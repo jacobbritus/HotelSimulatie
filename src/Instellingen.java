@@ -1,5 +1,3 @@
-//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
-
 import java.awt.Color;
 
 public final class Instellingen {
@@ -21,6 +19,9 @@ public final class Instellingen {
     // Default = 16
     public static int oppervlakVakjes = 16;
 
+
+    // Vakjes View
+    public static boolean vakjesAlternerendeKleuren = false;
 
     // Oppervlakte Kleuren
 
