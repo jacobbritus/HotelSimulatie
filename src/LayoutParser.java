@@ -90,10 +90,6 @@ public class LayoutParser {
             int row = labelAttributes.get("row");
             int col = labelAttributes.get("col");
 
-//            System.out.println(rowSpan);
-//            System.out.println(colSpan);
-//            System.out.println(row);
-//            System.out.println(col);
 
             boolean placed = false;
 
@@ -129,12 +125,6 @@ public class LayoutParser {
                     }
                 }
             }
-
-//            if (!placed) {
-//                System.out.println("Geen ruimte for label: " + label.getAttribute("text"));
-//            } else {
-//                System.out.println("Label: '" + label.getAttribute("text") + "' Op rij " + row + ", col " + col);
-//            }
         }
 
         System.out.println(Arrays.deepToString(grid));

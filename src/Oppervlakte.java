@@ -16,6 +16,7 @@ public class Oppervlakte extends JPanel {
         this.setOpaque(true);
 
         this.voegVakjesToe();
+        this.verbindVakjes();
 
         superPanel.add(this);
     }
@@ -39,6 +40,28 @@ public class Oppervlakte extends JPanel {
 
                 this.add(vakje);
                 vakjes[r][c] = vakje;
+            }
+        }
+        verbindVakjes();
+    }
+
+    public void verbindVakjes(){
+        for (int r = 0; r < vakjes.length; r++) {
+            for (int c = 0; c < vakjes[0].length; c++) {
+                Vakje v = vakjes[r][c];
+
+                if (r > 0) {
+                    v.buren.add(vakjes[r - 1][c]);
+                }
+                if (c > 0) {
+                    v.buren.add(vakjes[r][c-1]);
+                }
+                if (r < vakjes.length - 1) {
+                    v.buren.add(vakjes[r + 1][c]);
+                }
+                if (c < vakjes[0].length - 1) {
+                    v.buren.add(vakjes[r][c + 1]);
+                }
             }
         }
     }
