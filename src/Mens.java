@@ -59,7 +59,9 @@ public class Mens {
         int besteScore = Integer.MAX_VALUE;
 
         for (Vakje buur : vakje.getBuren()){
-            if (!buur.isVrij()){continue};
+            if (!buur.isVrij()){
+                continue;
+            };
 
             int dr = Math.abs(buur.getY() - destinatie.getY());
             int dc = Math.abs(buur.getX() - destinatie.getX());
