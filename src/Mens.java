@@ -11,6 +11,6 @@ public class Mens {
     }
 
     public void beweeg() {
-        // Basis: doet niets
+        // Basis beweging: doet nu niks, want de gast en schoonmaker moeten allebei anders bewegen.
     }
 }

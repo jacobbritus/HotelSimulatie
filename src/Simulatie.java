@@ -20,7 +20,26 @@ public class Simulatie extends JPanel {
         layout = new Layout(rauweGrid, this);
 
         // Spawn 1 gast voor test
-        Vakje start = layout.getRuimtes()[0][0].getVakjes()[0][0];
+        // Zoek lobby
+        Oppervlakte lobby = null;
+
+        for (int r = 0; r < layout.getRuimtes().length; r++) {
+            for (int c = 0; c < layout.getRuimtes()[0].length; c++) {
+                if (layout.getRuimtes()[r][c] instanceof Lobby) {
+                    lobby = layout.getRuimtes()[r][c];
+                    break;
+                }
+            }
+        }
+
+        if (lobby == null) {
+            throw new RuntimeException("Geen lobby gevonden in layout!");
+        }
+
+        // Kies een vakje in de lobby
+        Vakje start = lobby.getVakjes()[0][0];
+
+        // Spawn gast
         Gast g = new Gast(start);
         mensen.add(g);
 

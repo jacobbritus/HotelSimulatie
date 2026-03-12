@@ -36,6 +36,7 @@ public class Layout extends JPanel {
                         case "Kamer" -> ruimtes[r][c] = new Kamer(this, ruimtes);
                         case "Lift" -> ruimtes[r][c] = new Lift(this, ruimtes);
                         case "Trap" -> ruimtes[r][c] = new Trap(this, ruimtes);
+                        case "Lobby" -> ruimtes[r][c] = new Lobby(this, ruimtes);
                     }
                     // misschien
                     // ruimtes[r][c].returnLocatie

@@ -6,6 +6,10 @@
     <!-- Lift first -->
     <label text="Lift" row="2" col="2" rowSpan="2" colSpan="2"/>
 
+    <!-- Lobby -->
+    <label test="Lobby" row="0" col="0" rowSpan="2" colSpan="4"/>
+
+
     <!-- Kamer labels -->
     <label text="Kamer" row="0" col="1"/>
     <label text="Kamer" row="0" col="2"/>
