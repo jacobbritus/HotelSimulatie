@@ -11,7 +11,7 @@ public class SimulatieController extends JPanel {
     public SimulatieController(Simulatie simulatie) {
         this.simulatie = simulatie;
 
-        this.HTEtimer = new Timer(Instellingen.millisecondenPerTik, e -> simulatie.update());
+        this.HTEtimer = new Timer(Settings.millisecondenPerTik, e -> simulatie.update());
 
         this.setBackground(new Color(20, 20, 20 ,50));
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));

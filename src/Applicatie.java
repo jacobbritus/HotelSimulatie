@@ -11,7 +11,7 @@ public class Applicatie extends JFrame implements KeyListener {
     Simulatie simulatie;
 
     public Applicatie() {
-        this.setSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
+        this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
@@ -29,7 +29,7 @@ public class Applicatie extends JFrame implements KeyListener {
         scrollPane.getVerticalScrollBar().setUnitIncrement(5);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(5);
 
-        scrollPane.setBackground(Instellingen.achtergrondKleur);
+        scrollPane.setBackground(Settings.achtergrondKleur);
         scrollPane.setBorder(null); // It has a border for some reason
 
         this.getContentPane().add(scrollPane);
@@ -48,11 +48,7 @@ public class Applicatie extends JFrame implements KeyListener {
         scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, cornerBottomRight);
 
 
-        // test
-//        Vakje randomVakje = layout.getRuimtes()[4][2].vakjes[3][3];
-//        Mens randomMens = new Mens(randomVakje);
-//        randomVakje.zetMens(new Mens(randomVakje));
-//        randomMens.getDestinatie();
+
 
         this.setVisible(true);
     }
@@ -61,9 +57,9 @@ public class Applicatie extends JFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyChar() == '+') {
-            simulatie.zoom(Instellingen.oppervlakVakjes);
+            simulatie.zoom(Settings.oppervlakVakjes);
         } else if (e.getKeyChar() == '-') {
-            simulatie.zoom(Instellingen.oppervlakVakjes * -1);
+            simulatie.zoom(Settings.oppervlakVakjes * -1);
         }
     }
 

@@ -1,11 +1,11 @@
 import java.awt.Color;
 
-public final class Instellingen {
-    private Instellingen() {} // Geen instanties kunnen gemaakt worden.
+public final class Settings {
+    private Settings() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 1920;
-    public static int schermHoogte = 1080;
+    public static int schermBreedte = 1080;
+    public static int schermHoogte = 720;
 
     // Achtergrond Kleur
     // Default = Color.WHITE
@@ -21,7 +21,7 @@ public final class Instellingen {
 
 
     // Vakjes View
-    public static boolean vakjesAlternerendeKleuren = false;
+    public static boolean setSquaresAlternatingColors = false;
 
     // Oppervlakte Kleuren
 

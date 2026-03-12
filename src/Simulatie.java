@@ -1,11 +1,4 @@
 import javax.swing.*;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 
@@ -16,12 +9,20 @@ public class Simulatie extends JPanel {
 
     public Simulatie(String[][] rauweGrid) {
         this.setLayout(new GridBagLayout()); // Zet layout in het midden
-        this.setBackground(Instellingen.achtergrondKleur);
-        this.setSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
+        this.setBackground(Settings.achtergrondKleur);
+        this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setOpaque(true);
 
        layout = new Layout(rauweGrid);
        this.add(layout);
+
+        //         test
+        Tile randomTile = layout.getFacilities()[4][2].tiles[15][15];
+        Human randomMens = new Human(randomTile);
+        randomTile.setHuman(new Human(randomTile));
+        randomMens.getDestinatie();
+
+        randomTile.getNeigbour(Direction.RIGHT).setBackground(Color.GREEN);
     }
 
     public void update() {
@@ -29,26 +30,23 @@ public class Simulatie extends JPanel {
     }
 
     public void zoom(int aantal) {
-        Instellingen.oppervlakGrootte += aantal;
-
+        Settings.oppervlakGrootte += aantal;
 
         // Nieuwe preferred size op basis van huidige grid
-        Oppervlakte[][] r = layout.getRuimtes();
+        Facility[][] r = layout.getFacilities();
         int hoogte = r.length;
         int breedte = r[0].length;
 
         layout.setPreferredSize(new Dimension(
-                Instellingen.oppervlakGrootte * breedte,
-                Instellingen.oppervlakGrootte * hoogte
+                Settings.oppervlakGrootte * breedte,
+                Settings.oppervlakGrootte * hoogte
         ));
 
         layout.revalidate();
         layout.repaint();
 
-//        this.layout.herlaad();
+        this.layout.reload();
         this.layout.revalidate();
-
-
     }
 
 }

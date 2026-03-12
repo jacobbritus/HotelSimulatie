@@ -9,7 +9,7 @@ Simulation class (LAYERED PANE) houdt Controller vast z-index 1 en Layout z-inde
 - implement Timer
 - spawn people each
 - implement update()
-    - loop over all Mens and beweeg
+    - loop over all Human and beweeg
     - spawn more people at random spots
 
 Simulation Controller (JFrame probably) and layer on top of grid so get LayeredPane as LayoutHouder

@@ -1,22 +1,22 @@
 import java.awt.*;
 
-public class Mens {
-    Vakje vakje;
-    Vakje destinatie; // this.vakje.getOppervlakte().getRuimtes()[3][3].getVakjes()[3][3] ---
+public class Human {
+    Tile tile;
+    Tile destinatie; // this.vakje.getOppervlakte().getRuimtes()[3][3].getVakjes()[3][3] ---
     int cooldown;
 
-    public Mens(Vakje vakje) {
-        this.vakje = vakje;
-        this.vakje.setBackground(Color.BLUE);
+    public Human(Tile tile) {
+        this.tile = tile;
+        this.tile.setBackground(Color.BLUE);
     }
 
     public void getDestinatie() {
-        this.vakje.getOppervlakte().getRuimtes()[0][0].getVakjes()[0][0].setBackground(Color.RED);
+        this.tile.getFloor().getFacilities()[0][0].getTiles()[0][0].setBackground(Color.RED);
     }
 
-    public void zetVakje(Vakje doelVakje) {
-        this.vakje.zetMens(null);
-        this.vakje = doelVakje;
+    public void zetVakje(Tile newTile) {
+        this.tile.setHuman(null);
+        this.tile = newTile;
     }
 
     public void beweeg() {
