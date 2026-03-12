@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 public class Applicatie extends JFrame implements KeyListener {
     Layout layout;
     JPanel layoutHouder;
+    // oka
 
     public Applicatie() {
         this.setMinimumSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
