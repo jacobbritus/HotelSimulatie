@@ -1,19 +1,18 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 
-public class SimulatieController {
+public class SimulatieController extends JPanel {
 
     private final Simulatie simulatie;
     private final Timer HTEtimer;
 
     public SimulatieController(Simulatie simulatie) {
         this.simulatie = simulatie;
-<<<<<<< Updated upstream
+
         this.HTEtimer = new Timer(Instellingen.millisecondenPerTik, e -> simulatie.update());
-=======
+
         this.setBackground(new Color(20, 20, 20 ,50));
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         this.setOpaque(false); // Avoid weird behavior when scrolling
@@ -26,9 +25,6 @@ public class SimulatieController {
 
         this.addButtons();
 
-        HTEtimer = new Timer(Instellingen.millisecondenPerTik, e -> simulatie.update());
-
->>>>>>> Stashed changes
     }
 
     // Setup toolbar
@@ -40,14 +36,13 @@ public class SimulatieController {
         startKnop.setAlignmentY(Component.CENTER_ALIGNMENT);
         startKnop.addActionListener(e -> HTEtimer.start());
         this.add(startKnop);
-
-<<<<<<< Updated upstream
-    public void setTickSpeed(int ms) {
-        HTEtimer.setDelay(ms);
-    }
-}
-=======
     }
 
+
+
 }
->>>>>>> Stashed changes
+
+
+
+
+

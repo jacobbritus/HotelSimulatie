@@ -2,17 +2,13 @@
 // Dit kan java.awt.List binnenhalen en dat botst met java.util.List.
 
 import javax.swing.*;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Applicatie extends JFrame implements KeyListener {
-<<<<<<< Updated upstream
 
-    private Simulatie simulatie;
-=======
     Simulatie simulatie;
->>>>>>> Stashed changes
 
     public Applicatie() {
         this.setSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
@@ -22,9 +18,7 @@ public class Applicatie extends JFrame implements KeyListener {
     }
 
     public void startSimulatie(String[][] rauweGrid) {
-<<<<<<< Updated upstream
-        simulatie = new Simulatie(this, rauweGrid);
-=======
+
         simulatie = new Simulatie(rauweGrid);
 
         SimulatieController simulatieController = new SimulatieController(simulatie);
@@ -60,25 +54,9 @@ public class Applicatie extends JFrame implements KeyListener {
 //        randomVakje.zetMens(new Mens(randomVakje));
 //        randomMens.getDestinatie();
 
->>>>>>> Stashed changes
         this.setVisible(true);
     }
 
-    @Override
-<<<<<<< Updated upstream
-    public void keyReleased(KeyEvent e) {
-        if (simulatie == null) return;
-
-        switch (e.getKeyChar()) {
-            case '1' -> simulatie.setTickSpeed(1000);
-            case '2' -> simulatie.setTickSpeed(500);
-            case '3' -> simulatie.setTickSpeed(250);
-            case '4' -> simulatie.setTickSpeed(100);
-        }
-=======
-    public void keyTyped(KeyEvent e) {
-
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -92,9 +70,7 @@ public class Applicatie extends JFrame implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
->>>>>>> Stashed changes
     }
 
     @Override public void keyTyped(KeyEvent e) {}
-    @Override public void keyPressed(KeyEvent e) {}
 }

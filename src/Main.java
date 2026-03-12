@@ -7,11 +7,7 @@ public class Main {
         Applicatie applicatie = new Applicatie();
 
         LayoutParser layoutParser = new LayoutParser();
-<<<<<<< Updated upstream
-        Document doc = layoutParser.loadFile("layouts/LobbyTest.layout");
-=======
         Document doc = layoutParser.loadFile("layouts/bar.layout");
->>>>>>> Stashed changes
 
         if (doc == null) {
             System.out.println("Kon layout niet laden.");

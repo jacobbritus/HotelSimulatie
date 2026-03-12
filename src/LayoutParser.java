@@ -114,33 +114,6 @@ public class LayoutParser {
             }
         }
 
-        // validatie, kijken of alle verplichte elementen bestaan
-        boolean lobbyAanwezig = false;
-        boolean trapAanwezig = false;
-        boolean liftAanwezig = false;
-
-        for (String[] strings : grid) {
-            for (int c = 0; c < grid[0].length; c++) {
-                String cel = strings[c];
-                if (cel == null) continue;
-
-                switch (cel) {
-                    case "Lobby" -> lobbyAanwezig = true;
-                    case "Trap" -> trapAanwezig = true;
-                    case "Lift" -> liftAanwezig = true;
-                }
-            }
-        }
-
-        if (!lobbyAanwezig || !trapAanwezig || !liftAanwezig) {
-            System.out.println("FOUT: Layout mist verplichte elementen:");
-            if (!lobbyAanwezig) System.out.println("- Lobby ontbreekt");
-            if (!trapAanwezig)  System.out.println("- Trap ontbreekt");
-            if (!liftAanwezig)  System.out.println("- Lift ontbreekt");
-            return null;
-        }
-
-        System.out.println(Arrays.deepToString(grid));
         return grid;
     }
 
