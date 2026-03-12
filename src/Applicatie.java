@@ -1,10 +1,14 @@
+// BELANGRIJK: importeer NOOIT java.awt.*
+// Dit kan java.awt.List binnenhalen en dat botst met java.util.List.
+
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Applicatie extends JFrame implements KeyListener {
-    Simulatie simulatie;
+
+    private Simulatie simulatie;
 
     public Applicatie() {
         this.setMinimumSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
@@ -20,17 +24,13 @@ public class Applicatie extends JFrame implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyChar() == '+') {
-            simulatie.zoom(100);
-        } else if (e.getKeyChar() == '-') {
-            simulatie.zoom(-100);
-        }
+        if (simulatie == null) return;
 
         switch (e.getKeyChar()) {
-            case '1' -> simulatie.simulatieController.setTickSpeed(1000);
-            case '2' -> simulatie.simulatieController.setTickSpeed(500);
-            case '3' -> simulatie.simulatieController.setTickSpeed(250);
-            case '4' -> simulatie.simulatieController.setTickSpeed(100);
+            case '1' -> simulatie.setTickSpeed(1000);
+            case '2' -> simulatie.setTickSpeed(500);
+            case '3' -> simulatie.setTickSpeed(250);
+            case '4' -> simulatie.setTickSpeed(100);
         }
     }
 

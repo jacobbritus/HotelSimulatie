@@ -1,3 +1,5 @@
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -117,15 +119,15 @@ public class LayoutParser {
         boolean trapAanwezig = false;
         boolean liftAanwezig = false;
 
-        for (int r = 0; r < grid.length; r++) {
+        for (String[] strings : grid) {
             for (int c = 0; c < grid[0].length; c++) {
-                String cel = grid[r][c];
+                String cel = strings[c];
                 if (cel == null) continue;
 
                 switch (cel) {
                     case "Lobby" -> lobbyAanwezig = true;
-                    case "Trap"  -> trapAanwezig = true;
-                    case "Lift"  -> liftAanwezig = true;
+                    case "Trap" -> trapAanwezig = true;
+                    case "Lift" -> liftAanwezig = true;
                 }
             }
         }

@@ -1,95 +1,117 @@
-import java.awt.*;
+import java.util.List;
 import java.util.Random;
 
 public class Gast extends Mens {
 
     private boolean despawned = false;
+    private Vakje destinatie;
+    private List<Vakje> pad;
+
+    private final Random random = new Random();
 
     public Gast(Vakje start) {
         super(start);
+        kiesNieuweDestinatie();
     }
 
     @Override
     public void beweeg() {
-        leeftijd++;
 
-        // Leeftijd op → terug naar lobby
+        leeftijd++;
+        
+        if (leeftijd % 50 == 0) {
+            System.out.println("Gast beweegt! Huidi vakje: (" + vakje.gridR + "," + vakje.gridC + "), Destinatie: (" + destinatie.gridR + "," + destinatie.gridC + "), Leeftijd: " + leeftijd);
+        }
+
+        // Te oud → terug naar lobby
         if (leeftijd >= maxLeeftijd) {
-            if (!(vakje.getOppervlakte() instanceof Lobby)) {
-                destinatie = vindLobbyVakje();
-            } else {
-                // In lobby → despawn
-                vakje.setBackground(vakje.kleur);
-                vakje.zetMens(null);
-                despawned = true;
+            destinatie = vindLobbyVakje();
+            pad = AStar.findPath(vakje, destinatie);
+        }
+
+        // Geen pad → probeer opnieuw een pad te vinden
+        if (pad == null || pad.isEmpty()) {
+            pad = AStar.findPath(vakje, destinatie);
+            // Als er nog steeds geen pad is, kunnen we niet bewegen
+            if (pad == null || pad.isEmpty()) {
+                System.out.println("WAARSCHUWING: Geen pad gevonden! Huidi vakje: (" + vakje.gridR + "," + vakje.gridC + "), Destinatie: (" + destinatie.gridR + "," + destinatie.gridC + ")");
                 return;
             }
         }
 
-        // Geen bestemming → kies er een
-        if (destinatie == null) {
-            kiesNieuweDestinatie();
+        Vakje volgende = pad.remove(0);
+
+        // Als het vakje bezet is (en niet de bestemming), herbereken pad
+        if (!volgende.isVrij() && volgende != destinatie) {
+            pad = AStar.findPath(vakje, destinatie);
             return;
         }
+
+        // Verlaat huidig vakje
+        vakje.zetMens(null);
+        // Als dit vakje niet meer de bestemming is, het vakje wordt automatisch baseColor
+        // Als het WEL de bestemming is, moet het rood blijven
+        if (vakje == destinatie) {
+            vakje.highlightDestinatie();  // Zet het weer rood
+        }
+
+
+        // Ga naar volgende vakje
+        vakje = volgende;
+        vakje.zetMens(this);
 
         // Bestemming bereikt
         if (vakje == destinatie) {
+
+            // Bestemming is bereikt, dus niet langer highlight nodig
+            // updateKleur() zal dit al hebben gedaan
+            
+            // In lobby + te oud → despawn
             if (vakje.getOppervlakte() instanceof Lobby && leeftijd >= maxLeeftijd) {
-                vakje.setBackground(vakje.kleur);
                 vakje.zetMens(null);
+                vakje.resetKleur();
                 despawned = true;
                 return;
             }
+
+            // Nieuwe bestemming
             kiesNieuweDestinatie();
-            return;
-        }
-
-        // Movement naar beste buur
-        Vakje beste = null;
-        int besteScore = Integer.MAX_VALUE;
-
-        for (Vakje buur : vakje.getBuren()) {
-            if (!buur.isVrij()) continue;
-
-            int score = afstand(buur, destinatie);
-            if (score < besteScore) {
-                besteScore = score;
-                beste = buur;
-            }
-        }
-
-        if (beste != null) {
-            vakje.setBackground(vakje.kleur);
-            vakje.zetMens(null);
-
-            vakje = beste;
-            vakje.zetMens(this);
-            vakje.setBackground(Color.BLUE);
         }
     }
 
     private void kiesNieuweDestinatie() {
-        Vakje[][] vakjes = vakje.getOppervlakte().getVakjes();
-        Random random = new Random();
-        destinatie = vakjes[random.nextInt(vakjes.length)][random.nextInt(vakjes[0].length)];
-        destinatie.setBackground(Color.RED);
+
+        // Reset oude bestemming kleur (als die bestaat en er geen mens op staat)
+        if (destinatie != null && destinatie.isVrij()) {
+            destinatie.resetKleur();
+        }
+
+        Oppervlakte[][] ruimtes = vakje.getOppervlakte().getRuimtes();
+
+        int r = random.nextInt(ruimtes.length);
+        int c = random.nextInt(ruimtes[0].length);
+
+        Vakje[][] vakjes = ruimtes[r][c].getVakjes();
+
+        Vakje doel = vakjes[random.nextInt(vakjes.length)][random.nextInt(vakjes[0].length)];
+
+        this.destinatie = doel;
+        destinatie.highlightDestinatie();
+
+        this.pad = AStar.findPath(vakje, doel);
     }
 
     private Vakje vindLobbyVakje() {
         Oppervlakte[][] ruimtes = vakje.getOppervlakte().getRuimtes();
 
-        for (int r = 0; r < ruimtes.length; r++) {
+        for (Oppervlakte[] ruimte : ruimtes) {
             for (int c = 0; c < ruimtes[0].length; c++) {
-                if (ruimtes[r][c] instanceof Lobby) {
-                    return ruimtes[r][c].getVakjes()[0][0];
+                if (ruimte[c] instanceof Lobby) {
+                    return ruimte[c].getVakjes()[0][0];
                 }
             }
         }
         return null;
-    }
-
-    private int afstand(Vakje a, Vakje b) {
-        return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
     }
 
     public boolean isDespawned() {
