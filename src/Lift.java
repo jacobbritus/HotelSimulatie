@@ -1,5 +1,8 @@
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+
 import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+
 
 public class Lift extends Oppervlakte {
     public Lift(JPanel superPanel, Oppervlakte[][] ruimtes) {

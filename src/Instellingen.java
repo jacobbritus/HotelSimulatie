@@ -1,4 +1,6 @@
-import java.awt.*;
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+
+import java.awt.Color;
 
 public final class Instellingen {
     private Instellingen() {} // Geen instanties kunnen gemaakt worden.
@@ -19,9 +21,6 @@ public final class Instellingen {
     // Default = 16
     public static int oppervlakVakjes = 16;
 
-
-    // Vakjes View
-    public static boolean vakjesAlternerendeKleuren = true;
 
     // Oppervlakte Kleuren
 
