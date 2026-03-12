@@ -8,6 +8,8 @@ public class Simulatie extends JPanel {
     SimulatieController simulatieController;
     List<Mens> mensen = new ArrayList<>();
 
+    int tickCount = 0;
+
     public Simulatie(JFrame frame, String[][] rauweGrid) {
         this.setLayout(new GridBagLayout());
         this.setBackground(Instellingen.achtergrondKleur);
@@ -20,37 +22,32 @@ public class Simulatie extends JPanel {
         layout = new Layout(rauweGrid, this);
 
         // Spawn 1 gast voor test
-        // Zoek lobby
-        Oppervlakte lobby = null;
-
-        for (int r = 0; r < layout.getRuimtes().length; r++) {
-            for (int c = 0; c < layout.getRuimtes()[0].length; c++) {
-                if (layout.getRuimtes()[r][c] instanceof Lobby) {
-                    lobby = layout.getRuimtes()[r][c];
-                    break;
-                }
-            }
-        }
-
-        if (lobby == null) {
+        Vakje start = vindLobbyVakje();
+        if (start == null) {
             throw new RuntimeException("Geen lobby gevonden in layout!");
         }
 
-        // Kies een vakje in de lobby
-        Vakje start = lobby.getVakjes()[0][0];
-
-        // Spawn gast
-        Gast g = new Gast(start);
-        mensen.add(g);
+        mensen.add(new Gast(start));
 
         simulatieController = new SimulatieController(this);
         simulatieController.start();
     }
 
     public void update() {
+        tickCount++;
+
         for (Mens mens : mensen) {
             mens.beweeg();
         }
+
+        // Elke 50 ticks een nieuwe gast
+        if (tickCount % 50 == 0) {
+            spawnGast();
+        }
+
+        // Verwijder gasten die despawnen
+        mensen.removeIf(m -> m instanceof Gast g && g.isDespawned());
+
         layout.repaint();
     }
 
@@ -58,5 +55,23 @@ public class Simulatie extends JPanel {
         Instellingen.oppervlakGrootte += aantal;
         this.layout.herlaad();
         this.layout.revalidate();
+    }
+
+    private void spawnGast() {
+        Vakje lobbyVakje = vindLobbyVakje();
+        if (lobbyVakje != null && lobbyVakje.isVrij()) {
+            mensen.add(new Gast(lobbyVakje));
+        }
+    }
+
+    private Vakje vindLobbyVakje() {
+        for (int r = 0; r < layout.getRuimtes().length; r++) {
+            for (int c = 0; c < layout.getRuimtes()[0].length; c++) {
+                if (layout.getRuimtes()[r][c] instanceof Lobby) {
+                    return layout.getRuimtes()[r][c].getVakjes()[0][0];
+                }
+            }
+        }
+        return null;
     }
 }

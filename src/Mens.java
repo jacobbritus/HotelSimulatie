@@ -1,16 +1,15 @@
-import java.awt.*;
+public abstract class Mens {
 
-public class Mens {
     protected Vakje vakje;
     protected Vakje destinatie;
 
-    public Mens(Vakje vakje) {
-        this.vakje = vakje;
-        vakje.zetMens(this);
-        vakje.setBackground(Color.BLUE);
+    protected int leeftijd = 0;
+    protected int maxLeeftijd = 300; // voorbeeld
+
+    public Mens(Vakje start) {
+        this.vakje = start;
+        start.zetMens(this);
     }
 
-    public void beweeg() {
-        // Basis beweging: doet nu niks, want de gast en schoonmaker moeten allebei anders bewegen.
-    }
+    public abstract void beweeg();
 }

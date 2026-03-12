@@ -2,8 +2,8 @@ import java.awt.*;
 import java.util.Random;
 
 public class Gast extends Mens {
-    int leeftijd;
-    int maxLeeftijd = 100;
+
+    private boolean despawned = false;
 
     public Gast(Vakje start) {
         super(start);
@@ -21,6 +21,7 @@ public class Gast extends Mens {
                 // In lobby → despawn
                 vakje.setBackground(vakje.kleur);
                 vakje.zetMens(null);
+                despawned = true;
                 return;
             }
         }
@@ -31,12 +32,12 @@ public class Gast extends Mens {
             return;
         }
 
-        // Bestemming bereikt → nieuwe kiezen (tenzij we naar lobby moesten)
+        // Bestemming bereikt
         if (vakje == destinatie) {
             if (vakje.getOppervlakte() instanceof Lobby && leeftijd >= maxLeeftijd) {
-                // Despawn in lobby
                 vakje.setBackground(vakje.kleur);
                 vakje.zetMens(null);
+                despawned = true;
                 return;
             }
             kiesNieuweDestinatie();
@@ -89,5 +90,9 @@ public class Gast extends Mens {
 
     private int afstand(Vakje a, Vakje b) {
         return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY());
+    }
+
+    public boolean isDespawned() {
+        return despawned;
     }
 }

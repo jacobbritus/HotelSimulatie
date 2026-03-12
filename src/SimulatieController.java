@@ -12,4 +12,8 @@ public class SimulatieController extends JPanel {
     public void start() {
         HTEtimer.start();
     }
+
+    public void setTickSpeed(int ms) {
+        HTEtimer.setDelay(ms);
+    }
 }
