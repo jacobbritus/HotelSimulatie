@@ -1,4 +1,8 @@
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import java.awt.*;
 
 public class SimulatieController {
 
@@ -7,14 +11,43 @@ public class SimulatieController {
 
     public SimulatieController(Simulatie simulatie) {
         this.simulatie = simulatie;
+<<<<<<< Updated upstream
         this.HTEtimer = new Timer(Instellingen.millisecondenPerTik, e -> simulatie.update());
+=======
+        this.setBackground(new Color(20, 20, 20 ,50));
+        this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.setOpaque(false); // Avoid weird behavior when scrolling
+        this.setPreferredSize(new Dimension(0, 48));
+        this.setBackground(Color.WHITE);
+
+        this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 2, 0,
+                Color.LIGHT_GRAY), new EmptyBorder(10, 10, 10, 10)));
+
+
+        this.addButtons();
+
+        HTEtimer = new Timer(Instellingen.millisecondenPerTik, e -> simulatie.update());
+
+>>>>>>> Stashed changes
     }
 
-    public void start() {
-        HTEtimer.start();
-    }
+    // Setup toolbar
+    public void addButtons() {
+        JButton startKnop = new JButton("Start");
+        startKnop.setPreferredSize(new Dimension(32, 32));
+        startKnop.setFocusable(false);
+        startKnop.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        startKnop.setAlignmentY(Component.CENTER_ALIGNMENT);
+        startKnop.addActionListener(e -> HTEtimer.start());
+        this.add(startKnop);
 
+<<<<<<< Updated upstream
     public void setTickSpeed(int ms) {
         HTEtimer.setDelay(ms);
     }
 }
+=======
+    }
+
+}
+>>>>>>> Stashed changes

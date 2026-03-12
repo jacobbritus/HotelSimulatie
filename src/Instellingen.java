@@ -6,8 +6,8 @@ public final class Instellingen {
     private Instellingen() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 720;
-    public static int schermHoogte = 720;
+    public static int schermBreedte = 1920;
+    public static int schermHoogte = 1080;
 
     // Achtergrond Kleur
     // Default = Color.WHITE

@@ -1,8 +1,13 @@
 import javax.swing.*;
+<<<<<<< Updated upstream
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+=======
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+>>>>>>> Stashed changes
 
 public class Simulatie extends JPanel {
 
@@ -12,6 +17,7 @@ public class Simulatie extends JPanel {
 
     private int tickCount = 0;
 
+<<<<<<< Updated upstream
     public Simulatie(JFrame frame, String[][] rauweGrid) {
 
         // Layout voor deze panel (hoewel we vooral de layout zelf in een scrollpane tonen)
@@ -38,7 +44,19 @@ public class Simulatie extends JPanel {
         // Start de simulatie
         simulatieController = new SimulatieController(this);
         simulatieController.start();
+=======
+    public Simulatie(String[][] rauweGrid) {
+        this.setLayout(new GridBagLayout()); // Zet layout in het midden
+        this.setBackground(Instellingen.achtergrondKleur);
+        this.setSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
+        this.setOpaque(true);
+
+       layout = new Layout(rauweGrid);
+       this.add(layout);
+
+>>>>>>> Stashed changes
     }
+
 
     public void update() {
         tickCount++;
@@ -88,6 +106,7 @@ public class Simulatie extends JPanel {
     // Zoom hoeft niet, maar laten we hem veilig houden als hij nog ergens aangeroepen wordt
     public void zoom(int aantal) {
         Instellingen.oppervlakGrootte += aantal;
+<<<<<<< Updated upstream
 
         // Nieuwe preferred size op basis van huidige grid
         Oppervlakte[][] r = layout.getRuimtes();
@@ -101,6 +120,11 @@ public class Simulatie extends JPanel {
 
         layout.revalidate();
         layout.repaint();
+=======
+        this.layout.herlaad();
+        this.layout.revalidate();
+
+>>>>>>> Stashed changes
     }
 
     public void setTickSpeed(int speed) {

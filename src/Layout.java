@@ -3,10 +3,14 @@ import java.awt.*;
 
 public class Layout extends JPanel {
 
+<<<<<<< Updated upstream
     private final Oppervlakte[][] ruimtes;
 
     public Layout(String[][] rauweGrid) {
 
+=======
+    public Layout(String[][] rauweGrid) {
+>>>>>>> Stashed changes
         int hoogte = rauweGrid.length;
         int breedte = rauweGrid[0].length;
 
@@ -21,8 +25,13 @@ public class Layout extends JPanel {
                 Instellingen.oppervlakGrootte * hoogte
         ));
 
+<<<<<<< Updated upstream
         // Maak alle oppervlakten
         voegRuimtes(rauweGrid);
+=======
+        this.voegRuimtes(rauweGrid, hoogte, breedte);
+
+>>>>>>> Stashed changes
 
         // Verbind alle oppervlakten
         Oppervlakte.verbindAlleOppervlakten(ruimtes);
