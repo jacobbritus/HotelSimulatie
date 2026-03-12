@@ -14,7 +14,6 @@ public class Simulatie extends JPanel {
      SimulatieController simulatieController;
 
 
-
     public Simulatie(String[][] rauweGrid) {
         this.setLayout(new GridBagLayout()); // Zet layout in het midden
         this.setBackground(Instellingen.achtergrondKleur);
@@ -23,14 +22,11 @@ public class Simulatie extends JPanel {
 
        layout = new Layout(rauweGrid);
        this.add(layout);
-
-
     }
 
     public void update() {
-
+        System.out.println("yes");
     }
-
 
     public void zoom(int aantal) {
         Instellingen.oppervlakGrootte += aantal;

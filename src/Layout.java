@@ -21,6 +21,7 @@ public class Layout extends JPanel {
         ));
 
         // Maak alle oppervlakten
+        voegRuimtes(rauweGrid);
     }
 
     public Oppervlakte[][] getRuimtes() {
@@ -39,7 +40,6 @@ public class Layout extends JPanel {
                     case "Kamer" -> o = new Kamer(this, ruimtes);
                     case "Lift" -> o = new Lift(this, ruimtes);
                     case "Trap" -> o = new Trap(this, ruimtes);
-                    case "Lobby" -> o = new Lobby(this, ruimtes);
                     default -> {
                         o = new Oppervlakte(this, null, null, ruimtes);
                         o.setBackground(Color.BLACK);
