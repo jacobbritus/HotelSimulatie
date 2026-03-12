@@ -37,11 +37,11 @@ public class Layout extends JPanel {
                 Facility o;
 
                 switch (type) {
-                    case "Kamer" -> o = new Kamer(this, facilities);
-                    case "Lift" -> o = new Lift(this, facilities);
-                    case "Trap" -> o = new Trap(this, facilities);
+                    case "Kamer" -> o = new Kamer(this, facilities, r, c);
+                    case "Lift" -> o = new Lift(this, facilities, r, c);
+                    case "Trap" -> o = new Trap(this, facilities, r, c);
                     default -> {
-                        o = new Facility(this, null, null, facilities);
+                        o = new Facility(this, null, null, facilities, r, c);
                         o.setBackground(Color.BLACK);
                     }
                 }
@@ -54,13 +54,13 @@ public class Layout extends JPanel {
     }
 
     public void reload() {
-        this.setPreferredSize(new Dimension(Settings.oppervlakGrootte * facilities[0].length,
-                Settings.oppervlakGrootte * facilities.length));
-        for (int r = 0; r < facilities.length; r++) {
-            for (int c = 0; c < facilities[0].length; c++) {
-                facilities[r][c].removeAll();
-                facilities[r][c].reload();
-                facilities[r][c].revalidate();
+        this.setPreferredSize(new Dimension(Settings.oppervlakGrootte * this.facilities[0].length,
+                Settings.oppervlakGrootte * this.facilities.length));
+        for (int r = 0; r < this.facilities.length; r++) {
+            for (int c = 0; c < this.facilities[0].length; c++) {
+                this.facilities[r][c].removeAll();
+                this.facilities[r][c].reload();
+                this.facilities[r][c].revalidate();
 
             }
         }
@@ -72,60 +72,29 @@ public class Layout extends JPanel {
     }
     
     private void connectTiles() {
-        for (int r = 0; r < facilities.length; r++) {
-            for (int c = 0; c < facilities[0].length; c++) {
-                Tile[][] tiles = facilities[r][c].getTiles();
+        for (int r = 0; r < this.facilities.length; r++) {
+            for (int c = 0; c < this.facilities[0].length; c++) {
+                Tile[][] tiles = this.facilities[r][c].getTiles();
+
                 for (int dr = 0; dr < tiles.length; dr++) {
                     for (int dc = 0; dc < tiles[0].length; dc++) {
                         Tile tile = tiles[dr][dc];
 
-                        if (r > 0) {
-                            if (dr == 0) {
-                                tile.setNeighbour(Direction.UP,
-                                        facilities[r - 1][c].getTiles()[tiles.length - 1][dc]
-                                        );
-                            } else {
-                                tile.setNeighbour(Direction.UP,
-                                        tiles[dr - 1][dc]
-                                );
-                            }
-                        }
+                        if (r > 0 && dr == 0) {
+                            tile.setNeighbour(Direction.UP, this.facilities[r - 1][c].getTiles()[tiles.length - 1][dc]);
+                        } else if (dr > 0) tile.setNeighbour(Direction.UP, tiles[dr - 1][dc]);
 
-                        if (r < facilities.length - 1) {
-                            if (dr == tiles.length - 1) {
-                                tile.setNeighbour(Direction.DOWN,
-                                        facilities[r + 1][c].getTiles()[0][dc]
-                                );
-                            } else {
-                                tile.setNeighbour(Direction.DOWN,
-                                        tiles[dr + 1][dc]
-                                );
-                            }
-                        }
+                        if (dr == tiles.length - 1 && r < this.facilities.length - 1) {
+                            tile.setNeighbour(Direction.DOWN, this.facilities[r + 1][c].getTiles()[0][dc]);
+                        }  else if (dr < tiles.length - 1) tile.setNeighbour(Direction.DOWN, tiles[dr +1][dc]);
 
-                        if (c > 0) {
-                            if (dc == 0) {
-                                tile.setNeighbour(Direction.LEFT,
-                                        facilities[r][c - 1].getTiles()[dr][tiles[0].length -1]
-                                );
-                            } else {
-                                tile.setNeighbour(Direction.LEFT,
-                                        tiles[dr][dc - 1]
-                                );
-                            }
-                        }
+                        if (c > 0 && dc == 0) {
+                            tile.setNeighbour(Direction.LEFT, this.facilities[r][c - 1].getTiles()[dr][tiles[0].length - 1]);
+                        } else if (dc > 0) tile.setNeighbour(Direction.LEFT, tiles[dr][dc - 1]);
 
-                        if (c < facilities[0].length - 1) {
-                            if (dc == tiles[0].length - 1) {
-                                tile.setNeighbour(Direction.RIGHT,
-                                        facilities[r][c + 1].getTiles()[dr][0]
-                                );
-                            } else {
-                                tile.setNeighbour(Direction.RIGHT,
-                                        tiles[dr][dc + 1]
-                                );
-                            }
-                        }
+                        if (dc == tiles[0].length - 1 && dc < this.facilities[0].length - 1) {
+                            tile.setNeighbour(Direction.RIGHT, this.facilities[r ][c + 1].getTiles()[dr][0]);
+                        }  else if (dc < tiles[0].length - 1) tile.setNeighbour(Direction.RIGHT, tiles[dr][dc + 1]);
                     }
                 }
 

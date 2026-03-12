@@ -1,42 +1,81 @@
-import java.awt.*;
+import java.awt.Color;
+import java.util.*;
 
 public class Human {
-    Tile tile;
-    Tile destinatie; // this.vakje.getOppervlakte().getRuimtes()[3][3].getVakjes()[3][3] ---
-    int cooldown;
+    private Tile tile;
+    private int stepsTaken;
+    private List<Tile> destinationPath;
+
+
+    public Tile getTile() {
+        return tile;
+    }
 
     public Human(Tile tile) {
+        this.destinationPath = null;
+        stepsTaken = 0;
         this.tile = tile;
         this.tile.setBackground(Color.BLUE);
     }
 
-    public void getDestinatie() {
-        this.tile.getFloor().getFacilities()[0][0].getTiles()[0][0].setBackground(Color.RED);
+    public Tile getRandomDestination() {
+        this.tile.getFacility().getFacilities()[2][2].tiles[4][4].setBackground(Color.RED);
+        return this.tile.getFacility().getFacilities()[4][4].tiles[0][0];
     }
 
-    public void zetVakje(Tile newTile) {
+    public void setTile(Tile newTile) {
+        this.tile.revertColor();
         this.tile.setHuman(null);
         this.tile = newTile;
+        this.tile.setBackground(Color.BLUE);
     }
 
-    public void beweeg() {
-        // if this.vakje == destinatie
-        // setCooldown (elk update = cooldown--)
-        // if cooldown == 0
-        // nieuw destinatie is this.vakje.getOppervlakte.getRuimtes().getRandomDestinatie()
+    public void move() {
 
-        // OR CREATE PATH ONCE AND JUST MOVE TO NEXT
-        // IF NOT TRAVERSABLE DONT MOVE SIMPLY
-
-        // if this.vakje.getOppervlakte == destinatie.getOpperVlakte
-        // manhattan formula en
-//            if vakje == vrij
-        // beweeg die richting op
-        // else
-        // manhattan formula en
-//            if vakje == vrij
-        // beweeg die richting op
     }
+
+    public void expand(Tile tile) {
+        for (Tile neighbour : tile.getNeighbours().values()) {
+            if (neighbour != null) {
+                neighbour.setBackground(Color.GREEN);
+
+            }
+        }
+    }
+
+
+
+    public void bfs() {
+        ArrayList<Tile> open = new ArrayList<>();
+        open.add(this.tile);
+        ArrayList<Tile> closed = new ArrayList<>();
+
+        // Start at the starting node and expand outwards
+        for (Tile neighbour : this.tile.getNeighbours().values()) {
+            if (neighbour != null) {
+                neighbour.setBackground(Color.GREEN);
+                expand(neighbour);
+            }
+
+            // save parent in map to retrace later
+        }
+        while (!open.isEmpty()) {
+            Tile current = open.getFirst();
+            open.remove(current);
+            closed.add(current);
+
+            System.out.println(current);
+            for (Tile neighbour : current.getNeighbours().values())
+                if (neighbour != null) {
+                    open.add(neighbour);
+                    break;
+                }
+
+        }
+
+    }
+
+
 }
 
 

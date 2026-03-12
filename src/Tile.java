@@ -1,31 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class Tile extends JLabel {
     private final Facility facility;
+    private final int row;
+    private final int column;
     private final Color color;
     private Human human;
+    private int gCost;
+    private int hCost;
     private final HashMap<Direction, Tile> neighbours;
 
-    public Facility getFloor() {
-        return facility;
-    }
-
-    public void setHuman(Human human) {
-        this.human = human;
-    }
-
-    public Tile getNeigbour(Direction direction) {
-        return neighbours.get(direction);
-    }
-
-    public void setNeighbour(Direction direction, Tile tile) {
-            neighbours.put(direction, tile);
-    }
-
-    public Tile(Facility facility, Color color1, Color color2, boolean isEven) {
+    public Tile(Facility facility, Color color1, Color color2, boolean isEven, int row, int column) {
+        this.gCost = 0;
+        this.hCost = 0;
+        this.row = row;
+        this.column = column;
         this.facility = facility;
         neighbours = new HashMap<>();
         neighbours.put(Direction.UP, null);
@@ -42,5 +33,69 @@ public class Tile extends JLabel {
         }
 
         this.setOpaque(true);
+    }
+
+    public boolean isWalkable() {
+        return true;
+    }
+
+    public int getgCost() {
+        return gCost;
+    }
+
+    public void setgCost(int gCost) {
+        this.gCost = gCost;
+    }
+    public int gethCost() {
+        return hCost;
+    }
+
+    public void sethCost(int hCost) {
+        this.hCost = gCost;
+    }
+
+
+    public int getRow() {
+        return row;
+    }
+
+    public void revertColor() {
+        this.setBackground(this.color);
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public HashMap<Direction, Tile> getNeighbours() {
+        return neighbours;
+    }
+
+    public Integer getGlobalPoint(String axis) {
+        if (axis.equals("y")) {
+            return (this.facility.getRow() * Settings.facilityTilesSize) + this.getRow();
+        } else if (axis.equals("x")) {
+            return (this.facility.getColumn() * Settings.facilityTilesSize) + this.getColumn();
+        } else {
+            return null;
+        }
+    }
+
+
+
+    public Facility getFacility() {
+        return facility;
+    }
+
+    public void setHuman(Human human) {
+        this.human = human;
+    }
+
+    public Tile getNeigbour(Direction direction) {
+        return neighbours.get(direction);
+    }
+
+    public void setNeighbour(Direction direction, Tile tile) {
+            neighbours.put(direction, tile);
     }
 }

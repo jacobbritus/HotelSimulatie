@@ -1,32 +1,36 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 
-public class Simulatie extends JPanel {
+public class Simulation extends JPanel {
      Layout layout;
      SimulatieController simulatieController;
+     Human human;
 
-
-    public Simulatie(String[][] rauweGrid) {
+    public Simulation(String[][] rauweGrid) {
         this.setLayout(new GridBagLayout()); // Zet layout in het midden
         this.setBackground(Settings.achtergrondKleur);
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setOpaque(true);
 
-       layout = new Layout(rauweGrid);
-       this.add(layout);
+        layout = new Layout(rauweGrid);
+        this.add(layout);
 
-        //         test
-        Tile randomTile = layout.getFacilities()[4][2].tiles[15][15];
-        Human randomMens = new Human(randomTile);
+        // test
+        Tile randomTile = layout.getFacilities()[0][0].tiles[15][15];
+
+        this.human = new Human(randomTile);
         randomTile.setHuman(new Human(randomTile));
-        randomMens.getDestinatie();
+        this.human.getRandomDestination();
 
-        randomTile.getNeigbour(Direction.RIGHT).setBackground(Color.GREEN);
+        System.out.println();
+        this.human.bfs();
+
     }
 
     public void update() {
-        System.out.println("yes");
+//        this.human.move();
     }
 
     public void zoom(int aantal) {

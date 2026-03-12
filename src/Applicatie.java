@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 
 public class Applicatie extends JFrame implements KeyListener {
 
-    Simulatie simulatie;
+    Simulation simulation;
 
     public Applicatie() {
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
@@ -19,11 +19,11 @@ public class Applicatie extends JFrame implements KeyListener {
 
     public void startSimulatie(String[][] rauweGrid) {
 
-        simulatie = new Simulatie(rauweGrid);
+        simulation = new Simulation(rauweGrid);
 
-        SimulatieController simulatieController = new SimulatieController(simulatie);
+        SimulatieController simulatieController = new SimulatieController(simulation);
 
-        JScrollPane scrollPane = new JScrollPane(simulatie);
+        JScrollPane scrollPane = new JScrollPane(simulation);
 
         // Change scroll speed
         scrollPane.getVerticalScrollBar().setUnitIncrement(5);
@@ -57,9 +57,9 @@ public class Applicatie extends JFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyChar() == '+') {
-            simulatie.zoom(Settings.oppervlakVakjes);
+            simulation.zoom(Settings.facilityTilesSize);
         } else if (e.getKeyChar() == '-') {
-            simulatie.zoom(Settings.oppervlakVakjes * -1);
+            simulation.zoom(Settings.facilityTilesSize * -1);
         }
     }
 

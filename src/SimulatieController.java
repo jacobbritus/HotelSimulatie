@@ -5,13 +5,13 @@ import java.awt.*;
 
 public class SimulatieController extends JPanel {
 
-    private final Simulatie simulatie;
+    private final Simulation simulation;
     private final Timer HTEtimer;
 
-    public SimulatieController(Simulatie simulatie) {
-        this.simulatie = simulatie;
+    public SimulatieController(Simulation simulation) {
+        this.simulation = simulation;
 
-        this.HTEtimer = new Timer(Settings.millisecondenPerTik, e -> simulatie.update());
+        this.HTEtimer = new Timer(Settings.millisecondenPerTik, e -> simulation.update());
 
         this.setBackground(new Color(20, 20, 20 ,50));
         this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
