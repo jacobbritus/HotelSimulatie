@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class Applicatie extends JFrame implements KeyListener {
     Layout layout;
-    JPanel layoutHouder;
+    Simulatie simulatie;
     // test
 
     public Applicatie() {
@@ -16,23 +16,7 @@ public class Applicatie extends JFrame implements KeyListener {
     }
 
     public void startSimulatie(String[][] rauweGrid) {
-        layoutHouder = new JPanel(new GridBagLayout()); // Zet layout in het midden
-        layoutHouder.setBackground(Instellingen.achtergrondKleur);
-        layoutHouder.setSize(new Dimension(640, 640));
-
-        JScrollPane scrollPane = new JScrollPane(layoutHouder);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(5);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(5);
-
-        scrollPane.setBackground(Instellingen.achtergrondKleur);
-        scrollPane.setBorder(null);
-
-        this.getContentPane().add(scrollPane);
-
-        layout = new Layout(
-                rauweGrid,
-                layoutHouder
-        );
+        simulatie = new Simulatie(this, rauweGrid);
         // test
 //        Vakje randomVakje = layout.getRuimtes()[4][2].vakjes[3][3];
 //        Mens randomMens = new Mens(randomVakje);
@@ -55,16 +39,11 @@ public class Applicatie extends JFrame implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyChar() == '+') {
-            zoom(100);
+            simulatie.zoom(100);
         } else if (e.getKeyChar() == '-') {
-            zoom(-100);
+            simulatie.zoom(-100);
         }
     }
 
-    public void zoom(int aantal) {
-        Instellingen.oppervlakGrootte += aantal;
-        System.out.println(Instellingen.oppervlakGrootte);
-        this.layout.herlaad();
-        this.layout.revalidate();
-    }
+
 }
