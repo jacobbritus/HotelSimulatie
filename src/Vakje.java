@@ -1,21 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Vakje extends JLabel {
     Oppervlakte oppervlakte;
     Color kleur;
     Mens mens;
+
+    // Nieuw: buren voor pathfinding
     List<Vakje> buren = new ArrayList<>();
-
-    public Oppervlakte getOppervlakte() {
-        return oppervlakte;
-    }
-
-    public void zetMens(Mens mens) {
-        this.mens = mens;
-    }
 
     public Vakje(Oppervlakte oppervlakte, Color kleur1, Color kleur2, boolean isEven) {
         this.oppervlakte = oppervlakte;
@@ -31,12 +25,19 @@ public class Vakje extends JLabel {
         this.setOpaque(true);
     }
 
-    public List<Vakje> getBuren() {
-        return buren;
+    public Oppervlakte getOppervlakte() {
+        return oppervlakte;
     }
 
-    public boolean isVrij(){
+    public void zetMens(Mens mens) {
+        this.mens = mens;
+    }
+
+    public boolean isVrij() {
         return mens == null;
     }
 
+    public List<Vakje> getBuren() {
+        return buren;
+    }
 }

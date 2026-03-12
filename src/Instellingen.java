@@ -1,3 +1,4 @@
+
 import java.awt.*;
 
 public final class Instellingen {
@@ -24,4 +25,7 @@ public final class Instellingen {
     public static boolean vakjesAlternerendeKleuren = true;
 
     // Oppervlakte Kleuren
+
+    // Milliseconden per tik
+    public static int millisecondenPerTik = 1000;
 }
