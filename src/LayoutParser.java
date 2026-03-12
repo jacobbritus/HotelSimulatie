@@ -69,18 +69,15 @@ public class LayoutParser {
         validateGrid(doc);
         if (this.gridColumns == null || this.gridRows == null) return null;
 
-
         String[][] grid = new String[this.gridRows][this.gridColumns];
-
+        boolean[][] occupied = new boolean[this.gridRows][this.gridColumns];
 
         NodeList labels = doc.getElementsByTagName("label");
 
-        boolean[][] occupied = new boolean[this.gridRows][this.gridColumns]; // Track which cells are taken
-
+        // 1. Plaats ALLE labels
         for (int i = 0; i < labels.getLength(); i++) {
             Node child = labels.item(i);
-
-            if (child.getNodeType() != Node.ELEMENT_NODE) continue; // skip #text nodes
+            if (child.getNodeType() != Node.ELEMENT_NODE) continue;
 
             Element label = (Element) child;
 
@@ -90,75 +87,59 @@ public class LayoutParser {
             int row = labelAttributes.get("row");
             int col = labelAttributes.get("col");
 
-
-            boolean placed = false;
-
-            // 4. Automatic placement: scan grid
-            outer:
-            for (int r = 0; r < this.gridRows; r++) {
-                for (int c = 0; c < this.gridColumns; c++) {
-                    boolean fits = true;
-
-                    // Check whether the label is too big or the space is already occupied
-                    for (int dr = 0; dr < rowSpan; dr++)
-                        for (int dc = 0; dc < colSpan; dc++)
-                            if (r + dr >= this.gridRows || c + dc >= this.gridColumns || occupied[r + dr][c + dc]) {
-                                fits = false;
-                                break; // Exit this column check loop
-                            }
-
-                    // Place the label text in the grid and mark the space as occupied.
-                    if (fits) {
-                        // Mark occupied
-                        for (int dr = 0; dr < rowSpan; dr++)
-                            for (int dc = 0; dc < colSpan; dc++) {
-                                occupied[row + dr][col + dc] = true;
-
-                                if (label.getAttribute("text").equals("Lift")) {
-                                    System.out.println(row + dr);
-                                    System.out.println(col + dc);
-                                    System.out.println();
-                                }
-                                grid[row + dr][col + dc] = label.getAttribute("text");
-                            }
-                        break outer; // Labels have been placed successfully
-                    }
-                }
-            }
-
-            //valideren dat de nodige elementen ook echt in de grid zitten
-            boolean lobbyAanwezig = false;
-            boolean trapAanwezig = false;
-            boolean liftAanwezig = false;
-
-            for (int r = 0; r < grid.length; r++) {
-                for (int c = 0; c < grid[0].length; c++) {
-
-                    String cel = grid[r][c];
-                    if (cel == null) continue;
-
-                    switch (cel) {
-                        case "Lobby" -> lobbyAanwezig = true;
-                        case "Trap"  -> trapAanwezig = true;
-                        case "Lift"  -> liftAanwezig = true;
-                    }
-                }
-            }
-
-            if (!lobbyAanwezig || !trapAanwezig || !liftAanwezig) {
-                System.out.println("FOUT: Layout mist verplichte elementen:");
-                if (!lobbyAanwezig) System.out.println("- Lobby ontbreekt");
-                if (!trapAanwezig)  System.out.println("- Trap ontbreekt");
-                if (!liftAanwezig)  System.out.println("- Lift ontbreekt");
+            // Check of label binnen grid past
+            if (row + rowSpan > gridRows || col + colSpan > gridColumns) {
+                System.out.println("Label past niet in grid: " + label.getAttribute("text"));
                 return null;
             }
 
+            // Check op overlap
+            for (int dr = 0; dr < rowSpan; dr++) {
+                for (int dc = 0; dc < colSpan; dc++) {
+                    if (occupied[row + dr][col + dc]) {
+                        System.out.println("Overlap gedetecteerd bij label: " + label.getAttribute("text"));
+                        return null;
+                    }
+                }
+            }
+
+            // Plaats label
+            for (int dr = 0; dr < rowSpan; dr++) {
+                for (int dc = 0; dc < colSpan; dc++) {
+                    occupied[row + dr][col + dc] = true;
+                    grid[row + dr][col + dc] = label.getAttribute("text");
+                }
+            }
+        }
+
+        // validatie, kijken of alle verplichte elementen bestaan
+        boolean lobbyAanwezig = false;
+        boolean trapAanwezig = false;
+        boolean liftAanwezig = false;
+
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                String cel = grid[r][c];
+                if (cel == null) continue;
+
+                switch (cel) {
+                    case "Lobby" -> lobbyAanwezig = true;
+                    case "Trap"  -> trapAanwezig = true;
+                    case "Lift"  -> liftAanwezig = true;
+                }
+            }
+        }
+
+        if (!lobbyAanwezig || !trapAanwezig || !liftAanwezig) {
+            System.out.println("FOUT: Layout mist verplichte elementen:");
+            if (!lobbyAanwezig) System.out.println("- Lobby ontbreekt");
+            if (!trapAanwezig)  System.out.println("- Trap ontbreekt");
+            if (!liftAanwezig)  System.out.println("- Lift ontbreekt");
+            return null;
         }
 
         System.out.println(Arrays.deepToString(grid));
         return grid;
-
-
     }
 
     public Document loadFile(String imagePath) {
@@ -179,7 +160,7 @@ public class LayoutParser {
             doc = builder.parse(file);
         } catch (ParserConfigurationException | SAXException | IOException e) {
             System.out.println(e);
-            System.out.println("Kon de bestand niet vinden.");
+            System.out.println("Kon het bestand niet vinden.");
             doc = null;
         }
         if (doc != null) doc.getDocumentElement().normalize(); // Maakt het document schoon door bijv. whitespace te wissen.

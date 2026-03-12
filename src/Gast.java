@@ -3,7 +3,7 @@ import java.util.Random;
 
 public class Gast extends Mens {
     int leeftijd;
-    int maxLeeftijd = 10;
+    int maxLeeftijd = 100;
 
     public Gast(Vakje start) {
         super(start);

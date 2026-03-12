@@ -1,12 +1,17 @@
 <grid rows="6" columns="6">
 
-    <label text="Trap" row="0" col="0"/>
-    <label text="Trap" row="5" col="5"/>
+    <!-- Trappen in de onderste hoeken -->
+    <label text="Trap" row="4" col="0" rowSpan="2" colSpan="2"/>
+    <label text="Trap" row="4" col="4" rowSpan="2" colSpan="2"/>
 
-    <!-- Lift first -->
+    <!-- Lift in het midden -->
     <label text="Lift" row="2" col="2" rowSpan="2" colSpan="2"/>
 
-    <!-- Kamer labels -->
+    <!-- Lobby onderaan in het midden -->
+    <label text="Lobby" row="4" col="2" rowSpan="2" colSpan="2"/>
+
+    <!-- Kamers (alles wat niet trap/lift/lobby is) -->
+    <label text="Kamer" row="0" col="0"/>
     <label text="Kamer" row="0" col="1"/>
     <label text="Kamer" row="0" col="2"/>
     <label text="Kamer" row="0" col="3"/>
@@ -29,18 +34,5 @@
     <label text="Kamer" row="3" col="1"/>
     <label text="Kamer" row="3" col="4"/>
     <label text="Kamer" row="3" col="5"/>
-
-    <label text="Kamer" row="4" col="0"/>
-    <label text="Kamer" row="4" col="1"/>
-    <label text="Kamer" row="4" col="2"/>
-    <label text="Kamer" row="4" col="3"/>
-    <label text="Kamer" row="4" col="4"/>
-    <label text="Kamer" row="4" col="5"/>
-
-    <label text="Kamer" row="5" col="0"/>
-    <label text="Kamer" row="5" col="1"/>
-    <label text="Kamer" row="5" col="2"/>
-    <label text="Kamer" row="5" col="3"/>
-    <label text="Kamer" row="5" col="4"/>
 
 </grid>
