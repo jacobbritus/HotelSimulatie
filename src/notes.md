@@ -1,3 +1,16 @@
+// A* or Dijkstra
+
+// check in and out
+each room gets a human
+only accessible to this human
+public Tile isWalkable(Human human) { ---- (Tile klasse)
+    return vakje.getFacility.getHuman == human
+}
+have humans check in and out
+change color of room to red
+
+
+
 
 add mens and subclasses (Maurice en Emiel)
 - add their beweeg()
