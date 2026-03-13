@@ -1,8 +1,8 @@
-//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeert ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
 
 import org.w3c.dom.Document;
 
-public class Main {
+public class    Main {
     public static void main(String[] args) {
         Applicatie applicatie = new Applicatie();
 

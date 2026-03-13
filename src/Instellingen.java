@@ -1,4 +1,4 @@
-//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeert ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
 
 import java.awt.Color;
 
@@ -26,4 +26,13 @@ public final class Instellingen {
 
     // Milliseconden per tik
     public static int millisecondenPerTik = 1000;
+
+    //maximale aantal gasten
+    public static int maxGasten = 200;
+
+    //Heatmap toggle
+    public static boolean heatmapAan = true;
+
+    //debug toggle
+    public static boolean debugAan = false;
 }

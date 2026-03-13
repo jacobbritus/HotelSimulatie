@@ -15,7 +15,7 @@ public class Oppervlakte extends JPanel {
         this.ruimtes = ruimtes;
 
         // GridLayout voor vakjes
-        this.setLayout(new GridLayout(Instellingen.oppervlakVakjes, Instellingen.oppervlakVakjes));
+        this.setLayout(new GridLayout(Instellingen.oppervlakVakjes, Instellingen.oppervlakVakjes, 0, 0));
 
         // Maak vakjes
         voegVakjesToe();
