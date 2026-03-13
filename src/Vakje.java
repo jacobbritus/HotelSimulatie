@@ -15,7 +15,8 @@ public class Vakje extends JPanel {
 
     // Congestie-waardes
     public int congestie = 0;               // actuele drukte
-    public int toekomstigeCongestie = 0;    // predictive load
+    public int toekomstigeCongestie = 0;    // predictive
+    public int nabijheidsCongestie = 0;    // drukte naast alle gasten, niet alleen achter
 
     public final List<Vakje> buren = new ArrayList<>();
 
@@ -78,7 +79,7 @@ public class Vakje extends JPanel {
         // NIET overschrijven als dit de bestemming is
         if (getBackground().equals(Color.RED)) return;
 
-        int waarde = congestie + toekomstigeCongestie;
+        int waarde = congestie + toekomstigeCongestie + nabijheidsCongestie;
 
         if (waarde == 0) {
             setBackground(baseColor);

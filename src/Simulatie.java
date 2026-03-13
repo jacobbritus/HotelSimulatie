@@ -1,6 +1,5 @@
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,12 +7,15 @@ public class Simulatie extends JPanel {
 
     private final Layout layout;
     private final SimulatieController simulatieController;
+    private final JFrame applicatieFrame;
     private final List<Mens> mensen = new ArrayList<>();
 
-    private int tickCount = 0;
+    public int tickCount = 0;
     public int aantalGasten = 0;
 
     public Simulatie(JFrame frame, String[][] rauweGrid) {
+
+        this.applicatieFrame = frame;
 
         setLayout(new BorderLayout());
         setBackground(Instellingen.achtergrondKleur);
@@ -25,6 +27,7 @@ public class Simulatie extends JPanel {
 
         // Bouw layout
         layout = new Layout(rauweGrid);
+        layout.setSimulatie(this);
         scrollPane.setViewportView(layout);
 
         // Eerste gast in de lobby
@@ -34,10 +37,16 @@ public class Simulatie extends JPanel {
             aantalGasten++;
         }
 
+        scrollPane.setFocusable(false);
+        layout.setFocusable(false);
+
         // Start simulatie
         simulatieController = new SimulatieController(this);
         simulatieController.start();
     }
+
+
+    // UPDATE LOOP
 
     public void update() {
         tickCount++;
@@ -47,7 +56,7 @@ public class Simulatie extends JPanel {
             mens.beweeg();
         }
 
-        // Om de zoveel ticks een nieuwe gast
+        // Spawn nieuwe gasten
         if (tickCount % 2 == 0) {
             spawnGast();
         }
@@ -61,23 +70,29 @@ public class Simulatie extends JPanel {
             return false;
         });
 
-        // Congestie langzaam laten verdwijnen
+        // Congestie updates
         verlaagAlleCongestie();
+        berekenNabijheidsCongestie();
         updateHeatmap();
 
-        // Herteken de layout
+        // Herteken
         layout.repaint();
+        repaint(); // voor debug overlay
+
+        if (Instellingen.debugAan) {
+            ((Applicatie)applicatieFrame).updateDebug(aantalGasten, tickCount, Instellingen.heatmapAan, Instellingen.maxGasten);
+        }
     }
 
-    private void verlaagAlleCongestie() {
-        Oppervlakte[][] ruimtes = layout.getRuimtes();
 
-        for (Oppervlakte[] rij : ruimtes) {
+    // CONGESTIE
+
+    private void verlaagAlleCongestie() {
+        for (Oppervlakte[] rij : layout.getRuimtes()) {
             for (Oppervlakte o : rij) {
                 if (o == null) continue;
 
-                Vakje[][] vakjes = o.getVakjes();
-                for (Vakje[] vakRij : vakjes) {
+                for (Vakje[] vakRij : o.getVakjes()) {
                     for (Vakje v : vakRij) {
                         v.verlaagCongestie();
                     }
@@ -86,15 +101,35 @@ public class Simulatie extends JPanel {
         }
     }
 
-    private void updateHeatmap() {
-        Oppervlakte[][] ruimtes = layout.getRuimtes();
+    private void berekenNabijheidsCongestie() {
 
-        for (Oppervlakte[] rij : ruimtes) {
+        // Reset
+        for (Oppervlakte[] rij : layout.getRuimtes()) {
+            for (Oppervlakte o : rij) {
+                for (Vakje[] vakRij : o.getVakjes()) {
+                    for (Vakje v : vakRij) {
+                        v.nabijheidsCongestie = 0;
+                    }
+                }
+            }
+        }
+
+        // Voor elke gast → verhoog congestie rondom hem
+        for (Mens m : mensen) {
+            Vakje v = m.vakje;
+
+            for (Vakje buur : v.getBuren()) {
+                buur.nabijheidsCongestie += 3; // tweakbaar
+            }
+        }
+    }
+
+    public void updateHeatmap() {
+        for (Oppervlakte[] rij : layout.getRuimtes()) {
             for (Oppervlakte o : rij) {
                 if (o == null) continue;
 
-                Vakje[][] vakjes = o.getVakjes();
-                for (Vakje[] vakRij : vakjes) {
+                for (Vakje[] vakRij : o.getVakjes()) {
                     for (Vakje v : vakRij) {
                         v.updateHeatmapKleur();
                     }
@@ -103,11 +138,13 @@ public class Simulatie extends JPanel {
         }
     }
 
+
+    // SPAWN
+
     private void spawnGast() {
         Vakje lobbyVakje = vindLobbyVakje();
 
         if (lobbyVakje == null) return;
-
         if (aantalGasten >= Instellingen.maxGasten) return;
 
         if (lobbyVakje.isVrij()) {
@@ -117,19 +154,19 @@ public class Simulatie extends JPanel {
     }
 
     private Vakje vindLobbyVakje() {
-        Oppervlakte[][] r = layout.getRuimtes();
-
-        for (Oppervlakte[] oppervlaktes : r) {
-            for (int j = 0; j < r[0].length; j++) {
-                if (oppervlaktes[j] instanceof Lobby) {
-                    return oppervlaktes[j].getVakjes()[0][0];
+        for (Oppervlakte[] rij : layout.getRuimtes()) {
+            for (Oppervlakte o : rij) {
+                if (o instanceof Lobby) {
+                    return o.getVakjes()[0][0];
                 }
             }
         }
         return null;
     }
 
-    // Zoom blijft optioneel
+
+    // ZOOM
+
     public void zoom(int aantal) {
         Instellingen.oppervlakGrootte += aantal;
 
@@ -146,7 +183,20 @@ public class Simulatie extends JPanel {
         layout.repaint();
     }
 
+
+    // TICK SPEED
+
     public void setTickSpeed(int speed) {
         simulatieController.setTickSpeed(speed);
+    }
+
+
+    // DEBUG OVERLAY
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Debug now uses a separate frame
     }
 }

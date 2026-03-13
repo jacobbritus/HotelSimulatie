@@ -29,7 +29,8 @@ public class AStar {
                 // -----------------------------
                 int movementCost = 1
                         + buur.congestie
-                        + buur.toekomstigeCongestie;
+                        + buur.toekomstigeCongestie
+                        + buur.nabijheidsCongestie;
 
                 int g = current.g + movementCost;
 

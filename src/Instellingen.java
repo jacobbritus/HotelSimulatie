@@ -28,8 +28,11 @@ public final class Instellingen {
     public static int millisecondenPerTik = 1000;
 
     //maximale aantal gasten
-    public static int maxGasten = 50;
+    public static int maxGasten = 200;
 
     //Heatmap toggle
     public static boolean heatmapAan = true;
+
+    //debug toggle
+    public static boolean debugAan = false;
 }

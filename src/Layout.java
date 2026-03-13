@@ -13,7 +13,7 @@ public class Layout extends JPanel {
         ruimtes = new Oppervlakte[hoogte][breedte];
 
         // GridLayout voor de oppervlakten
-        this.setLayout(new GridLayout(hoogte, breedte));
+        this.setLayout(new GridLayout(hoogte, breedte, 0, 0));
 
 
 
@@ -55,5 +55,18 @@ public class Layout extends JPanel {
                 this.add(o);
             }
         }
+    }
+
+    private Simulatie simulatie;
+
+    public void setSimulatie(Simulatie s) {
+        this.simulatie = s;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Debug overlay removed to avoid duplication and scrolling issues
     }
 }
