@@ -4,8 +4,8 @@ public final class Settings {
     private Settings() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 1080;
-    public static int schermHoogte = 720;
+    public static int schermBreedte = 1920;
+    public static int schermHoogte = 1080;
 
     // Achtergrond Kleur
     // Default = Color.WHITE
@@ -17,14 +17,14 @@ public final class Settings {
 
     // Bepaald hoeveel vakjes in een Oppervlakte staan
     // Default = 16
-    public static int facilityTilesSize = 8;
+    public static int facilityTilesSize = 16;
 
 
     // Vakjes View
-    public static boolean setSquaresAlternatingColors = true;
+    public static boolean setSquaresAlternatingColors = false;
 
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int ticks = 30;
+    public static int ticks = 20;
 }

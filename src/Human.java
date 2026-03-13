@@ -10,7 +10,6 @@ public class Human {
     private Integer lifeTime;
 
     public Human(Tile tile) {
-        this.lifeTime = Settings.ticks * (int) (Math.random() * 1000);
         this.walkingCooldown = null;
         this.atDestination = true;
         this.stepsTaken = 0;
@@ -27,7 +26,7 @@ public class Human {
         return atDestination;
     }
 
-    public void setDestinationPath(boolean bool) {
+    public void setAtDestination(boolean bool) {
         this.atDestination = bool;
     }
 
@@ -43,10 +42,9 @@ public class Human {
             this.walkingCooldown = milliseconds;
         } else {
             if ((int) (Math.random() * 100) > 98 ) {
-                this.walkingCooldown = (Settings.ticks * 10) * (int) (Math.random() * 5);
+                this.walkingCooldown = (Settings.ticks) * (int) (Math.random() * 10);
             }
         }
-
     }
 
     public void handleWalkingCooldown() {
@@ -58,6 +56,14 @@ public class Human {
 
     public Integer getLifeTime() {
         return lifeTime;
+    }
+
+    public void setLifeTime() {
+        this.lifeTime = Settings.ticks * Math.max((int) (Math.random() * 500), 100);
+    }
+
+    public void decreaseLifeTime() {
+        this.lifeTime -= Settings.ticks;
     }
 
     public void despawn() {
@@ -86,14 +92,12 @@ public class Human {
     }
 
     public Tile returnOne(HashSet<Tile> tiles) {
-        Tile n = null;
-
         for (Tile neighbour : tiles) {
             if (neighbour != null) {
                 return neighbour;
             }
         }
-        return n;
+        return null;
     }
 
     public void bfs(Tile destination) {

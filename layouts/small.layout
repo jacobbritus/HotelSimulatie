@@ -2,7 +2,7 @@
 
     <label text="Trap" row="0" col="0"/>
     <label text="Lift" row="1" col="1"/>
-    <label text="Trap" row="2" col="2"/>
+    <label text="Lobby" row="2" col="2"/>
 
     <label text="Kamer" row="0" col="1"/>
     <label text="Kamer" row="0" col="2"/>

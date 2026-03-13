@@ -2,11 +2,13 @@ import com.sun.jdi.ClassObjectReference;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Layout extends JPanel {
     private final Facility[][] facilities;
     private final Tile entrance;
+    private boolean roomsAreFull;
 
 
     public Layout(String[][] rawGrid) {
@@ -30,7 +32,16 @@ public class Layout extends JPanel {
 
         // Entrance
         Facility facility = this.facilities[height - 1][0];
-        this.entrance = facility.getTiles()[Settings.facilityTilesSize - 1][0];
+        this.entrance = getRandomTile(null, true, Lobby.class);
+        this.roomsAreFull = false;
+    }
+
+    public boolean getRoomsAreFull() {
+        return this.roomsAreFull;
+    }
+
+    public void setRoomsAreFull(boolean roomsAreFull) {
+        this.roomsAreFull = roomsAreFull;
     }
 
     public Tile getEntrance() {
@@ -43,7 +54,6 @@ public class Layout extends JPanel {
 
     public Tile getRandomTile(Facility facility, boolean randomOfSameClass, Class<?> t) {
         Facility randomFacility = null;
-
         if (randomOfSameClass) {
             Class<?> c;
             if (facility != null) c = facility.getClass();
@@ -66,8 +76,8 @@ public class Layout extends JPanel {
         return randomFacility.getTiles()[dr][dc];
     }
 
-    public HashSet<Facility> getFacilityInstances(Class <?> a) {
-        HashSet<Facility> foundFacilities = new HashSet<>();
+    public ArrayList<Facility> getFacilityInstances(Class <?> a) {
+        ArrayList<Facility> foundFacilities = new ArrayList<>();
         for (int c = 0; c < this.facilities.length; c++) {
             for (int r = 0; r < this.facilities[0].length; r++) {
                 Facility f = this.facilities[r][c];
@@ -77,9 +87,6 @@ public class Layout extends JPanel {
                 }
             }
         }
-
-        System.out.println(foundFacilities);
-
         return foundFacilities;
     }
 

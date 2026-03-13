@@ -3,7 +3,7 @@
     <!-- Stairs -->
     <label text="Trap" row="0" col="0"/>
     <label text="Trap" row="0" col="5"/>
-    <label text="Trap" row="5" col="0"/>
+    <label text="Lobby" row="5" col="0"/>
     <label text="Trap" row="5" col="5"/>
 
     <!-- Lift -->

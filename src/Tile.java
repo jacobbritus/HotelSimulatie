@@ -7,6 +7,7 @@ public class Tile extends JLabel {
     private final int row;
     private final int column;
     private final Color color;
+    private Color activeColor;
     private Human human;
     private int gCost;
     private int hCost;
@@ -18,25 +19,34 @@ public class Tile extends JLabel {
         this.row = row;
         this.column = column;
         this.facility = facility;
-        neighbours = new HashMap<>();
-        neighbours.put(Direction.UP, null);
-        neighbours.put(Direction.DOWN, null);
-        neighbours.put(Direction.LEFT, null);
-        neighbours.put(Direction.RIGHT, null);
+        this.neighbours = new HashMap<>();
+        this.neighbours.put(Direction.UP, null);
+        this.neighbours.put(Direction.DOWN, null);
+        this.neighbours.put(Direction.LEFT, null);
+        this.neighbours.put(Direction.RIGHT, null);
 
         if (isEven || !Settings.setSquaresAlternatingColors) {
             this.setBackground(color1);
-            color = color1;
+            this.color = color1;
         } else {
             this.setBackground(color2);
-            color = color2;
+            this.color = color2;
         }
+        this.activeColor = color;
 
         this.setOpaque(true);
     }
 
     public Human getHuman() {
         return this.human;
+    }
+
+    public void setActiveColor(Color color) {
+        this.activeColor = color;
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 
     public boolean isWalkable() {
@@ -64,7 +74,7 @@ public class Tile extends JLabel {
     }
 
     public void revertColor() {
-        this.setBackground(this.color);
+        this.setBackground(this.activeColor);
     }
 
     public int getColumn() {

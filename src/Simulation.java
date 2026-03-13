@@ -14,15 +14,16 @@ public class Simulation extends JPanel {
         this.setOpaque(true);
 
         layout = new Layout(rauweGrid);
+
         this.add(layout);
 
         // test
         this.guests = new ArrayList<>();
 
         for (int i = 0; i < 1; i++) {
-            guests.add(
-                    new Guest(layout.getEntrance())
-            );
+            Tile tile = this.layout.getRandomTile(null, true, Lobby.class);
+            System.out.println(tile.getRow());
+            guests.add(new Guest(tile));
         }
     }
 
@@ -33,21 +34,15 @@ public class Simulation extends JPanel {
     public void update() {
         for (Guest guest : this.guests) {
             guest.update(this.layout);
+            if (guest.getIsLeaving()) guest.despawn();
         }
 
-        for (Guest guests : this.guests) {
-            if (guests.getLifeTime() < 0) {
-                this.guests.remove(guests);
-                guests.despawn();
-            }
-        }
-
+        guests.removeIf(guest -> guest.getIsLeaving());
 
         // Adding guests
-        if (simulationController.getRunTime() % (Settings.ticks * 100) == 0) {
-            guests.add(
-                    new Guest(layout.getEntrance())
-            );
+        if (simulationController.getRunTime() % (Settings.ticks * 50) == 0) {
+            Tile tile = this.layout.getRandomTile(null, true, Lobby.class);
+            guests.add(new Guest(tile));
         }
     }
 

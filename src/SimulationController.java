@@ -2,11 +2,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class SimulationController extends JPanel {
     private int runTime;
     private final Simulation simulation;
     private final Timer HTEtimer;
+    private final JLabel ticksLabel;
 
     public SimulationController(Simulation simulation) {
         this.runTime = 0;
@@ -16,6 +18,7 @@ public class SimulationController extends JPanel {
             this.runTime += Settings.ticks;
             simulation.update();
         });
+        this.ticksLabel = new JLabel("" + (110 - Settings.ticks));
 
         this.setBackground(new Color(20, 20, 20 ,50));
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -26,30 +29,41 @@ public class SimulationController extends JPanel {
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 2, 0,
                 Color.LIGHT_GRAY), new EmptyBorder(10, 10, 10, 10)));
 
-        this.addButtons();
+        createButton("Start", e -> this.HTEtimer.start());
+        createButton("Pause", e -> this.HTEtimer.stop());
+        createButton("Decrease Speed", e -> {
+            Settings.ticks = Math.min(Settings.ticks + 10, 100);
+            this.ticksLabel.setText("" + (110 - Settings.ticks));
+            this.HTEtimer.setDelay(Settings.ticks);
+        });
+        createButton("Increase Speed", e -> {
+            Settings.ticks = Math.max(Settings.ticks - 10, 10);
+            this.ticksLabel.setText("" + (110 - Settings.ticks));
+            this.HTEtimer.setDelay(Settings.ticks);
+        });
+
+        this.add(
+                new JLabel("Speed: ")
+        );
+
+
+        this.add(ticksLabel);
     }
 
     public int getRunTime() {
         return runTime;
     }
 
-    // Setup toolbar
-    public void addButtons() {
-        JButton startKnop = new JButton("Start");
-        startKnop.setPreferredSize(new Dimension(32, 32));
+    // compose later
+    public void createButton(String text, ActionListener actionListener) {
+        JButton startKnop = new JButton(text);
         startKnop.setFocusable(false);
-        startKnop.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        startKnop.setAlignmentY(Component.CENTER_ALIGNMENT);
-        startKnop.addActionListener(e -> HTEtimer.start());
+
+        startKnop.addActionListener(actionListener);
         this.add(startKnop);
-
-        JButton pauzeerKnop = new JButton("Pause");
-        pauzeerKnop.setPreferredSize(new Dimension(32, 32));
-        pauzeerKnop.setFocusable(false);
-
-        pauzeerKnop.addActionListener(e -> HTEtimer.stop());
-        this.add(pauzeerKnop);
     }
+
+
 
 
 

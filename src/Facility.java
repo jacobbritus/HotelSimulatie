@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class Facility extends JPanel {
@@ -15,9 +16,7 @@ public class Facility extends JPanel {
         this.facilites = facilites;
         this.color1 = color1;
         this.color2 = color2;
-        this.setBackground(color2);
-//        this.setBorder(BorderFactory.createLineBorder(color2, 0));
-        this.setOpaque(true);
+        this.setBorder(new LineBorder(color2, 2));
 
         this.addTiles();
 
