@@ -95,18 +95,17 @@ public class Layout extends JPanel {
             for (int c = 0; c < grid[0].length; c++) {
 
                 String type = grid[r][c];
-                Facility o = null;
+                Facility o;
                 System.out.println(type);
-                if (type != null) {
-                    switch (type) {
-                        case "Kamer" -> o = new Kamer(this, facilities, r, c);
-                        case "Lift" -> o = new Lift(this, facilities, r, c);
-                        case "Trap" -> o = new Trap(this, facilities, r, c);
-                        case "Lobby" -> o = new Lobby(this, facilities, r, c);
+                switch (type) {
+                    case "Kamer" -> o = new Kamer(this, facilities, r, c);
+                    case "Lift" -> o = new Lift(this, facilities, r, c);
+                    case "Trap" -> o = new Trap(this, facilities, r, c);
+                    case "Lobby" -> o = new Lobby(this, facilities, r, c);
+                    default -> {
+                        o = new Facility(this, null, null, facilities, r, c);
+                        o.setBackground(Color.BLACK);
                     }
-                } else {
-                    o = new Facility(this, null, null, facilities, r, c);
-                    o.setBackground(Color.BLACK);
                 }
 
                 facilities[r][c] = o;

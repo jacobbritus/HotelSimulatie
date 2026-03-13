@@ -27,8 +27,9 @@ public class Applicatie extends JFrame implements KeyListener {
 //        scrollPane.getViewport().setAlignmentX(0.2F);
 
         // Change scroll speed
-        scrollPane.getVerticalScrollBar().setUnitIncrement(5);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(5);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(9);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(9);
+
 
 //        scrollPane.setBackground(Settings.achtergrondKleur);
         scrollPane.setBorder(null); // It has a border for some reason

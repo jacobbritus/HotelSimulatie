@@ -1,10 +1,12 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Guest extends Human{
     private boolean isCheckedIn;
     private boolean isLeaving;
     private Kamer kamer;
+
     public Guest(Tile tile) {
         super(tile);
         this.isCheckedIn = false;
@@ -29,9 +31,10 @@ public class Guest extends Human{
 
     @Override
     public void update(Layout layout) {
+
         if (this.getIsCheckedIn()) {
             if (this.getLifeTime() == null) {
-                this.setLifeTime();
+                this.setLifeTime(Settings.ticks * Math.max((int) (Math.random() * 100), 150)); // Get an actual formula
             } else {
                 this.decreaseLifeTime();
             }
@@ -40,10 +43,9 @@ public class Guest extends Human{
         if (!this.isAtDestination()) {
             this.move();
         } else {
-            if (this.kamer != null && this.kamer.getGuest() == null) {
-                this.kamer.setGuest(this);
-            }
-            if (this.getTile().getFacility() == this.kamer) this.setWalkingCooldown(Settings.ticks * 50); // Slow movement in room
+
+            System.out.println(layout.getRoomsAreFull());
+            if (this.getTile().getFacility() == this.kamer) this.setWalkingCooldown(Settings.ticks * 50); // Get an actual formula
             this.setAtDestination(false);
             Tile destination;
 
@@ -56,12 +58,10 @@ public class Guest extends Human{
                  if ((this.getTile().getFacility() instanceof Lobby)) {
                      if (this.getLifeTime() == null) this.assignRoom(layout);
                      else this.checkOut(layout);
-
                  }
             } else { // Walk within room for now.
                  destination = layout.getRandomTile(this.kamer, false, null);
             }
-
 
             if (destination != null) this.bfs(destination);
         }
@@ -77,35 +77,26 @@ public class Guest extends Human{
 
     public void assignRoom(Layout layout) {
         ArrayList<Facility> kamers = layout.getFacilityInstances(Kamer.class);
+        Collections.shuffle(kamers);
 
-        // Find an empty room
-        Kamer k = (Kamer) kamers.get(0);
-        while (k.getIsReservated() || k.getGuest() != null) {
-            int r = (int) (Math.random() * kamers.size());
-            k = (Kamer) kamers.get(r);
-        }
-
-        // Set Room
-        this.kamer = k;
-        k.setReservated(true);
-
-//        k.setGuest(this);
-
-        // Stop at lobby for a moment and check in
-        this.setWalkingCooldown(Settings.ticks * 100);
-        this.isCheckedIn = true;
-
-
-        // Update room availability
-        boolean full = true;
-
-        for (Facility f : kamers) {
-            Kamer kf = (Kamer) f;
-            if ((!kf.getIsReservated())) {
-                full = false;
+        Kamer k = null;
+        for (Facility facility : kamers) {
+            Kamer kamer = (Kamer) facility;
+            if (kamer.getGuest() == null && !kamer.isDirty()) {
+                k = kamer;
+                break;
             }
         }
-        if (full) layout.setRoomsAreFull(true);
+        if (k == null) {
+            layout.setRoomsAreFull(true);
+            return;
+        }
+        this.kamer = k;
+        k.setGuest(this);
+        // Stop at lobby for a moment and check in
+        this.setWalkingCooldown(Settings.ticks * 20);  // Get an actual formula
+        this.isCheckedIn = true;
+
     }
 
 

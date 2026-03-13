@@ -7,9 +7,10 @@ import java.awt.Color;
 public class Kamer extends Facility {
     private Guest guest;
     private boolean isDirty;
-    private Color unavailableColor1;
-    private Color unavailableColor2;
-    private boolean isReservated;
+    private final Color unavailableColor1;
+    private final Color unavailableColor2;
+    private final Color dirtyColor1;
+    private final Color dirtyColor2;
 
 
     public Kamer(JPanel superPanel, Facility[][] ruimtes, int row, int column) {
@@ -17,42 +18,46 @@ public class Kamer extends Facility {
                 new Color(173, 222, 161), ruimtes, row, column);
         this.guest = null;
         this.isDirty = false;
-        this.isReservated = false;
 
         unavailableColor1 = new Color(246, 210, 210,255);
         unavailableColor2 = new Color(255, 138, 138,255);
+
+
+       dirtyColor1 = new Color(246, 200, 173,255);
+       dirtyColor2 = new Color(224, 185, 146,255);
     }
 
-    public void setReservated(boolean bool) {
-        this.isReservated = bool;
+    public void clean() {
+        this.isDirty = false;
+        this.setBorder(new LineBorder(color2, 2));
+        changeGroundColor(color1);
+
     }
 
-    public boolean getIsReservated() {
-        return this.isReservated;
+    public boolean isDirty() {
+        return this.isDirty;
     }
+
 
     public void setGuest(Guest guest) {
         if (guest != null) {
+            this.isDirty = true;
             this.guest = guest;
             this.setBorder(new LineBorder(unavailableColor2 , 2));
+            changeGroundColor(unavailableColor1);
 
         } else {
-            this.isReservated = false;
             this.guest = null;
-            this.isDirty = true;
-            this.setBorder(new LineBorder(color2, 2));
+            changeGroundColor(dirtyColor1);
+            this.setBorder(new LineBorder(dirtyColor2, 2));
         }
-        changeGroundColor(guest);
+
     }
 
-    public void changeGroundColor(Guest guest) {
+    public void changeGroundColor(Color color) {
         for (int r = 0; r < this.tiles.length; r++) {
             for (int c = 0; c <this.tiles[0].length ; c++) {
-                Color color = null;
                 Tile tile = this.tiles[r][c];
-                if (guest == null) color = this.color1;
-                else color = unavailableColor1;
-
                 tile.setBackground(color);
                 tile.setActiveColor(color);
             }

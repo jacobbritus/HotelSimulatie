@@ -58,8 +58,8 @@ public class Human {
         return lifeTime;
     }
 
-    public void setLifeTime() {
-        this.lifeTime = Settings.ticks * Math.max((int) (Math.random() * 500), 100);
+    public void setLifeTime(int lifeTime) {
+        this.lifeTime = lifeTime;
     }
 
     public void decreaseLifeTime() {

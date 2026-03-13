@@ -1,4 +1,4 @@
-<grid rows="6" columns="7">
+<grid rows="6" columns="6">
 
     <!-- Stairs -->
     <label text="Trap" row="0" col="0"/>

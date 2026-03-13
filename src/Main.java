@@ -5,7 +5,7 @@ public class Main {
         Applicatie applicatie = new Applicatie();
 
         LayoutParser layoutParser = new LayoutParser();
-        Document doc = layoutParser.loadFile("layouts/large.layout");
+        Document doc = layoutParser.loadFile("layouts/bar.layout");
 
         if (doc == null) {
             System.out.println("Kon layout niet laden.");

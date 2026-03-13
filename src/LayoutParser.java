@@ -112,7 +112,6 @@ public class LayoutParser {
             }
         }
 
-        System.out.println(Arrays.deepToString(grid));
 
         return grid;
     }

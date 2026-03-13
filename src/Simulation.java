@@ -1,39 +1,54 @@
 import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Simulation extends JPanel {
      Layout layout;
      SimulationController simulationController;
      private ArrayList<Guest> guests;
-     private JPanel testPanel;
+     private final JPanel testPanel;
+     private final String[][] rauweGrid;
 
     public Simulation(String[][] rauweGrid) {
         this.setLayout(new BorderLayout()); // Zet layout in het midden
-        this.setBackground(Settings.achtergrondKleur);
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setOpaque(true);
-
-
-        layout = new Layout(rauweGrid);
-
+        this.rauweGrid = rauweGrid;
         testPanel = new JPanel(new GridBagLayout());
         testPanel.setOpaque(true);
+        testPanel.setBackground(Settings.achtergrondKleur);
+
+        testPanel.setPreferredSize(new Dimension(Settings.schermBreedte , Settings.schermHoogte - 128 ));
+
+        start();
+    }
+
+    public void start() {
+        layout = new Layout(rauweGrid);
         testPanel.add(layout);
-        testPanel.setPreferredSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
-
-
         this.add(testPanel);
 
         // test
         this.guests = new ArrayList<>();
 
-        for (int i = 0; i < 1; i++) {
+
+        for (int i = 0; i < 2; i++) {
             Tile tile = this.layout.getRandomTile(null, true, Lobby.class);
             System.out.println(tile.getRow());
             guests.add(new Guest(tile));
         }
     }
+
+    public void reset() {
+        testPanel.removeAll();
+        start();
+        this.revalidate();
+        this.repaint();
+    }
+
 
     public void setSimulationController(SimulationController simulatieController) {
         this.simulationController = simulatieController;

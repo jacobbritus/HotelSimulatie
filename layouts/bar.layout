@@ -1,45 +1,50 @@
-<grid rows="9" columns="9">
+<grid rows="6" columns="6">
 
-    <label text="Trap" row="0" col="0"/>
-    <label text="Trap" row="0" col="8"/>
-    <label text="Lobby" row="8" col="0"/>
-    <label text="Trap" row="8" col="8"/>
+        <!-- Stairs -->
+<label text="Trap" row="0" col="0"/>
+<label text="Trap" row="0" col="5"/>
+<label text="Lobby" row="5" col="0"/>
+<label text="Trap" row="5" col="5"/>
 
-    <label text="Lift" row="3" col="3"/>
-    <label text="Lift" row="3" col="4"/>
-    <label text="Lift" row="3" col="5"/>
-    <label text="Lift" row="4" col="3"/>
-    <label text="Lift" row="4" col="4"/>
-    <label text="Lift" row="4" col="5"/>
-    <label text="Lift" row="5" col="3"/>
-    <label text="Lift" row="5" col="4"/>
-    <label text="Lift" row="5" col="5"/>
+        <!-- Lift -->
+<label text="Lift" row="2" col="2"/>
+<label text="Lift" row="2" col="3"/>
+<label text="Lift" row="3" col="2"/>
+<label text="Lift" row="3" col="3"/>
 
-    <label text="Kamer" row="0" col="1"/> <label text="Kamer" row="0" col="2"/> <label text="Kamer" row="0" col="3"/>
-    <label text="Kamer" row="0" col="4"/> <label text="Kamer" row="0" col="5"/> <label text="Kamer" row="0" col="6"/>
-    <label text="Kamer" row="0" col="7"/>
-    <label text="Kamer" row="8" col="1"/> <label text="Kamer" row="8" col="2"/> <label text="Kamer" row="8" col="3"/>
-    <label text="Kamer" row="8" col="4"/> <label text="Kamer" row="8" col="5"/> <label text="Kamer" row="8" col="6"/>
-    <label text="Kamer" row="8" col="7"/>
+        <!-- Rooms -->
+<label text="Kamer" row="0" col="1"/>
+<label text="Kamer" row="0" col="2"/>
+<label text="Kamer" row="0" col="3"/>
+<label text="Kamer" row="0" col="4"/>
 
-    <label text="Kamer" row="1" col="0"/> <label text="Kamer" row="1" col="1"/> <label text="Kamer" row="1" col="2"/>
-    <label text="Kamer" row="1" col="3"/> <label text="Kamer" row="1" col="4"/> <label text="Kamer" row="1" col="5"/>
-    <label text="Kamer" row="1" col="6"/> <label text="Kamer" row="1" col="7"/> <label text="Kamer" row="1" col="8"/>
-    <label text="Kamer" row="2" col="0"/> <label text="Kamer" row="2" col="1"/> <label text="Kamer" row="2" col="2"/>
-    <label text="Kamer" row="2" col="3"/> <label text="Kamer" row="2" col="4"/> <label text="Kamer" row="2" col="5"/>
-    <label text="Kamer" row="2" col="6"/> <label text="Kamer" row="2" col="7"/> <label text="Kamer" row="2" col="8"/>
-    <label text="Kamer" row="6" col="0"/> <label text="Kamer" row="6" col="1"/> <label text="Kamer" row="6" col="2"/>
-    <label text="Kamer" row="6" col="3"/> <label text="Kamer" row="6" col="4"/> <label text="Kamer" row="6" col="5"/>
-    <label text="Kamer" row="6" col="6"/> <label text="Kamer" row="6" col="7"/> <label text="Kamer" row="6" col="8"/>
-    <label text="Kamer" row="7" col="0"/> <label text="Kamer" row="7" col="1"/> <label text="Kamer" row="7" col="2"/>
-    <label text="Kamer" row="7" col="3"/> <label text="Kamer" row="7" col="4"/> <label text="Kamer" row="7" col="5"/>
-    <label text="Kamer" row="7" col="6"/> <label text="Kamer" row="7" col="7"/> <label text="Kamer" row="7" col="8"/>
+<label text="Kamer" row="1" col="0"/>
+<label text="Kamer" row="1" col="1"/>
+<label text="Kamer" row="1" col="2"/>
+<label text="Kamer" row="1" col="3"/>
+<label text="Kamer" row="1" col="4"/>
+<label text="Kamer" row="1" col="5"/>
 
-    <label text="Kamer" row="3" col="0"/> <label text="Kamer" row="3" col="1"/> <label text="Kamer" row="3" col="2"/>
-    <label text="Kamer" row="3" col="6"/> <label text="Kamer" row="3" col="7"/> <label text="Kamer" row="3" col="8"/>
-    <label text="Kamer" row="4" col="0"/> <label text="Kamer" row="4" col="1"/> <label text="Kamer" row="4" col="2"/>
-    <label text="Kamer" row="4" col="6"/> <label text="Kamer" row="4" col="7"/> <label text="Kamer" row="4" col="8"/>
-    <label text="Kamer" row="5" col="0"/> <label text="Kamer" row="5" col="1"/> <label text="Kamer" row="5" col="2"/>
-    <label text="Kamer" row="5" col="6"/> <label text="Kamer" row="5" col="7"/> <label text="Kamer" row="5" col="8"/>
+<label text="Kamer" row="2" col="0"/>
+<label text="Kamer" row="2" col="1"/>
+<label text="Kamer" row="2" col="4"/>
+<label text="Kamer" row="2" col="5"/>
+
+<label text="Kamer" row="3" col="0"/>
+<label text="Kamer" row="3" col="1"/>
+<label text="Kamer" row="3" col="4"/>
+<label text="Kamer" row="3" col="5"/>
+
+<label text="Kamer" row="4" col="0"/>
+<label text="Kamer" row="4" col="1"/>
+<label text="Kamer" row="4" col="2"/>
+<label text="Kamer" row="4" col="3"/>
+<label text="Kamer" row="4" col="4"/>
+<label text="Kamer" row="4" col="5"/>
+
+<label text="Kamer" row="5" col="1"/>
+<label text="Kamer" row="5" col="2"/>
+<label text="Kamer" row="5" col="3"/>
+<label text="Kamer" row="5" col="4"/>
 
 </grid>

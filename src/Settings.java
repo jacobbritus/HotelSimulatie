@@ -9,7 +9,7 @@ public final class Settings {
 
     // Achtergrond Kleur
     // Default = Color.WHITE
-    public static Color achtergrondKleur = Color.WHITE;
+    public static Color achtergrondKleur = Color.BLACK;
 
     // Bepaald hoe hoog en breed elk Oppervlakte is
     // Default = 100
@@ -26,5 +26,5 @@ public final class Settings {
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int ticks = 20;
+    public static int ticks = 2;
 }

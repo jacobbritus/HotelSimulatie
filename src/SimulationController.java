@@ -24,12 +24,16 @@ public class SimulationController extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.setOpaque(false); // Avoid weird behavior when scrolling
         this.setPreferredSize(new Dimension(0, 48));
-        this.setBackground(Color.WHITE);
+        this.setBackground(Color.GRAY);
 
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
                 Color.lightGray), new EmptyBorder(10, 10, 10, 10)));
 
         createButton("Start", e -> this.HTEtimer.start());
+        createButton("Reset", e -> {
+            this.simulation.reset();
+            this.HTEtimer.stop();
+        });
         createButton("Pause", e -> this.HTEtimer.stop());
         createButton("Decrease Speed", e -> {
             Settings.ticks = Math.min(Settings.ticks + 10, 100);
