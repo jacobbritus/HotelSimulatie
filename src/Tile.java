@@ -35,8 +35,12 @@ public class Tile extends JLabel {
         this.setOpaque(true);
     }
 
+    public Human getHuman() {
+        return this.human;
+    }
+
     public boolean isWalkable() {
-        return true;
+        return human == null;
     }
 
     public int getgCost() {
@@ -88,10 +92,13 @@ public class Tile extends JLabel {
     }
 
     public void setHuman(Human human) {
+        if (human == null) {
+            revertColor();
+        }
         this.human = human;
     }
 
-    public Tile getNeigbour(Direction direction) {
+    public Tile getNeighbour(Direction direction) {
         return neighbours.get(direction);
     }
 

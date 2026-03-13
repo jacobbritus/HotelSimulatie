@@ -1,6 +1,3 @@
-// BELANGRIJK: importeer NOOIT java.awt.*
-// Dit kan java.awt.List binnenhalen en dat botst met java.util.List.
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -19,9 +16,11 @@ public class Applicatie extends JFrame implements KeyListener {
 
     public void startSimulatie(String[][] rauweGrid) {
 
+
         simulation = new Simulation(rauweGrid);
 
-        SimulatieController simulatieController = new SimulatieController(simulation);
+        SimulationController simulationController = new SimulationController(simulation);
+        simulation.setSimulationController(simulationController);
 
         JScrollPane scrollPane = new JScrollPane(simulation);
 
@@ -35,7 +34,7 @@ public class Applicatie extends JFrame implements KeyListener {
         this.getContentPane().add(scrollPane);
 
         // Put the controller (Top bar UI) at the top of the screen
-        scrollPane.setColumnHeaderView(simulatieController);
+        scrollPane.setColumnHeaderView(simulationController);
 
 
         // This is done to avoid empty spots around the border

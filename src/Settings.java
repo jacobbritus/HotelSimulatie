@@ -17,14 +17,14 @@ public final class Settings {
 
     // Bepaald hoeveel vakjes in een Oppervlakte staan
     // Default = 16
-    public static int facilityTilesSize = 16;
+    public static int facilityTilesSize = 8;
 
 
     // Vakjes View
-    public static boolean setSquaresAlternatingColors = false;
+    public static boolean setSquaresAlternatingColors = true;
 
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int millisecondenPerTik = 20;
+    public static int ticks = 30;
 }

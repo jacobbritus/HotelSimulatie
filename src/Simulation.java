@@ -1,12 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
-
+import java.util.ArrayList;
 
 public class Simulation extends JPanel {
      Layout layout;
-     SimulatieController simulatieController;
-     Human human;
+     SimulationController simulationController;
+     private ArrayList<Guest> guests;
 
     public Simulation(String[][] rauweGrid) {
         this.setLayout(new GridBagLayout()); // Zet layout in het midden
@@ -18,19 +17,38 @@ public class Simulation extends JPanel {
         this.add(layout);
 
         // test
-        Tile randomTile = layout.getFacilities()[0][0].tiles[15][15];
+        this.guests = new ArrayList<>();
 
-        this.human = new Human(randomTile);
-        randomTile.setHuman(new Human(randomTile));
-        this.human.getRandomDestination();
+        for (int i = 0; i < 1; i++) {
+            guests.add(
+                    new Guest(layout.getEntrance())
+            );
+        }
+    }
 
-        System.out.println();
-        this.human.bfs();
-
+    public void setSimulationController(SimulationController simulatieController) {
+        this.simulationController = simulatieController;
     }
 
     public void update() {
-//        this.human.move();
+        for (Guest guest : this.guests) {
+            guest.update(this.layout);
+        }
+
+        for (Guest guests : this.guests) {
+            if (guests.getLifeTime() < 0) {
+                this.guests.remove(guests);
+                guests.despawn();
+            }
+        }
+
+
+        // Adding guests
+        if (simulationController.getRunTime() % (Settings.ticks * 100) == 0) {
+            guests.add(
+                    new Guest(layout.getEntrance())
+            );
+        }
     }
 
     public void zoom(int aantal) {

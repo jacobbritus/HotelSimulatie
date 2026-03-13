@@ -7,16 +7,16 @@ public class Facility extends JPanel {
     private int row;
     private int column;
     Tile[][] tiles;
-    Facility[][] ruimtes;
+    Facility[][] facilites;
 
-    public Facility(JPanel superPanel, Color color1, Color color2, Facility[][] ruimtes, int row, int column) {
+    public Facility(JPanel superPanel, Color color1, Color color2, Facility[][] facilites, int row, int column) {
         this.row = row;
         this.column = column;
-        this.ruimtes = ruimtes;
+        this.facilites = facilites;
         this.color1 = color1;
         this.color2 = color2;
         this.setBackground(color2);
-        this.setBorder(BorderFactory.createLineBorder(color2));
+//        this.setBorder(BorderFactory.createLineBorder(color2, 0));
         this.setOpaque(true);
 
         this.addTiles();
@@ -33,11 +33,11 @@ public class Facility extends JPanel {
     }
 
     public Facility[][] getFacilities() {
-        return ruimtes;
+        return this.facilites;
     }
 
     public Tile[][] getTiles() {
-        return tiles;
+        return this.tiles;
     }
 
     public void addTiles() {

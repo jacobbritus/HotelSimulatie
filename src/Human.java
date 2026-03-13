@@ -4,76 +4,138 @@ import java.util.*;
 public class Human {
     private Tile tile;
     private int stepsTaken;
-    private List<Tile> destinationPath;
+    private ArrayList<Tile> destinationPath;
+    private boolean atDestination;
+    private Integer walkingCooldown;
+    private Integer lifeTime;
 
+    public Human(Tile tile) {
+        this.lifeTime = Settings.ticks * (int) (Math.random() * 1000);
+        this.walkingCooldown = null;
+        this.atDestination = true;
+        this.stepsTaken = 0;
+
+        this.tile = tile;
+        this.tile.setHuman(this);
+    }
 
     public Tile getTile() {
         return tile;
     }
 
-    public Human(Tile tile) {
-        this.destinationPath = null;
-        stepsTaken = 0;
-        this.tile = tile;
-        this.tile.setBackground(Color.BLUE);
+    public boolean isAtDestination() {
+        return atDestination;
     }
 
-    public Tile getRandomDestination() {
-        this.tile.getFacility().getFacilities()[2][2].tiles[4][4].setBackground(Color.RED);
-        return this.tile.getFacility().getFacilities()[4][4].tiles[0][0];
+    public void setDestinationPath(boolean bool) {
+        this.atDestination = bool;
     }
 
-    public void setTile(Tile newTile) {
-        this.tile.revertColor();
+    public void setTile(Tile newTile, Color color) {
         this.tile.setHuman(null);
         this.tile = newTile;
-        this.tile.setBackground(Color.BLUE);
+        this.tile.setBackground(color);
+        this.tile.setHuman(this);
+    }
+
+    public void setWalkingCooldown(Integer milliseconds) {
+        if (milliseconds != null) {
+            this.walkingCooldown = milliseconds;
+        } else {
+            if ((int) (Math.random() * 100) > 98 ) {
+                this.walkingCooldown = (Settings.ticks * 10) * (int) (Math.random() * 5);
+            }
+        }
+
+    }
+
+    public void handleWalkingCooldown() {
+        this.walkingCooldown -= Settings.ticks;
+        if (walkingCooldown < 0) {
+            this.walkingCooldown = null;
+        }
+    }
+
+    public Integer getLifeTime() {
+        return lifeTime;
+    }
+
+    public void despawn() {
+        this.tile.setHuman(null);
+    }
+
+    public void update(Layout layout) {
+
     }
 
     public void move() {
+        if (walkingCooldown != null) {
+            this.handleWalkingCooldown();
+            return;
+        }
 
-    }
-
-    public void expand(Tile tile) {
-        for (Tile neighbour : tile.getNeighbours().values()) {
-            if (neighbour != null) {
-                neighbour.setBackground(Color.GREEN);
-
-            }
+        if (stepsTaken < destinationPath.size()) {
+            setWalkingCooldown(null);
+            Tile tile = destinationPath.get(stepsTaken);
+            if (tile.isWalkable()) this.setTile(tile, null);
+            stepsTaken++;
+        } else {
+            this.stepsTaken = 0;
+            this.atDestination = true;
         }
     }
 
+    public Tile returnOne(HashSet<Tile> tiles) {
+        Tile n = null;
 
+        for (Tile neighbour : tiles) {
+            if (neighbour != null) {
+                return neighbour;
+            }
+        }
+        return n;
+    }
 
-    public void bfs() {
-        ArrayList<Tile> open = new ArrayList<>();
+    public void bfs(Tile destination) {
+        this.destinationPath = new ArrayList<>();
+
+        HashSet<Tile> open = new HashSet<>();
+        HashSet<Tile> closed = new HashSet<>();
+        HashMap<Tile, Tile> breadcrumbs = new HashMap<>();
+
         open.add(this.tile);
-        ArrayList<Tile> closed = new ArrayList<>();
 
-        // Start at the starting node and expand outwards
-        for (Tile neighbour : this.tile.getNeighbours().values()) {
-            if (neighbour != null) {
-                neighbour.setBackground(Color.GREEN);
-                expand(neighbour);
-            }
-
-            // save parent in map to retrace later
-        }
         while (!open.isEmpty()) {
-            Tile current = open.getFirst();
+            Tile current = returnOne(open);
             open.remove(current);
             closed.add(current);
 
-            System.out.println(current);
-            for (Tile neighbour : current.getNeighbours().values())
-                if (neighbour != null) {
-                    open.add(neighbour);
-                    break;
+            if (current == destination) {
+                retraceSteps(destination, breadcrumbs);
+                break;
+            }
+
+            for (Tile neighbour : current.getNeighbours().values()) {
+                if (neighbour == null || closed.contains(neighbour) || !neighbour.isWalkable()) {
+                    continue;
                 }
 
+                open.add(neighbour);
+                breadcrumbs.put(neighbour, current);
+            }
         }
-
     }
+
+    public void retraceSteps(Tile destination, HashMap<Tile, Tile> breadcrumbs) {
+        Tile step = destination;
+
+        while (step != this.getTile()) {
+            step = breadcrumbs.get(step);
+            this.destinationPath.add(step);
+        }
+        Collections.reverse(this.destinationPath);
+    }
+
 
 
 }

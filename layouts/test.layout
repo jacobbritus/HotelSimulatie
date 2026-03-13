@@ -1,10 +1,10 @@
 <grid rows="6" columns="6">
 
     <label text="Trap" row="0" col="0"/>
-    <label text="Trap" row="5" col="5"/>
+    <label text="Lift" row="5" col="5"/>
 
     <!-- Lift first -->
-    <label text="Lift" row="2" col="2" rowSpan="2" colSpan="2"/>
+    <label text="Lobby" row="2" col="2" rowSpan="2" colSpan="2"/>
 
     <!-- Kamer labels -->
     <label text="Kamer" row="0" col="1"/>
