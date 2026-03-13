@@ -11,6 +11,7 @@ public class Simulatie extends JPanel {
     private final List<Mens> mensen = new ArrayList<>();
 
     private int tickCount = 0;
+    public int aantalGasten = 0;
 
     public Simulatie(JFrame frame, String[][] rauweGrid) {
 
@@ -49,12 +50,19 @@ public class Simulatie extends JPanel {
         }
 
         // Om de zoveel ticks een nieuwe gast
-        if (tickCount % 50 == 0) {
+        if (tickCount % 2 == 0) {
             spawnGast();
+            aantalGasten++;
         }
 
         // Verwijder despawned gasten
-        mensen.removeIf(m -> m instanceof Gast g && g.isDespawned());
+        mensen.removeIf(m -> {
+            if (m instanceof Gast g && g.isDespawned()) {
+                aantalGasten--;
+                return true;
+            }
+            return false;
+        });
 
         // Herteken de layout
         layout.repaint();
@@ -68,6 +76,7 @@ public class Simulatie extends JPanel {
         if (lobbyVakje.isVrij()) {
             mensen.add(new Gast(lobbyVakje));
             System.out.println("Nieuwe gast gespawned in lobby.");
+            System.out.println(aantalGasten);
         }
     }
 

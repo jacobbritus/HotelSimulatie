@@ -1,4 +1,4 @@
-//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeerd ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeert ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
