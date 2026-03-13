@@ -5,21 +5,44 @@ import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.BorderLayout;
 
 public class Applicatie extends JFrame implements KeyListener {
 
     private Simulatie simulatie;
 
     public Applicatie() {
+        this.setLayout(new BorderLayout());
         this.setMinimumSize(new Dimension(Instellingen.schermBreedte, Instellingen.schermHoogte));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.addKeyListener(this);
+
+
+        JPanel topBar = new JPanel();
+        JButton heatmapKnop = new JButton("Heatmap aan/uit");
+
+        heatmapKnop.addActionListener(e -> {
+            Instellingen.heatmapAan = !Instellingen.heatmapAan;
+            System.out.println("Heatmap: " + (Instellingen.heatmapAan ? "AAN" : "UIT"));
+
+            if (simulatie != null) {
+                simulatie.repaint();
+            }
+        });
+
+        topBar.add(heatmapKnop);
+
+        // Topbar bovenaan het scherm
+        this.add(topBar, BorderLayout.NORTH);
     }
 
     public void startSimulatie(String[][] rauweGrid) {
         simulatie = new Simulatie(this, rauweGrid);
+        this.add(simulatie, BorderLayout.CENTER);
         this.setVisible(true);
+        simulatie.addKeyListener(this);
+        simulatie.setFocusable(true);
+        simulatie.requestFocusInWindow();
     }
 
     @Override

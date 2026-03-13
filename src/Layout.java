@@ -15,11 +15,7 @@ public class Layout extends JPanel {
         // GridLayout voor de oppervlakten
         this.setLayout(new GridLayout(hoogte, breedte));
 
-        // Zichtbare grootte
-        this.setPreferredSize(new Dimension(
-                Instellingen.oppervlakGrootte * breedte,
-                Instellingen.oppervlakGrootte * hoogte
-        ));
+
 
         // Maak alle oppervlakten
         voegRuimtes(rauweGrid);

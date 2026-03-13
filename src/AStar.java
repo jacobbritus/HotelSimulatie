@@ -14,15 +14,24 @@ public class AStar {
         while (!open.isEmpty()) {
             Node current = open.poll();
 
+            // Doel bereikt → reconstruct pad
             if (current.vakje == doel) {
                 return reconstruct(current);
             }
 
             for (Vakje buur : current.vakje.getBuren()) {
 
+                // Niet door bezette vakjes, behalve de bestemming
                 if (!buur.isVrij() && buur != doel) continue;
 
-                int g = current.g + 1;
+                // -----------------------------
+                // COST = afstand + congestie + predictive congestie
+                // -----------------------------
+                int movementCost = 1
+                        + buur.congestie
+                        + buur.toekomstigeCongestie;
+
+                int g = current.g + movementCost;
 
                 Node next = nodes.getOrDefault(buur, new Node(buur));
                 nodes.put(buur, next);
@@ -37,36 +46,36 @@ public class AStar {
             }
         }
 
-        return null;
+        return null; // geen pad
     }
 
+    // Manhattan distance op globale schaal
     private static int h(Vakje a, Vakje b) {
-        // Manhattan distance - bereken globale positie op basis van Oppervlakte en lokale gridR/gridC
+
         Oppervlakte oppA = a.getOppervlakte();
         Oppervlakte oppB = b.getOppervlakte();
-        Oppervlakte[][] ruimtesA = oppA.getRuimtes();
-        
-        // Vind positie van oppervlakte A in het raster
+        Oppervlakte[][] grid = oppA.getRuimtes();
+
         int oppRA = 0, oppCA = 0, oppRB = 0, oppCB = 0;
-        for (int r = 0; r < ruimtesA.length; r++) {
-            for (int c = 0; c < ruimtesA[0].length; c++) {
-                if (ruimtesA[r][c] == oppA) {
+
+        for (int r = 0; r < grid.length; r++) {
+            for (int c = 0; c < grid[0].length; c++) {
+                if (grid[r][c] == oppA) {
                     oppRA = r;
                     oppCA = c;
                 }
-                if (ruimtesA[r][c] == oppB) {
+                if (grid[r][c] == oppB) {
                     oppRB = r;
                     oppCB = c;
                 }
             }
         }
-        
-        // Globale positie = (oppervlakteposie * vakjesPerOppervlakte) + lokalePositie
+
         int globalRA = oppRA * Instellingen.oppervlakVakjes + a.gridR;
         int globalCA = oppCA * Instellingen.oppervlakVakjes + a.gridC;
         int globalRB = oppRB * Instellingen.oppervlakVakjes + b.gridR;
         int globalCB = oppCB * Instellingen.oppervlakVakjes + b.gridC;
-        
+
         return Math.abs(globalRA - globalRB) + Math.abs(globalCA - globalCB);
     }
 
@@ -77,10 +86,10 @@ public class AStar {
             node = node.parent;
         }
         Collections.reverse(pad);
-        // Verwijder startpunt - we willen alleen toekomstige vakjes
-        if (!pad.isEmpty()) {
-            pad.remove(0);
-        }
+
+        // Eerste element is het startvakje → verwijderen
+        if (!pad.isEmpty()) pad.remove(0);
+
         return pad;
     }
 

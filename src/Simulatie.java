@@ -15,28 +15,26 @@ public class Simulatie extends JPanel {
 
     public Simulatie(JFrame frame, String[][] rauweGrid) {
 
-        // Layout voor deze panel (hoewel we vooral de layout zelf in een scrollpane tonen)
-        this.setLayout(new BorderLayout());
-        this.setBackground(Instellingen.achtergrondKleur);
+        setLayout(new BorderLayout());
+        setBackground(Instellingen.achtergrondKleur);
 
         // ScrollPane toont de layout
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setBorder(null);
-        frame.getContentPane().add(scrollPane);
+        this.add(scrollPane, BorderLayout.CENTER);
 
         // Bouw layout
         layout = new Layout(rauweGrid);
-
-        // ScrollPane toont layout
         scrollPane.setViewportView(layout);
 
         // Eerste gast in de lobby
         Vakje lobby = vindLobbyVakje();
         if (lobby != null) {
             mensen.add(new Gast(lobby));
+            aantalGasten++;
         }
 
-        // Start de simulatie
+        // Start simulatie
         simulatieController = new SimulatieController(this);
         simulatieController.start();
     }
@@ -52,7 +50,6 @@ public class Simulatie extends JPanel {
         // Om de zoveel ticks een nieuwe gast
         if (tickCount % 2 == 0) {
             spawnGast();
-            aantalGasten++;
         }
 
         // Verwijder despawned gasten
@@ -64,8 +61,46 @@ public class Simulatie extends JPanel {
             return false;
         });
 
+        // Congestie langzaam laten verdwijnen
+        verlaagAlleCongestie();
+        updateHeatmap();
+
         // Herteken de layout
         layout.repaint();
+    }
+
+    private void verlaagAlleCongestie() {
+        Oppervlakte[][] ruimtes = layout.getRuimtes();
+
+        for (Oppervlakte[] rij : ruimtes) {
+            for (Oppervlakte o : rij) {
+                if (o == null) continue;
+
+                Vakje[][] vakjes = o.getVakjes();
+                for (Vakje[] vakRij : vakjes) {
+                    for (Vakje v : vakRij) {
+                        v.verlaagCongestie();
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateHeatmap() {
+        Oppervlakte[][] ruimtes = layout.getRuimtes();
+
+        for (Oppervlakte[] rij : ruimtes) {
+            for (Oppervlakte o : rij) {
+                if (o == null) continue;
+
+                Vakje[][] vakjes = o.getVakjes();
+                for (Vakje[] vakRij : vakjes) {
+                    for (Vakje v : vakRij) {
+                        v.updateHeatmapKleur();
+                    }
+                }
+            }
+        }
     }
 
     private void spawnGast() {
@@ -73,10 +108,11 @@ public class Simulatie extends JPanel {
 
         if (lobbyVakje == null) return;
 
+        if (aantalGasten >= Instellingen.maxGasten) return;
+
         if (lobbyVakje.isVrij()) {
             mensen.add(new Gast(lobbyVakje));
-            System.out.println("Nieuwe gast gespawned in lobby.");
-            System.out.println(aantalGasten);
+            aantalGasten++;
         }
     }
 
@@ -86,19 +122,17 @@ public class Simulatie extends JPanel {
         for (Oppervlakte[] oppervlaktes : r) {
             for (int j = 0; j < r[0].length; j++) {
                 if (oppervlaktes[j] instanceof Lobby) {
-                    Vakje[][] vakjes = oppervlaktes[j].getVakjes();
-                    return vakjes[0][0];
+                    return oppervlaktes[j].getVakjes()[0][0];
                 }
             }
         }
         return null;
     }
 
-    // Zoom hoeft niet, maar laten we hem veilig houden als hij nog ergens aangeroepen wordt
+    // Zoom blijft optioneel
     public void zoom(int aantal) {
         Instellingen.oppervlakGrootte += aantal;
 
-        // Nieuwe preferred size op basis van huidige grid
         Oppervlakte[][] r = layout.getRuimtes();
         int hoogte = r.length;
         int breedte = r[0].length;

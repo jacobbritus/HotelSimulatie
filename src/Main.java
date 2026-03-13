@@ -2,7 +2,7 @@
 
 import org.w3c.dom.Document;
 
-public class Main {
+public class    Main {
     public static void main(String[] args) {
         Applicatie applicatie = new Applicatie();
 

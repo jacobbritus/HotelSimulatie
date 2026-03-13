@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -5,7 +6,10 @@ public class Gast extends Mens {
 
     private boolean despawned = false;
     private Vakje destinatie;
-    private List<Vakje> pad;
+    private List<Vakje> pad = new ArrayList<>();
+
+    private int wachttijd = 0;
+    private static final int MAX_WACHTTIJD = 10;
 
     private final Random random = new Random();
 
@@ -16,89 +20,115 @@ public class Gast extends Mens {
 
     @Override
     public void beweeg() {
+        if (despawned) return;
 
         leeftijd++;
-        
-        if (leeftijd % 50 == 0) {
-            System.out.println("Gast beweegt! Huidi vakje: (" + vakje.gridR + "," + vakje.gridC + "), Destinatie: (" + destinatie.gridR + "," + destinatie.gridC + "), Leeftijd: " + leeftijd);
-        }
 
         // Te oud → terug naar lobby
-        if (leeftijd >= maxLeeftijd) {
+        if (leeftijd >= maxLeeftijd && !(destinatie.getOppervlakte() instanceof Lobby)) {
             destinatie = vindLobbyVakje();
-            pad = AStar.findPath(vakje, destinatie);
+            herberekenPadMetPredictive();
         }
 
-        // Geen pad → probeer opnieuw een pad te vinden
+        // Geen pad → probeer opnieuw
         if (pad == null || pad.isEmpty()) {
-            pad = AStar.findPath(vakje, destinatie);
-            // Als er nog steeds geen pad is, kunnen we niet bewegen
-            if (pad == null || pad.isEmpty()) {
-                System.out.println("WAARSCHUWING: Geen pad gevonden! Huidi vakje: (" + vakje.gridR + "," + vakje.gridC + "), Destinatie: (" + destinatie.gridR + "," + destinatie.gridC + ")");
-                return;
-            }
+            herberekenPadMetPredictive();
+            if (pad == null || pad.isEmpty()) return;
         }
 
         Vakje volgende = pad.remove(0);
 
-        // Als het vakje bezet is (en niet de bestemming), herbereken pad
+        // Vakje bezet (en niet de bestemming) → herbereken
         if (!volgende.isVrij() && volgende != destinatie) {
-            pad = AStar.findPath(vakje, destinatie);
+
+            // Gast wacht even
+            wachttijd++;
+
+            // Te lang gewacht → kies nieuw pad
+            if (wachttijd >= MAX_WACHTTIJD) {
+                wachttijd = 0;
+                herberekenPadMetPredictive();
+            }
+
             return;
         }
 
-        // Verlaat huidig vakje
+        // Huidig vakje verlaten
         vakje.zetMens(null);
-        // Als dit vakje niet meer de bestemming is, het vakje wordt automatisch baseColor
-        // Als het WEL de bestemming is, moet het rood blijven
-        if (vakje == destinatie) {
-            vakje.highlightDestinatie();  // Zet het weer rood
+        if (vakje != destinatie && vakje.isVrij()) {
+            vakje.resetKleur();
+
         }
 
-
-        // Ga naar volgende vakje
+        // Naar volgend vakje
         vakje = volgende;
-        vakje.zetMens(this);
+        vakje.zetMens(this); // verhoogt ook congestie in Vakje
+        wachttijd = 0;
 
         // Bestemming bereikt
         if (vakje == destinatie) {
 
-            // Bestemming is bereikt, dus niet langer highlight nodig
-            // updateKleur() zal dit al hebben gedaan
-            
             // In lobby + te oud → despawn
             if (vakje.getOppervlakte() instanceof Lobby && leeftijd >= maxLeeftijd) {
                 vakje.zetMens(null);
                 vakje.resetKleur();
                 despawned = true;
+                verwijderPredictiveLoad();
                 return;
             }
 
-            // Nieuwe bestemming
+            // Nieuwe bestemming kiezen
             kiesNieuweDestinatie();
         }
     }
 
     private void kiesNieuweDestinatie() {
-
-        // Reset oude bestemming kleur (als die bestaat en er geen mens op staat)
+        // Oude bestemming resetten als die vrij is
         if (destinatie != null && destinatie.isVrij()) {
             destinatie.resetKleur();
         }
 
+        verwijderPredictiveLoad();
+
         Oppervlakte[][] ruimtes = vakje.getOppervlakte().getRuimtes();
+        List<Vakje> mogelijke = new ArrayList<>();
 
-        int r = random.nextInt(ruimtes.length);
-        int c = random.nextInt(ruimtes[0].length);
+        for (Oppervlakte[] rij : ruimtes) {
+            for (Oppervlakte o : rij) {
+                if (o == null) continue;
+                Vakje[][] vakjes = o.getVakjes();
+                if (vakjes == null || vakjes.length == 0) continue;
+                mogelijke.add(vakjes[random.nextInt(vakjes.length)][random.nextInt(vakjes[0].length)]);
+            }
+        }
 
-        Vakje[][] vakjes = ruimtes[r][c].getVakjes();
+        if (mogelijke.isEmpty()) return;
 
-        Vakje doel = vakjes[random.nextInt(vakjes.length)][random.nextInt(vakjes[0].length)];
-
-        this.destinatie = doel;
+        destinatie = mogelijke.get(random.nextInt(mogelijke.size()));
         destinatie.highlightDestinatie();
 
-        this.pad = AStar.findPath(vakje, doel);
+        pad = AStar.findPath(vakje, destinatie);
+        voegPredictiveLoadToe();
+    }
+
+    private void herberekenPadMetPredictive() {
+        verwijderPredictiveLoad();
+        pad = AStar.findPath(vakje, destinatie);
+        voegPredictiveLoadToe();
+    }
+
+    private void voegPredictiveLoadToe() {
+        if (pad == null) return;
+        for (Vakje v : pad) {
+            v.toekomstigeCongestie++;
+        }
+    }
+
+    private void verwijderPredictiveLoad() {
+        if (pad == null) return;
+        for (Vakje v : pad) {
+            if (v.toekomstigeCongestie > 0) v.toekomstigeCongestie--;
+        }
     }
 
     private Vakje vindLobbyVakje() {
