@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Applicatie extends JFrame implements KeyListener {
-
     Simulation simulation;
 
     public Applicatie() {
@@ -24,12 +23,16 @@ public class Applicatie extends JFrame implements KeyListener {
 
         JScrollPane scrollPane = new JScrollPane(simulation);
 
+
+//        scrollPane.getViewport().setAlignmentX(0.2F);
+
         // Change scroll speed
         scrollPane.getVerticalScrollBar().setUnitIncrement(5);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(5);
 
-        scrollPane.setBackground(Settings.achtergrondKleur);
+//        scrollPane.setBackground(Settings.achtergrondKleur);
         scrollPane.setBorder(null); // It has a border for some reason
+
 
         this.getContentPane().add(scrollPane);
 

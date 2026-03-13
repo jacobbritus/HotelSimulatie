@@ -78,7 +78,6 @@ public class Guest extends Human{
     public void assignRoom(Layout layout) {
         ArrayList<Facility> kamers = layout.getFacilityInstances(Kamer.class);
 
-
         // Find an empty room
         Kamer k = (Kamer) kamers.get(0);
         while (k.getIsReservated() || k.getGuest() != null) {

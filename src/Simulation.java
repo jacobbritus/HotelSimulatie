@@ -6,16 +6,24 @@ public class Simulation extends JPanel {
      Layout layout;
      SimulationController simulationController;
      private ArrayList<Guest> guests;
+     private JPanel testPanel;
 
     public Simulation(String[][] rauweGrid) {
-        this.setLayout(new GridBagLayout()); // Zet layout in het midden
+        this.setLayout(new BorderLayout()); // Zet layout in het midden
         this.setBackground(Settings.achtergrondKleur);
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setOpaque(true);
 
+
         layout = new Layout(rauweGrid);
 
-        this.add(layout);
+        testPanel = new JPanel(new GridBagLayout());
+        testPanel.setOpaque(true);
+        testPanel.add(layout);
+        testPanel.setPreferredSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
+
+
+        this.add(testPanel);
 
         // test
         this.guests = new ArrayList<>();
@@ -37,7 +45,7 @@ public class Simulation extends JPanel {
             if (guest.getIsLeaving()) guest.despawn();
         }
 
-        guests.removeIf(guest -> guest.getIsLeaving());
+        guests.removeIf(Guest::getIsLeaving);
 
         // Adding guests
         if (simulationController.getRunTime() % (Settings.ticks * 50) == 0) {
@@ -54,10 +62,16 @@ public class Simulation extends JPanel {
         int hoogte = r.length;
         int breedte = r[0].length;
 
+        testPanel.setPreferredSize(new Dimension(
+                Settings.oppervlakGrootte * breedte *3,
+                Settings.oppervlakGrootte * hoogte *2));
         layout.setPreferredSize(new Dimension(
                 Settings.oppervlakGrootte * breedte,
                 Settings.oppervlakGrootte * hoogte
         ));
+
+
+
 
         layout.revalidate();
         layout.repaint();

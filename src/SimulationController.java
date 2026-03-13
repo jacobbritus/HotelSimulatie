@@ -26,8 +26,8 @@ public class SimulationController extends JPanel {
         this.setPreferredSize(new Dimension(0, 48));
         this.setBackground(Color.WHITE);
 
-        this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 2, 0,
-                Color.LIGHT_GRAY), new EmptyBorder(10, 10, 10, 10)));
+        this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
+                Color.lightGray), new EmptyBorder(10, 10, 10, 10)));
 
         createButton("Start", e -> this.HTEtimer.start());
         createButton("Pause", e -> this.HTEtimer.stop());
