@@ -3,8 +3,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class Facility extends JPanel {
-    Color color1;
-    Color color2;
+    Color availableColor1;
+    Color availableColor2;
     private int row;
     private int column;
     Tile[][] tiles;
@@ -14,8 +14,8 @@ public class Facility extends JPanel {
         this.row = row;
         this.column = column;
         this.facilites = facilites;
-        this.color1 = color1;
-        this.color2 = color2;
+        this.availableColor1 = color1;
+        this.availableColor2 = color2;
         this.setBorder(new LineBorder(color2, 2));
 
         this.addTiles();
@@ -46,7 +46,7 @@ public class Facility extends JPanel {
         for (int r = 0; r < Settings.facilityTilesSize; r++) {
             for (int c = 0; c < Settings.facilityTilesSize; c++) {
                 Tile tile = new Tile(this,
-                        color1, color2,
+                        availableColor1, availableColor2,
                         (c + r % 2) % 2 == 0,
                         r, c);
 

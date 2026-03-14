@@ -1,0 +1,24 @@
+<grid rows="6" columns="6">
+
+<label text="Lift" row="2" column="2" rowSpan="2" colSpan="2" />
+
+
+
+<label text="Kamer" row="0" column="1" colSpan="4" />
+
+<label text="Kamer" row="1" column="0" rowSpan="4" />
+<label text="Kamer" row="1" column="5" rowSpan="4" />
+<label text="Kamer" row="5" column="1" rowSpan="4" />
+<label text="Kamer" row="5" column="4" rowSpan="4" />
+
+<label text="Lobby" row="5" column="2"  colSpan="2" />
+
+<label text="Hall" fill="true"/>
+
+<label text="Empty" row="0" column="0" />
+<label text="Empty" row="5" column="5" />
+<label text="Empty" row="5" column="0" />
+<label text="Empty" row="0" column="5" />
+
+
+</grid>

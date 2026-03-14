@@ -4,8 +4,8 @@ public final class Settings {
     private Settings() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 1920;
-    public static int schermHoogte = 1080;
+    public static int schermBreedte = 1080;
+    public static int schermHoogte = 720;
 
     // Achtergrond Kleur
     // Default = Color.WHITE
@@ -26,5 +26,5 @@ public final class Settings {
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int ticks = 2;
+    public static int ticks = 20;
 }

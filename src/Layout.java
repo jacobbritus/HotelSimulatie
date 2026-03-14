@@ -1,21 +1,20 @@
-import com.sun.jdi.ClassObjectReference;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 
 public class Layout extends JPanel {
     private final Facility[][] facilities;
-    private final Tile entrance;
-    private boolean roomsAreFull;
+    private ArrayList<Lobby> lobbies;
+    private ArrayList<Kamer> rooms;
 
 
     public Layout(String[][] rawGrid) {
         int height = rawGrid.length;
         int width = rawGrid[0].length;
-
         facilities = new Facility[height][width];
+        lobbies = new ArrayList<>();
+        rooms = new ArrayList<>();
 
         // GridLayout voor de oppervlakten
         this.setLayout(new GridLayout(height, width));
@@ -30,64 +29,52 @@ public class Layout extends JPanel {
         addFacilities(rawGrid);
         connectTiles();
 
-        // Entrance
-        Facility facility = this.facilities[height - 1][0];
-        this.entrance = getRandomTile(null, true, Lobby.class);
-        this.roomsAreFull = false;
+        // Store important facilities once
+        for (int r = 0; r < facilities.length; r++) {
+            for (int c = 0; c < facilities[0].length; c++) {
+                Facility facility = this.facilities[r][c];
+                if (facility == null) continue;
+                if (facility instanceof Lobby lobby) lobbies.add(lobby);
+                if (facility instanceof Kamer kamer) rooms.add(kamer);
+            }
+        }
+
     }
 
-    public boolean getRoomsAreFull() {
-        return this.roomsAreFull;
+    public ArrayList<Lobby> getLobbies() {
+        Collections.shuffle(this.lobbies);
+        return lobbies;
     }
 
-    public void setRoomsAreFull(boolean roomsAreFull) {
-        this.roomsAreFull = roomsAreFull;
-    }
-
-    public Tile getEntrance() {
-        return this.entrance;
+    public ArrayList<Kamer> getRooms() {
+        Collections.shuffle(this.rooms);
+        return this.rooms;
     }
 
     public Facility[][] getFacilities() {
         return facilities;
     }
 
-    public Tile getRandomTile(Facility facility, boolean randomOfSameClass, Class<?> t) {
-        Facility randomFacility = null;
-        if (randomOfSameClass) {
-            Class<?> c;
-            if (facility != null) c = facility.getClass();
-            else c = t;
-            for (Facility f : getFacilityInstances(c)) {
-                randomFacility = f;
-                if ((int) (Math.random() * 100) > 50) break;
-            }
-        } else if (facility != null) {
-            randomFacility = facility;
-        } else {
+    public Tile getRandomTile(Facility facility) {
+
+        Facility randomFacility = facility;
+        if (facility == null) {
             int r = (int) (Math.random() * this.facilities.length);
             int c = (int) (Math.random() * this.facilities.length);
             randomFacility = this.facilities[r][c];
+
+            while (randomFacility == null) {
+                r = (int) (Math.random() * this.facilities.length);
+                c = (int) (Math.random() * this.facilities.length);
+                randomFacility = this.facilities[r][c];
+            }
         }
+
         
         int dr = (int) (Math.random() * Settings.facilityTilesSize);
         int dc = (int) (Math.random() * Settings.facilityTilesSize);
 
         return randomFacility.getTiles()[dr][dc];
-    }
-
-    public ArrayList<Facility> getFacilityInstances(Class <?> a) {
-        ArrayList<Facility> foundFacilities = new ArrayList<>();
-        for (int c = 0; c < this.facilities.length; c++) {
-            for (int r = 0; r < this.facilities[0].length; r++) {
-                Facility f = this.facilities[r][c];
-
-                if (f.getClass() == a) {
-                    foundFacilities.add(f);
-                }
-            }
-        }
-        return foundFacilities;
     }
 
     private void addFacilities(String[][] grid) {
@@ -96,20 +83,21 @@ public class Layout extends JPanel {
 
                 String type = grid[r][c];
                 Facility o;
-                System.out.println(type);
                 switch (type) {
                     case "Kamer" -> o = new Kamer(this, facilities, r, c);
                     case "Lift" -> o = new Lift(this, facilities, r, c);
                     case "Trap" -> o = new Trap(this, facilities, r, c);
                     case "Lobby" -> o = new Lobby(this, facilities, r, c);
+                    case "Hall" -> o = new Hall(this, facilities, r, c);
                     default -> {
-                        o = new Facility(this, null, null, facilities, r, c);
-                        o.setBackground(Color.BLACK);
+                        JPanel inaccessible = new JPanel();
+                        inaccessible.setBackground(Settings.achtergrondKleur);
+                        this.add(inaccessible);
+                        continue;
                     }
                 }
 
                 facilities[r][c] = o;
-                
                 this.add(o);
             }
         }
@@ -120,9 +108,11 @@ public class Layout extends JPanel {
                 Settings.oppervlakGrootte * this.facilities.length));
         for (int r = 0; r < this.facilities.length; r++) {
             for (int c = 0; c < this.facilities[0].length; c++) {
-                this.facilities[r][c].removeAll();
-                this.facilities[r][c].reload();
-                this.facilities[r][c].revalidate();
+                Facility facility = this.facilities[r][c];
+                if (facility == null) continue;
+                facility.removeAll();
+                facility.reload();
+                facility.revalidate();
 
             }
         }
@@ -133,6 +123,7 @@ public class Layout extends JPanel {
         for (int r = 0; r < this.facilities.length; r++) {
             for (int c = 0; c < this.facilities[0].length; c++) {
                 Facility facility = this.facilities[r][c];
+                if (facility == null) continue;
                 Tile[][] tiles = facility.getTiles();
 
                 for (int dr = 0; dr < tiles.length; dr++) {
@@ -140,23 +131,26 @@ public class Layout extends JPanel {
                         Tile tile = tiles[dr][dc];
 
                         if (r > 0 && dr == 0) {
+                            if ((facilities[r - 1][c]) == null) continue;
                             tile.setNeighbour(Direction.UP, facilities[r - 1][c].getTiles()[tiles.length - 1][dc]);
                         } else if (dr > 0) tile.setNeighbour(Direction.UP, tiles[dr - 1][dc]);
 
                         if (dr == tiles.length - 1 && r < facilities.length - 1) {
+                            if ((facilities[r + 1][c]) == null) continue;
                             tile.setNeighbour(Direction.DOWN, facilities[r + 1][c].getTiles()[0][dc]);
                         }  else if (dr < tiles.length - 1) tile.setNeighbour(Direction.DOWN, tiles[dr +1][dc]);
 
                         if (c > 0 && dc == 0) {
+                            if ((facilities[r][c - 1]) == null) continue;
                             tile.setNeighbour(Direction.LEFT, facilities[r][c - 1].getTiles()[dr][tiles[0].length - 1]);
                         } else if (dc > 0) tile.setNeighbour(Direction.LEFT, tiles[dr][dc - 1]);
 
                         if (c < facilities[0].length - 1 && dc == tiles[0].length - 1) {
+                            if ((facilities[r][c + 1]) == null) continue;
                             tile.setNeighbour(Direction.RIGHT, facilities[r][c+1].getTiles()[dr][0]);
                         }  else if (dc < tiles[0].length - 1) tile.setNeighbour(Direction.RIGHT, tiles[dr][dc + 1]);
                     }
                 }
-
             }
         }
     }

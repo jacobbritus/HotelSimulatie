@@ -6,6 +6,7 @@ import java.awt.Color;
 
 public class Kamer extends Facility {
     private Guest guest;
+    private Cleaner cleaner;
     private boolean isDirty;
     private final Color unavailableColor1;
     private final Color unavailableColor2;
@@ -18,19 +19,29 @@ public class Kamer extends Facility {
                 new Color(173, 222, 161), ruimtes, row, column);
         this.guest = null;
         this.isDirty = false;
+        this.cleaner =  null;
 
         unavailableColor1 = new Color(246, 210, 210,255);
         unavailableColor2 = new Color(255, 138, 138,255);
 
 
-       dirtyColor1 = new Color(246, 200, 173,255);
-       dirtyColor2 = new Color(224, 185, 146,255);
+       dirtyColor1 = new Color(249, 252, 224,255);
+       dirtyColor2 = new Color(247, 253, 136,255);
     }
 
-    public void clean() {
+    public Cleaner getCleaner() {
+        return this.cleaner;
+    }
+
+    public void setCleaner(Cleaner cleaner) {
+        this.cleaner = cleaner;
+    }
+
+    public void clean(Cleaner cleaner) {
+        this.cleaner = null;
         this.isDirty = false;
-        this.setBorder(new LineBorder(color2, 2));
-        changeGroundColor(color1);
+        this.setBorder(new LineBorder(availableColor2, 2));
+        changeGroundColor(availableColor1, availableColor2);
 
     }
 
@@ -38,28 +49,34 @@ public class Kamer extends Facility {
         return this.isDirty;
     }
 
-
     public void setGuest(Guest guest) {
         if (guest != null) {
             this.isDirty = true;
             this.guest = guest;
             this.setBorder(new LineBorder(unavailableColor2 , 2));
-            changeGroundColor(unavailableColor1);
+            changeGroundColor(unavailableColor1, unavailableColor2);
 
         } else {
             this.guest = null;
-            changeGroundColor(dirtyColor1);
+
+            changeGroundColor(dirtyColor1, dirtyColor2);
             this.setBorder(new LineBorder(dirtyColor2, 2));
         }
-
     }
 
-    public void changeGroundColor(Color color) {
+    public void changeGroundColor(Color color1, Color color2) {
         for (int r = 0; r < this.tiles.length; r++) {
             for (int c = 0; c <this.tiles[0].length ; c++) {
                 Tile tile = this.tiles[r][c];
-                tile.setBackground(color);
-                tile.setActiveColor(color);
+                if (tile.isEven() || !Settings.setSquaresAlternatingColors) {
+                    tile.setBackground(color1);
+                    tile.setActiveColor(color1);
+                } else {
+                    tile.setBackground(color2);
+                    tile.setActiveColor(color2);
+                }
+
+
             }
         }
     }

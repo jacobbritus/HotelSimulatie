@@ -8,14 +8,21 @@ public class Human {
     private boolean atDestination;
     private Integer walkingCooldown;
     private Integer lifeTime;
+    private boolean isUsingLift;
+    Color color;
 
     public Human(Tile tile) {
         this.walkingCooldown = null;
         this.atDestination = true;
         this.stepsTaken = 0;
+        this.isUsingLift = false;
 
         this.tile = tile;
         this.tile.setHuman(this);
+    }
+
+    public boolean isUsingLift() {
+        return isUsingLift;
     }
 
     public Tile getTile() {
@@ -23,7 +30,7 @@ public class Human {
     }
 
     public boolean isAtDestination() {
-        return atDestination;
+        return this.atDestination;
     }
 
     public void setAtDestination(boolean bool) {
@@ -37,7 +44,7 @@ public class Human {
         this.tile.setHuman(this);
     }
 
-    public void setWalkingCooldown(Integer milliseconds) {
+    public void setCooldown(Integer milliseconds) {
         if (milliseconds != null) {
             this.walkingCooldown = milliseconds;
         } else {
@@ -47,11 +54,13 @@ public class Human {
         }
     }
 
-    public void handleWalkingCooldown() {
-        this.walkingCooldown -= Settings.ticks;
-        if (walkingCooldown < 0) {
-            this.walkingCooldown = null;
+    public boolean activeCooldown() {
+        if (walkingCooldown != null) {
+            this.walkingCooldown -= Settings.ticks;
+            if (walkingCooldown < 0) this.walkingCooldown = null;
+            return true;
         }
+        return false;
     }
 
     public Integer getLifeTime() {
@@ -75,15 +84,9 @@ public class Human {
     }
 
     public void move() {
-        if (walkingCooldown != null) {
-            this.handleWalkingCooldown();
-            return;
-        }
-
-        if (stepsTaken < destinationPath.size()) {
-            setWalkingCooldown(null);
+        if (stepsTaken < destinationPath.size() - 1) {
             Tile tile = destinationPath.get(stepsTaken);
-            if (tile.isWalkable()) this.setTile(tile, null);
+            this.setTile(tile, null);
             stepsTaken++;
         } else {
             this.stepsTaken = 0;
@@ -120,7 +123,8 @@ public class Human {
             }
 
             for (Tile neighbour : current.getNeighbours().values()) {
-                if (neighbour == null || closed.contains(neighbour) || !neighbour.isWalkable()) {
+                if (neighbour == null || closed.contains(neighbour) || (neighbour.getFacility() instanceof Lift && !this.isUsingLift)
+                        || !neighbour.isWalkable() || isKamer(neighbour)) {
                     continue;
                 }
 
@@ -128,6 +132,13 @@ public class Human {
                 breadcrumbs.put(neighbour, current);
             }
         }
+    }
+
+    public boolean isKamer(Tile neighbour) {
+        Facility facility = neighbour.getFacility();
+        if  (this instanceof Guest) return facility instanceof Kamer kamer && kamer.getGuest() != this;
+        else if (this instanceof Cleaner cleaner)  return facility instanceof Kamer kamer && (kamer.getCleaner() != this && this.getTile().getFacility() != kamer);
+        return false;
     }
 
     public void retraceSteps(Tile destination, HashMap<Tile, Tile> breadcrumbs) {
@@ -138,6 +149,7 @@ public class Human {
             this.destinationPath.add(step);
         }
         Collections.reverse(this.destinationPath);
+
     }
 
 

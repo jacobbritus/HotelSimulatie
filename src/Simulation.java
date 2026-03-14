@@ -3,12 +3,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Simulation extends JPanel {
      Layout layout;
      SimulationController simulationController;
-     private ArrayList<Guest> guests;
+     private ArrayList<Human> humans;
      private final JPanel testPanel;
      private final String[][] rauweGrid;
 
@@ -31,14 +30,17 @@ public class Simulation extends JPanel {
         testPanel.add(layout);
         this.add(testPanel);
 
+
         // test
-        this.guests = new ArrayList<>();
+        this.humans = new ArrayList<>();
+        for (int i = 0; i < 1; i++) {
+            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+            humans.add(new Guest(tile));
+        }
 
-
-        for (int i = 0; i < 2; i++) {
-            Tile tile = this.layout.getRandomTile(null, true, Lobby.class);
-            System.out.println(tile.getRow());
-            guests.add(new Guest(tile));
+        for (int i = 0; i < 7; i++) {
+            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+            humans.add(new Cleaner(tile));
         }
     }
 
@@ -55,17 +57,17 @@ public class Simulation extends JPanel {
     }
 
     public void update() {
-        for (Guest guest : this.guests) {
-            guest.update(this.layout);
-            if (guest.getIsLeaving()) guest.despawn();
+        for (Human human : this.humans) {
+            human.update(this.layout);
+            if (human instanceof Guest guest &&  guest.isLeaving()) guest.despawn();
         }
 
-        guests.removeIf(Guest::getIsLeaving);
+        humans.removeIf(g -> g instanceof Guest guest&& guest.isLeaving());
 
-        // Adding guests
+//        // Adding guests
         if (simulationController.getRunTime() % (Settings.ticks * 50) == 0) {
-            Tile tile = this.layout.getRandomTile(null, true, Lobby.class);
-            guests.add(new Guest(tile));
+            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+            humans.add(new Guest(tile));
         }
     }
 
