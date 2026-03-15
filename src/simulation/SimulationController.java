@@ -6,6 +6,7 @@ import settings.Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -29,7 +30,7 @@ public class SimulationController extends JPanel {
 
         this.HTEtimer = new Timer(Settings.ticks, e -> {
             this.runTime += 1000 / Settings.ticks ;
-            this.timeLabel.setText(Settings.convertTime(this.runTime));
+            this.timeLabel.setText(Settings.convertTime(this.runTime) + "  ");
             simulation.update();
         });
 
@@ -42,8 +43,6 @@ public class SimulationController extends JPanel {
 
 
         // Children (compose later)
-
-
         this.add(createButton("Menu", e -> {
             this.simulationSidebar.toggle();
         }));
@@ -51,12 +50,12 @@ public class SimulationController extends JPanel {
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
-        this.ticksLabel = new JLabel("  x" + (1000 / Settings.ticks) + "  ");
+        this.ticksLabel = new JLabel("  " + (1000 / Settings.ticks) + "x  ");
+        this.ticksLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
 
         this.add(createButton("-", e -> {
             Settings.ticks = Math.min(Settings.ticks * 2, 1000);
-            this.ticksLabel.setText("  x" + (1000 / Settings.ticks) + "  ");
-            this.HTEtimer.setDelay(Settings.ticks);
+            updateSpeed();
         }));
 
 
@@ -64,16 +63,12 @@ public class SimulationController extends JPanel {
 
         this.add(createButton("+", e -> {
             Settings.ticks = Math.max(Settings.ticks / 2, 31);
-            System.out.println(Settings.ticks);
-            this.ticksLabel.setText("  x" + (1000 / Settings.ticks) + "  ");
-            this.HTEtimer.setDelay(Settings.ticks);
+            updateSpeed();
         }));
 
 
         Component x = Box.createVerticalStrut(3);
         this.add(x); // 5px gap
-
-
 
 
 
@@ -125,14 +120,19 @@ public class SimulationController extends JPanel {
         return runTime;
     }
 
+    public void updateSpeed() {
+        this.ticksLabel.setText("  " + (1000 / Settings.ticks) + "x  ");
+        this.HTEtimer.setDelay(Settings.ticks);
+    }
+
     // compose later
     public JButton createButton(String text, ActionListener actionListener) {
-        JButton startKnop = new JButton(text);
-        startKnop.setFont(FontHelper.getFont("Regular").deriveFont(12f));
-        startKnop.setFocusable(false);
-        startKnop.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        startKnop.addActionListener(actionListener);
-        return startKnop;
+        JButton button = new JButton(text);
+        button.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        button.setFocusable(false);
+        button.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        button.addActionListener(actionListener);
+        return button;
     }
 
     public void setShowRoom(Room room) {

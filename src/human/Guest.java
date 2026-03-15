@@ -1,5 +1,6 @@
 package human;
 
+import facility.Facility;
 import facility.Room;
 import facility.Lobby;
 import facility.Tile;
@@ -83,17 +84,41 @@ public class Guest extends Human {
         this.isCheckedIn = false;
     }
 
-    public void assignRoom(Layout layout) {
+    public Room getRandomRoom(ArrayList<Room> rooms, Layout layout) {
         ArrayList<Room> kamers = layout.getRooms();
         Collections.shuffle(kamers);
+        Room randomRoom = null;
 
         Room k = null;
         for (Room kamer : kamers) {
             if (kamer.getGuest() == null && !kamer.isDirty()) {
-                k = kamer;
+                randomRoom = kamer;
                 break;
             }
         }
+
+        return randomRoom;
+    }
+
+    public Room getNearestRoom(ArrayList<Room> rooms) {
+        Integer lowestDistance = null;
+        Room nearestRoom= null;
+        Facility current = this.getTile().getFacility();
+
+        for (Room room : rooms) {
+            int c = Math.abs(current.getRow() - room.getRow()) + Math.abs(current.getColumn() - room.getColumn());
+
+            if ((room.getGuest() == null && !room.isDirty()) && (lowestDistance == null || c < lowestDistance)) {
+                nearestRoom = room;
+                lowestDistance = c;
+            }
+        }
+        return nearestRoom;
+    }
+
+    public void assignRoom(Layout layout) {
+        ArrayList<Room> rooms = layout.getRooms();;
+        Room k = getNearestRoom(rooms);
         if (k == null) {
             return;
         }

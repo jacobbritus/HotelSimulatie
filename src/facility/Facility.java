@@ -30,7 +30,6 @@ public class Facility extends JPanel {
     }
 
     public SimulationController getSimulationController() {
-        System.out.println(this.simulationController);
         return this.simulationController;
     }
 

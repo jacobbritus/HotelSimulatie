@@ -13,7 +13,6 @@ public class MyScrollPane extends JScrollPane {
         this.getHorizontalScrollBar().setUnitIncrement(9);
         this.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
-
         this.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             protected void configureScrollBarColors() {
                 this.trackColor = Color.RED;

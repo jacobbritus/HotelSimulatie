@@ -20,7 +20,7 @@ public class SidebarSection extends JPanel {
         this.setOpaque(false);
 
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
-                Settings.themeColor2), new EmptyBorder(15, 15, 5, 0)));
+                Settings.themeColor2), new EmptyBorder(15, 15, 10, 0)));
 
         // --- Title ---
         JLabel titleLabel = new JLabel(title);

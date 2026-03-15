@@ -9,7 +9,6 @@ public class FontHelper {
         File font_file = new File(
                 String.format("assets/fonts/OpenSans-%s.ttf", weight)
         );
-        System.out.println(font_file.getAbsoluteFile());
         Font font;
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, font_file);

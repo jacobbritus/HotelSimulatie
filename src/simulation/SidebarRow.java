@@ -29,7 +29,7 @@ public class SidebarRow extends JPanel {
 
         this.add(this.valueLabel);
 
-        this.setBorder(new EmptyBorder(0, 2, 10, 20));
+        this.setBorder(new EmptyBorder(0, 2, 10, 25));
 
         this.setMaximumSize(new Dimension(Short.MAX_VALUE, this.getPreferredSize().height));
         this.setAlignmentX(Component.LEFT_ALIGNMENT);

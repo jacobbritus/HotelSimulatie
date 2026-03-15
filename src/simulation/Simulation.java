@@ -99,6 +99,7 @@ public class Simulation extends JPanel {
         this.simulationSidebar = simulationSidebar;
     }
 
+
     public void update() {
         for (Human human : this.humans) {
             human.update(this.layout);
@@ -109,7 +110,6 @@ public class Simulation extends JPanel {
         humans.removeIf(g -> g instanceof Guest guest&& guest.isLeaving());
 
 //        // Adding guests
-        System.out.println(simulationController.getRunTime() % 100);
         if (simulationController.getRunTime() % 100 < 3) {
             Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
             humans.add(new Guest(tile));

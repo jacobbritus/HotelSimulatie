@@ -33,7 +33,7 @@ public class Cleaner extends Human {
     @Override
     public void update(Layout layout) {
         if (this.activeCooldown()) {
-            return;
+                return;
         }
 
         if (!this.isAtDestination() && (this.getTile().getFacility() != this.roomToClean)) {
@@ -44,18 +44,10 @@ public class Cleaner extends Human {
 
             if (this.roomToClean == null) {
 //                setCooldown(100);
-                ArrayList<Room> rooms = layout.getRooms();
-                Integer distance = null;
-                for (Room kamer : rooms) {
-                    Facility current = this.getTile().getFacility();
-
-                    int c = Math.abs(current.getRow() - kamer.getRow()) + Math.abs(current.getColumn() - kamer.getColumn());
-                    if ((kamer.isDirty() && kamer.getCleaner() == null && kamer.getGuest() == null)
-                            && (distance == null || distance > c)) {
-                        distance = c;
-                        this.roomToClean = kamer;
-                        kamer.setCleaner(this);
-                    }
+                Room nearestRoom = getNearestRoom(layout);
+                if (nearestRoom != null) {
+                    this.roomToClean = nearestRoom;
+                    this.roomToClean.setCleaner(this);
                 }
 
                 destination = layout.getRandomTile(this.roomToClean);
@@ -81,5 +73,23 @@ public class Cleaner extends Human {
 
         }
 
+    }
+
+    private Room getNearestRoom(Layout layout) {
+        ArrayList<Room> rooms = layout.getRooms();
+        Room nearestRoom = null;
+        Integer distance = null;
+        for (Room kamer : rooms) {
+            Facility current = this.getTile().getFacility();
+
+            int c = Math.abs(current.getRow() - kamer.getRow()) + Math.abs(current.getColumn() - kamer.getColumn());
+            if ((kamer.isDirty() && kamer.getCleaner() == null && kamer.getGuest() == null)
+                    && (distance == null || distance > c)) {
+                distance = c;
+                nearestRoom = kamer;
+            }
+
+        }
+        return nearestRoom;
     }
 }

@@ -52,13 +52,12 @@ public class SimulationSidebar extends JPanel {
     public void addTitle() {
         this.title = new JLabel("Hotel Overview");
         title.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
-                Settings.themeColor2), new EmptyBorder(20, 10, 20, 0)));
+                Settings.themeColor2), new EmptyBorder(20, 15, 20, 0)));
         Dimension size = title.getPreferredSize();
+
         title.setPreferredSize(new Dimension(size.width + 50, size.height));
-
         title.setMaximumSize(new Dimension(Settings.sidebarWidth, 64));
-
-        this.title.setFont(FontHelper.getFont("Bold").deriveFont(24f));
+        title.setFont(FontHelper.getFont("SemiBold").deriveFont(24f));
 
         this.add(title);
     }
@@ -80,9 +79,9 @@ public class SimulationSidebar extends JPanel {
     }
 
     public void init() {
-        this.removeAll();
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setBorder(new EmptyBorder(0, 0, 0, 0));
+        removeAll();
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(new EmptyBorder(0, 0, 0, 0));
 
         addTitle();
 

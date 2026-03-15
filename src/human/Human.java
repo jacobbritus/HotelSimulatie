@@ -53,6 +53,10 @@ public class Human {
         this.tile.setHuman(this);
     }
 
+    public Integer getCooldown() {
+        return cooldown;
+    }
+
     public void setCooldown(Integer milliseconds) {
         this.cooldown = milliseconds;
     }

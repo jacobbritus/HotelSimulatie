@@ -36,10 +36,10 @@ public class Room extends Facility {
     }
 
     public void clean(Cleaner cleaner) {
+        changeGroundColor(getColor(FacilityState.AVAILABLE1), this.getColor(FacilityState.AVAILABLE2));
         this.cleaner = null;
         this.isDirty = false;
         this.setBorder(new LineBorder(this.getColor(FacilityState.AVAILABLE2), 2));
-        changeGroundColor(getColor(FacilityState.AVAILABLE1), this.getColor(FacilityState.AVAILABLE2));
     }
 
     public boolean isDirty() {
@@ -47,8 +47,6 @@ public class Room extends Facility {
     }
 
     public void setGuest(Guest guest) {
-
-
         if (guest != null) {
             this.guest = guest;
             this.setBorder(new LineBorder(getColor(FacilityState.UNAVAILABLE2) , 2));
@@ -58,7 +56,6 @@ public class Room extends Facility {
             this.onHover = new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
                     kamer.setBorder(new LineBorder(Color.YELLOW, 2));
-
                     kamer.getSimulationController().setShowRoom(kamer);
 
                 }
@@ -84,14 +81,17 @@ public class Room extends Facility {
     public void changeGroundColor(Color color1, Color color2) {
         for (int r = 0; r < this.tiles.length; r++) {
             for (int c = 0; c <this.tiles[0].length ; c++) {
+                Color activeColor;
                 Tile tile = this.tiles[r][c];
                 if (tile.isEven() || !Settings.setSquaresAlternatingColors) {
-                    tile.setBackground(color1);
-                    tile.setActiveColor(color1);
+                    activeColor = color1;
                 } else {
-                    tile.setBackground(color2);
-                    tile.setActiveColor(color2);
+                    activeColor = color2;
                 }
+                tile.setActiveColor(activeColor);
+                if (this.cleaner != null && tile == this.cleaner.getTile()) continue;
+                tile.setBackground(activeColor);
+
             }
         }
     }
