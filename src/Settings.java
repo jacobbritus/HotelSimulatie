@@ -13,9 +13,9 @@ public final class Settings {
     public static Color themeColor = new Color(240, 240, 240,255);
     public static Color themeColor2 = new Color(200, 200, 200,255);
 
-//    public static Color achtergrondKleur = new Color(20, 20, 20, 255);
+//    public static Color achtergrondKleur = new Color(25, 25, 25, 255);
 //    public static Color themeColor = new Color(30, 30, 30,255);
-//    public static Color themeColor2 = new Color(56, 56, 56,255);
+//    public static Color themeColor2 = new Color(40, 40, 40,255);
 
     // Bepaald hoe hoog en breed elk Oppervlakte is
     // Default = 100
@@ -32,5 +32,19 @@ public final class Settings {
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int ticks = 20;
+    public static int ticks = 1000;
+
+    // Guest staytime (3 hours)
+    public static int guestBaseStayTime = 60 * 60 * 3;
+
+    public static String convertTime(int milliseconds) {
+        int seconds = milliseconds % 60;
+        int minutes = (milliseconds / 60) % 60;
+        int hours = milliseconds / 3600;
+
+        return String.format(
+                "%02d:%02d:%02d",
+                hours, minutes, seconds
+        );
+    }
 }

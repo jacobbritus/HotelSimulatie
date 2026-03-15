@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseListener;
 
 // I've to create a file that holds all colors really
 
@@ -12,7 +14,7 @@ public class Kamer extends Facility {
     private final Color unavailableColor2;
     private final Color dirtyColor1;
     private final Color dirtyColor2;
-
+    private MouseListener onHover;
 
     public Kamer(JPanel superPanel, Facility[][] ruimtes, int row, int column) {
         super(superPanel, new Color(224, 246, 218),
@@ -49,13 +51,27 @@ public class Kamer extends Facility {
     }
 
     public void setGuest(Guest guest) {
+
+
         if (guest != null) {
             this.isDirty = true;
             this.guest = guest;
             this.setBorder(new LineBorder(unavailableColor2 , 2));
             changeGroundColor(unavailableColor1, unavailableColor2);
+            Kamer kamer = this;
 
+            this.onHover = new MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    System.out.println(Settings.convertTime(guest.getLifeTime()));
+                    kamer.setBorder(new LineBorder(Color.YELLOW, 2));
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    kamer.setBorder(new LineBorder(unavailableColor2, 2));
+                }
+            };
+            this.addMouseListener(this.onHover);
         } else {
+            this.removeMouseListener(this.onHover);
             this.guest = null;
 
             changeGroundColor(dirtyColor1, dirtyColor2);
@@ -74,8 +90,6 @@ public class Kamer extends Facility {
                     tile.setBackground(color2);
                     tile.setActiveColor(color2);
                 }
-
-
             }
         }
     }

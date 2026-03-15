@@ -45,13 +45,13 @@ public class Human {
     }
 
     public void setCooldown(Integer milliseconds) {
-        if (milliseconds != null) {
-            this.walkingCooldown = milliseconds;
-        } else {
-            if ((int) (Math.random() * 100) > 98 ) {
-                this.walkingCooldown = (Settings.ticks) * (int) (Math.random() * 10);
-            }
-        }
+//        if (milliseconds != null) {
+//            this.walkingCooldown = milliseconds;
+//        } else {
+//            if ((int) (Math.random() * 100) > 98 ) {
+//                this.walkingCooldown = (Settings.ticks) * (int) (Math.random() * 10);
+//            }
+//        }
     }
 
     public boolean activeCooldown() {
@@ -72,7 +72,7 @@ public class Human {
     }
 
     public void decreaseLifeTime() {
-        this.lifeTime -= Settings.ticks;
+        this.lifeTime = Math.max(this.lifeTime - 1000 / Settings.ticks, 0);
     }
 
     public void despawn() {
@@ -87,6 +87,9 @@ public class Human {
         if (stepsTaken < destinationPath.size() - 1) {
             Tile tile = destinationPath.get(stepsTaken);
             this.setTile(tile, null);
+            stepsTaken++;
+            stepsTaken++;
+            stepsTaken++;
             stepsTaken++;
         } else {
             this.stepsTaken = 0;

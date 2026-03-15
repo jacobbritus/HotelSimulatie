@@ -39,7 +39,7 @@ public class Guest extends Human{
 
         if (this.getIsCheckedIn()) {
             if (this.getLifeTime() == null) {
-                this.setLifeTime(Settings.ticks * Math.max((int) (Math.random() * 100), 150)); // Get an actual formula
+                this.setLifeTime(Settings.guestBaseStayTime); // Get an actual formula
             } else {
                 this.decreaseLifeTime();
             }
@@ -53,7 +53,7 @@ public class Guest extends Human{
             Tile destination;
 
             // No room availability, walk around randomly in lobby. Maybe leave and note statistics (start lifetime and if they leave, add statistic)
-             if (!this.isCheckedIn || getLifeTime() == null || getLifeTime() < 0) { // Check in at lobby, find a room
+             if (!this.isCheckedIn || getLifeTime() == null || getLifeTime() < 1) { // Check in at lobby, find a room
              destination = layout.getRandomTile(layout.getLobbies().getFirst());
              this.setCooldown(Settings.ticks * 100);
                  if ((this.getTile().getFacility() instanceof Lobby)) {

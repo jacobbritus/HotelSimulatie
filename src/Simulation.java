@@ -10,6 +10,7 @@ public class Simulation extends JPanel {
      private ArrayList<Human> humans;
      private final JPanel testPanel;
      private final String[][] rauweGrid;
+     private int millisecondsPassed;
 
     public Simulation(String[][] rauweGrid) {
         this.setLayout(new BorderLayout()); // Zet layout in het midden
