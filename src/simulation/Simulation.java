@@ -1,5 +1,14 @@
+package simulation;
+
+import facility.Facility;
+import facility.Tile;
+import human.Cleaner;
+import human.Guest;
+import human.Human;
+import layout.Layout;
+import settings.Settings;
+
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -31,7 +40,7 @@ public class Simulation extends JPanel {
     }
 
     public void start() {
-        layout = new Layout(rauweGrid);
+        layout = new Layout(rauweGrid, simulationController);
         testPanel.add(layout);
         this.add(testPanel);
 

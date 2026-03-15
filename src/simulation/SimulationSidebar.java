@@ -1,3 +1,8 @@
+package simulation;
+
+import human.Guest;
+import settings.Settings;
+
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;

@@ -1,3 +1,5 @@
+package settings;
+
 import java.awt.Color;
 
 public final class Settings {
@@ -34,8 +36,11 @@ public final class Settings {
     // Milliseconden per tik
     public static int ticks = 1000;
 
-    // Guest staytime (3 hours)
-    public static int guestBaseStayTime = 60 * 60 * 3;
+    // human.Guest staytime (3 hours)
+    public static int guestBaseStayTime = 60 * 60 * 3; // can be used like: this * random number between 1 and 5
+
+    // human.Cleaner cleaningTime (30 minutes)
+    public static int cleanerBaseCleaningTime = 60 * 30 ;
 
     public static String convertTime(int milliseconds) {
         int seconds = milliseconds % 60;

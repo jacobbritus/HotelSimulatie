@@ -1,5 +1,6 @@
+import settings.Settings;
+
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 

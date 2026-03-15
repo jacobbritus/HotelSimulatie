@@ -1,8 +1,16 @@
+import enums.FacilityState;
+import facility.Facility;
+import facility.Room;
+import settings.FacilityColors;
+import settings.Settings;
+import simulation.Simulation;
+import simulation.SimulationController;
+import simulation.SimulationSidebar;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Set;
 
 public class Applicatie extends JFrame implements KeyListener {
     Simulation simulation;
@@ -13,11 +21,7 @@ public class Applicatie extends JFrame implements KeyListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
-
-
-
-
-
+        FacilityColors.setup();
     }
 
     public void startSimulatie(String[][] rauweGrid) {

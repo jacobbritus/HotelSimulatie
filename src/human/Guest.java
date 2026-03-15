@@ -1,11 +1,19 @@
+package human;
+
+import facility.Room;
+import facility.Lobby;
+import facility.Tile;
+import layout.Layout;
+import settings.Settings;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Guest extends Human{
+public class Guest extends Human {
     private boolean isCheckedIn;
     private boolean isLeaving;
-    private Kamer kamer;
+    private Room kamer;
     private Color arrivalColor = Color.RED;
     private Color checkedInColor = Color.GREEN;
 
@@ -39,7 +47,7 @@ public class Guest extends Human{
 
         if (this.getIsCheckedIn()) {
             if (this.getLifeTime() == null) {
-                this.setLifeTime(Settings.guestBaseStayTime); // Get an actual formula
+                this.setLifeTime(Settings.guestBaseStayTime);
             } else {
                 this.decreaseLifeTime();
             }
@@ -48,14 +56,14 @@ public class Guest extends Human{
         if (!this.isAtDestination()) {
             this.move();
         } else {
-            if (this.getTile().getFacility() == this.kamer) this.setCooldown(Settings.ticks * 50); // Get an actual formula
+//            if (this.getTile().getFacility() == this.kamer) this.setCooldown(settings.Settings.ticks * 50); // Get an actual formula
             this.setAtDestination(false);
             Tile destination;
 
             // No room availability, walk around randomly in lobby. Maybe leave and note statistics (start lifetime and if they leave, add statistic)
              if (!this.isCheckedIn || getLifeTime() == null || getLifeTime() < 1) { // Check in at lobby, find a room
              destination = layout.getRandomTile(layout.getLobbies().getFirst());
-             this.setCooldown(Settings.ticks * 100);
+//             this.setCooldown(settings.Settings.ticks * 100);
                  if ((this.getTile().getFacility() instanceof Lobby)) {
                      if (this.getLifeTime() == null) this.assignRoom(layout);
                      else this.checkOut(layout);
@@ -76,11 +84,11 @@ public class Guest extends Human{
     }
 
     public void assignRoom(Layout layout) {
-        ArrayList<Kamer> kamers = layout.getRooms();
+        ArrayList<Room> kamers = layout.getRooms();
         Collections.shuffle(kamers);
 
-        Kamer k = null;
-        for (Kamer kamer : kamers) {
+        Room k = null;
+        for (Room kamer : kamers) {
             if (kamer.getGuest() == null && !kamer.isDirty()) {
                 k = kamer;
                 break;
@@ -92,7 +100,7 @@ public class Guest extends Human{
         this.kamer = k;
         k.setGuest(this);
         // Stop at lobby for a moment and check in
-        this.setCooldown(Settings.ticks * 20);  // Get an actual formula
+//        this.setCooldown(settings.Settings.ticks * 20);  // Get an actual formula
         this.isCheckedIn = true;
 
     }

@@ -1,3 +1,10 @@
+package facility;
+
+import enums.FacilityState;
+import human.Cleaner;
+import human.Guest;
+import settings.Settings;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -6,28 +13,17 @@ import java.awt.event.MouseListener;
 
 // I've to create a file that holds all colors really
 
-public class Kamer extends Facility {
+public class Room extends Facility {
     private Guest guest;
     private Cleaner cleaner;
     private boolean isDirty;
-    private final Color unavailableColor1;
-    private final Color unavailableColor2;
-    private final Color dirtyColor1;
-    private final Color dirtyColor2;
     private MouseListener onHover;
 
-    public Kamer(JPanel superPanel, Facility[][] ruimtes, int row, int column) {
-        super(superPanel, new Color(224, 246, 218),
-                new Color(173, 222, 161), ruimtes, row, column);
+    public Room(JPanel superPanel, Facility[][] ruimtes, int row, int column) {
+        super(superPanel, ruimtes, row, column);
         this.guest = null;
         this.isDirty = false;
         this.cleaner =  null;
-
-        unavailableColor1 = new Color(246, 210, 210,255);
-        unavailableColor2 = new Color(255, 138, 138,255);
-
-       dirtyColor1 = new Color(249, 252, 224,255);
-       dirtyColor2 = new Color(247, 253, 136,255);
     }
 
     public Cleaner getCleaner() {
@@ -41,9 +37,8 @@ public class Kamer extends Facility {
     public void clean(Cleaner cleaner) {
         this.cleaner = null;
         this.isDirty = false;
-        this.setBorder(new LineBorder(availableColor2, 2));
-        changeGroundColor(availableColor1, availableColor2);
-
+        this.setBorder(new LineBorder(this.getColor(FacilityState.AVAILABLE2), 2));
+        changeGroundColor(getColor(FacilityState.AVAILABLE1), this.getColor(FacilityState.AVAILABLE2));
     }
 
     public boolean isDirty() {
@@ -56,9 +51,9 @@ public class Kamer extends Facility {
         if (guest != null) {
             this.isDirty = true;
             this.guest = guest;
-            this.setBorder(new LineBorder(unavailableColor2 , 2));
-            changeGroundColor(unavailableColor1, unavailableColor2);
-            Kamer kamer = this;
+            this.setBorder(new LineBorder(getColor(FacilityState.UNAVAILABLE2) , 2));
+            changeGroundColor(getColor(FacilityState.UNAVAILABLE1), getColor(FacilityState.UNAVAILABLE2));
+            Room kamer = this;
 
             this.onHover = new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -66,7 +61,7 @@ public class Kamer extends Facility {
                     kamer.setBorder(new LineBorder(Color.YELLOW, 2));
                 }
                 public void mouseExited(java.awt.event.MouseEvent evt) {
-                    kamer.setBorder(new LineBorder(unavailableColor2, 2));
+                    kamer.setBorder(new LineBorder(kamer.getColor(FacilityState.UNAVAILABLE2), 2));
                 }
             };
             this.addMouseListener(this.onHover);
@@ -74,8 +69,8 @@ public class Kamer extends Facility {
             this.removeMouseListener(this.onHover);
             this.guest = null;
 
-            changeGroundColor(dirtyColor1, dirtyColor2);
-            this.setBorder(new LineBorder(dirtyColor2, 2));
+            changeGroundColor(getColor(FacilityState.DIRTY1), getColor(FacilityState.DIRTY2));
+            this.setBorder(new LineBorder(getColor(FacilityState.DIRTY2), 2));
         }
     }
 

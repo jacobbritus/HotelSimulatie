@@ -1,3 +1,7 @@
+package simulation;
+
+import settings.Settings;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -42,22 +46,21 @@ public class SimulationController extends JPanel {
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
-        this.ticksLabel = new JLabel("" + (1000 / Settings.ticks));
+        this.ticksLabel = new JLabel("x" + (1000 / Settings.ticks));
 
         this.add(createButton("-", e -> {
             Settings.ticks = Math.min(Settings.ticks * 2, 1000);
-            this.ticksLabel.setText("" + (1000 / Settings.ticks));
+            this.ticksLabel.setText("x" + (1000 / Settings.ticks));
             this.HTEtimer.setDelay(Settings.ticks);
         }));
 
-        this.add(
-                new JLabel("Ticks: ")
-        );
+
         this.add(ticksLabel);
 
         this.add(createButton("+", e -> {
-            Settings.ticks = Math.max(Settings.ticks / 2, 1);
-            this.ticksLabel.setText("" + (1000 / Settings.ticks));
+            Settings.ticks = Math.max(Settings.ticks / 2, 31);
+            System.out.println(Settings.ticks);
+            this.ticksLabel.setText("x" + (1000 / Settings.ticks));
             this.HTEtimer.setDelay(Settings.ticks);
         }));
 

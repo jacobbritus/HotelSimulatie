@@ -1,22 +1,25 @@
+package facility;
+
+import enums.FacilityState;
+import settings.FacilityColors;
+import settings.Settings;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.util.HashMap;
 
 public class Facility extends JPanel {
-    Color availableColor1;
-    Color availableColor2;
-    private int row;
-    private int column;
+    private final int row;
+    private final int column;
     Tile[][] tiles;
     Facility[][] facilites;
 
-    public Facility(JPanel superPanel, Color color1, Color color2, Facility[][] facilites, int row, int column) {
+    public Facility(JPanel superPanel, Facility[][] facilites, int row, int column) {
         this.row = row;
         this.column = column;
         this.facilites = facilites;
-        this.availableColor1 = color1;
-        this.availableColor2 = color2;
-        this.setBorder(new LineBorder(color2, 2));
+        this.setBorder(new LineBorder(this.getColor(FacilityState.DEFAULT2), 2));
 
         this.addTiles();
 
@@ -46,7 +49,6 @@ public class Facility extends JPanel {
         for (int r = 0; r < Settings.facilityTilesSize; r++) {
             for (int c = 0; c < Settings.facilityTilesSize; c++) {
                 Tile tile = new Tile(this,
-                        availableColor1, availableColor2,
                         (c + r % 2) % 2 == 0,
                         r, c);
 
@@ -54,6 +56,12 @@ public class Facility extends JPanel {
                 tiles[r][c] = tile;
             }
         }
+    }
+
+    public Color getColor(FacilityState state) {
+        HashMap<FacilityState, Color> map = FacilityColors.map.get(this.getClass());
+
+        return map.get(state);
     }
 
     public void reload() {

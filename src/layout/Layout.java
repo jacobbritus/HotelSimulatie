@@ -1,3 +1,10 @@
+package layout;
+
+import enums.Direction;
+import facility.*;
+import settings.Settings;
+import simulation.SimulationController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -6,10 +13,10 @@ import java.util.Collections;
 public class Layout extends JPanel {
     private final Facility[][] facilities;
     private ArrayList<Lobby> lobbies;
-    private ArrayList<Kamer> rooms;
+    private ArrayList<Room> rooms;
 
 
-    public Layout(String[][] rawGrid) {
+    public Layout(String[][] rawGrid, SimulationController simulationController) {
         int height = rawGrid.length;
         int width = rawGrid[0].length;
         facilities = new Facility[height][width];
@@ -26,7 +33,7 @@ public class Layout extends JPanel {
         ));
 
         // Add all facilities and connect their tiles
-        addFacilities(rawGrid);
+        addFacilities(rawGrid, simulationController);
         connectTiles();
 
         // Store important facilities once
@@ -35,7 +42,7 @@ public class Layout extends JPanel {
                 Facility facility = this.facilities[r][c];
                 if (facility == null) continue;
                 if (facility instanceof Lobby lobby) lobbies.add(lobby);
-                if (facility instanceof Kamer kamer) rooms.add(kamer);
+                if (facility instanceof Room kamer) rooms.add(kamer);
             }
         }
 
@@ -46,7 +53,7 @@ public class Layout extends JPanel {
         return lobbies;
     }
 
-    public ArrayList<Kamer> getRooms() {
+    public ArrayList<Room> getRooms() {
         Collections.shuffle(this.rooms);
         return this.rooms;
     }
@@ -77,16 +84,16 @@ public class Layout extends JPanel {
         return randomFacility.getTiles()[dr][dc];
     }
 
-    private void addFacilities(String[][] grid) {
+    private void addFacilities(String[][] grid, SimulationController simulationController) {
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
 
                 String type = grid[r][c];
                 Facility o;
                 switch (type) {
-                    case "Kamer" -> o = new Kamer(this, facilities, r, c);
+                    case "Kamer" -> o = new Room(this, facilities, r, c);
                     case "Lift" -> o = new Lift(this, facilities, r, c);
-                    case "Trap" -> o = new Trap(this, facilities, r, c);
+                    case "Trap" -> o = new Stairs(this, facilities, r, c);
                     case "Lobby" -> o = new Lobby(this, facilities, r, c);
                     case "Hall" -> o = new Hall(this, facilities, r, c);
                     default -> {

@@ -1,3 +1,10 @@
+package facility;
+
+import enums.Direction;
+import enums.FacilityState;
+import human.Human;
+import settings.Settings;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
@@ -6,15 +13,14 @@ public class Tile extends JLabel {
     private final Facility facility;
     private final int row;
     private final int column;
-    private final Color color;
-    private Color activeColor;
-    private boolean isEven;
+    private Color color;
+    private final boolean isEven;
     private Human human;
     private int gCost;
     private int hCost;
     private final HashMap<Direction, Tile> neighbours;
 
-    public Tile(Facility facility, Color color1, Color color2, boolean isEven, int row, int column) {
+    public Tile(Facility facility, boolean isEven, int row, int column) {
         this.gCost = 0;
         this.hCost = 0;
         this.row = row;
@@ -27,13 +33,12 @@ public class Tile extends JLabel {
         this.neighbours.put(Direction.RIGHT, null);
         this.isEven = isEven;
         if (isEven || !Settings.setSquaresAlternatingColors) {
-            this.setBackground(color1);
-            this.color = color1;
+            this.setBackground(facility.getColor(FacilityState.DEFAULT1));
+            this.color = facility.getColor(FacilityState.DEFAULT1);
         } else {
-            this.setBackground(color2);
-            this.color = color2;
+            this.setBackground(facility.getColor(FacilityState.DEFAULT2));
+            this.color = facility.getColor(FacilityState.DEFAULT2);
         }
-        this.activeColor = color;
 
         this.setOpaque(true);
     }
@@ -47,7 +52,7 @@ public class Tile extends JLabel {
     }
 
     public void setActiveColor(Color color) {
-        this.activeColor = color;
+        this.color = color;
     }
 
     public Color getColor() {
@@ -79,7 +84,7 @@ public class Tile extends JLabel {
     }
 
     public void revertColor() {
-        this.setBackground(this.activeColor);
+        this.setBackground(this.color);
     }
 
     public int getColumn() {

@@ -1,3 +1,4 @@
+import layout.LayoutParser;
 import org.w3c.dom.Document;
 
 public class Main {
@@ -15,7 +16,7 @@ public class Main {
         String[][] grid = layoutParser.convertLayout(doc);
 
         if (grid == null) {
-            System.out.println("Layout is ongeldig. Simulatie wordt niet gestart.");
+            System.out.println("layout.Layout is ongeldig. Simulatie wordt niet gestart.");
             return;
         }
 

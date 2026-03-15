@@ -342,7 +342,7 @@ Compilation: enabled, stopped_count=0, restarted_count=0
 Compilation events (20 events):
 Event: 503.507 Thread 0x0000000143020800 3542       3       java.util.HashMap$TreeNode::<init> (10 bytes)
 Event: 503.507 Thread 0x0000000143020800 nmethod 3542 0x000000010fa23ac8 code [0x000000010fa23c00, 0x000000010fa23d70]
-Event: 602.919 Thread 0x000000014301da00 3543       4       Tile::setHuman (14 bytes)
+Event: 602.919 Thread 0x000000014301da00 3543       4       facility.Tile::setHuman (14 bytes)
 Event: 602.937 Thread 0x000000014301da00 nmethod 3543 0x0000000117138788 code [0x0000000117138a00, 0x0000000117139728]
 Event: 657.460 Thread 0x0000000143020800 3544       3       java.util.HashMap::replacementNode (21 bytes)
 Event: 657.460 Thread 0x0000000143020800 nmethod 3544 0x000000010fa23dc8 code [0x000000010fa23f00, 0x000000010fa24220]
@@ -352,7 +352,7 @@ Event: 696.007 Thread 0x0000000143020800 3546       3       java.awt.EventDispat
 Event: 696.008 Thread 0x0000000143020800 nmethod 3546 0x000000010fa24a88 code [0x000000010fa24c40, 0x000000010fa25120]
 Event: 1024.899 Thread 0x0000000143020800 3547       3       java.util.HashMap$TreeNode::putTreeVal (314 bytes)
 Event: 1024.901 Thread 0x0000000143020800 nmethod 3547 0x000000010fa25188 code [0x000000010fa25480, 0x000000010fa26898]
-Event: 1048.078 Thread 0x000000014301da00 3548       4       Guest::assignRoom (146 bytes)
+Event: 1048.078 Thread 0x000000014301da00 3548       4       human.Guest::assignRoom (146 bytes)
 Event: 1048.103 Thread 0x0000000143020800 3549 %s!   3       sun.java2d.metal.MTLRenderQueue$QueueFlusher::run @ 2 (234 bytes)
 Event: 1048.105 Thread 0x0000000143020800 nmethod 3549% 0x000000010fa26948 code [0x000000010fa26e80, 0x000000010fa29ba8]
 Event: 1048.109 Thread 0x000000014301da00 nmethod 3548 0x0000000117139908 code [0x0000000117139b80, 0x000000011713ade0]
@@ -1116,7 +1116,7 @@ Dynamic libraries:
 0x00000001e3e01000 	/System/Library/PrivateFrameworks/JetEngine.framework/Versions/A/JetEngine
 0x00000002499f5000 	/System/Library/PrivateFrameworks/LinkMetadata.framework/Versions/A/LinkMetadata
 0x00000001b1276000 	/System/Library/PrivateFrameworks/OnBoardingKit.framework/Versions/A/OnBoardingKit
-0x00000002575a8000 	/System/Library/PrivateFrameworks/Settings.framework/Versions/A/Settings
+0x00000002575a8000 	/System/Library/PrivateFrameworks/settings.Settings.framework/Versions/A/settings.Settings
 0x0000000195a6a000 	/System/Library/Frameworks/CoreSpotlight.framework/Versions/A/CoreSpotlight
 0x0000000249c36000 	/System/Library/PrivateFrameworks/LinkServices.framework/Versions/A/LinkServices
 0x000000023a628000 	/System/Library/PrivateFrameworks/DoNotDisturb.framework/Versions/A/DoNotDisturb

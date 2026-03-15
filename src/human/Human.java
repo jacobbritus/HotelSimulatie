@@ -1,3 +1,12 @@
+package human;
+
+import facility.Facility;
+import facility.Room;
+import facility.Lift;
+import facility.Tile;
+import layout.Layout;
+import settings.Settings;
+
 import java.awt.Color;
 import java.util.*;
 
@@ -6,13 +15,13 @@ public class Human {
     private int stepsTaken;
     private ArrayList<Tile> destinationPath;
     private boolean atDestination;
-    private Integer walkingCooldown;
+    private Integer cooldown;
     private Integer lifeTime;
-    private boolean isUsingLift;
+    private final boolean isUsingLift;
     Color color;
 
     public Human(Tile tile) {
-        this.walkingCooldown = null;
+        this.cooldown = null;
         this.atDestination = true;
         this.stepsTaken = 0;
         this.isUsingLift = false;
@@ -45,19 +54,13 @@ public class Human {
     }
 
     public void setCooldown(Integer milliseconds) {
-//        if (milliseconds != null) {
-//            this.walkingCooldown = milliseconds;
-//        } else {
-//            if ((int) (Math.random() * 100) > 98 ) {
-//                this.walkingCooldown = (Settings.ticks) * (int) (Math.random() * 10);
-//            }
-//        }
+        this.cooldown = milliseconds;
     }
 
     public boolean activeCooldown() {
-        if (walkingCooldown != null) {
-            this.walkingCooldown -= Settings.ticks;
-            if (walkingCooldown < 0) this.walkingCooldown = null;
+        if (cooldown != null) {
+            this.cooldown -= Settings.ticks;
+            if (cooldown < 0) this.cooldown = null;
             return true;
         }
         return false;
@@ -139,8 +142,8 @@ public class Human {
 
     public boolean isKamer(Tile neighbour) {
         Facility facility = neighbour.getFacility();
-        if  (this instanceof Guest) return facility instanceof Kamer kamer && kamer.getGuest() != this;
-        else if (this instanceof Cleaner cleaner)  return facility instanceof Kamer kamer && (kamer.getCleaner() != this && this.getTile().getFacility() != kamer);
+        if  (this instanceof Guest) return facility instanceof Room kamer && kamer.getGuest() != this;
+        else if (this instanceof Cleaner cleaner)  return facility instanceof Room kamer && (kamer.getCleaner() != this && this.getTile().getFacility() != kamer);
         return false;
     }
 
