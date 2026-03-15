@@ -2,63 +2,71 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Set;
 
 public class Applicatie extends JFrame implements KeyListener {
     Simulation simulation;
+    boolean sidebarVisible;
 
     public Applicatie() {
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
+
+
+
+
+
     }
 
     public void startSimulatie(String[][] rauweGrid) {
-
-
         simulation = new Simulation(rauweGrid);
+        sidebarVisible = true;
 
-        SimulationController simulationController = new SimulationController(simulation);
-        simulation.setSimulationController(simulationController);
-
-        JScrollPane scrollPane = new JScrollPane(simulation);
+        this.setLayout(new BorderLayout());
 
 
-//        scrollPane.getViewport().setAlignmentX(0.2F);
-
-        // Change scroll speed
-        scrollPane.getVerticalScrollBar().setUnitIncrement(9);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(9);
 
 
-//        scrollPane.setBackground(Settings.achtergrondKleur);
-        scrollPane.setBorder(null); // It has a border for some reason
-
+        JScrollPane scrollPane = new MyScrollPane(simulation);
 
         this.getContentPane().add(scrollPane);
 
         // Put the controller (Top bar UI) at the top of the screen
-        scrollPane.setColumnHeaderView(simulationController);
+//        scrollPane.setColumnHeaderView(simulationController);
 
 
-        // This is done to avoid empty spots around the border
-        JPanel cornerTopRight = new JPanel();
-        cornerTopRight.setBackground(Color.WHITE);
-        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerTopRight);
+        SimulationSidebar simulationSidebar = new SimulationSidebar(simulation);
+        simulation.setSimulationSidebar(simulationSidebar);
 
-        JPanel cornerBottomRight = new JPanel();
-        cornerTopRight.setBackground(Color.WHITE);
-        scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, cornerBottomRight);
+        SimulationController simulationController = new SimulationController(simulation, e -> {
+            System.out.println(this.sidebarVisible);
+            if (this.sidebarVisible) {
+                simulationSidebar.setPreferredSize(new Dimension(0, Settings.schermHoogte));
+                this.sidebarVisible = false;
+            } else {
+                this.sidebarVisible = true;
+                simulationSidebar.setPreferredSize(new Dimension(Settings.schermBreedte / 4, Settings.schermHoogte));
+            }
 
+            simulationSidebar.revalidate();
+            simulationSidebar.repaint();
+        });
+        simulation.setSimulationController(simulationController);
+        this.add(simulationController, BorderLayout.NORTH);
 
-
-
+        this.add(simulationSidebar, BorderLayout.WEST);
         this.setVisible(true);
+
+        simulation.zoom(Settings.facilityTilesSize * -1);
     }
+
 
 
     @Override
     public void keyPressed(KeyEvent e) {
+        System.out.println(e.getKeyChar());
         if (e.getKeyChar() == '+') {
             simulation.zoom(Settings.facilityTilesSize);
         } else if (e.getKeyChar() == '-') {

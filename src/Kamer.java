@@ -24,7 +24,6 @@ public class Kamer extends Facility {
         unavailableColor1 = new Color(246, 210, 210,255);
         unavailableColor2 = new Color(255, 138, 138,255);
 
-
        dirtyColor1 = new Color(249, 252, 224,255);
        dirtyColor2 = new Color(247, 253, 136,255);
     }

@@ -9,8 +9,10 @@ public class SimulationController extends JPanel {
     private final Simulation simulation;
     private final Timer HTEtimer;
     private final JLabel ticksLabel;
+    private boolean paused;
+    private boolean started;
 
-    public SimulationController(Simulation simulation) {
+    public SimulationController(Simulation simulation, ActionListener actionListener) {
         this.runTime = 0;
         this.simulation = simulation;
 
@@ -20,38 +22,91 @@ public class SimulationController extends JPanel {
         });
         this.ticksLabel = new JLabel("" + (110 - Settings.ticks));
 
-        this.setBackground(new Color(20, 20, 20 ,50));
+        this.setBackground(Settings.themeColor);
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-        this.setOpaque(false); // Avoid weird behavior when scrolling
+//        this.setOpaque(true); // Avoid weird behavior when scrolling
         this.setPreferredSize(new Dimension(0, 48));
-        this.setBackground(Color.GRAY);
 
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
-                Color.lightGray), new EmptyBorder(10, 10, 10, 10)));
+                Settings.themeColor2), new EmptyBorder(10, 10, 10, 10)));
 
-        createButton("Start", e -> this.HTEtimer.start());
-        createButton("Reset", e -> {
-            this.simulation.reset();
-            this.HTEtimer.stop();
-        });
-        createButton("Pause", e -> this.HTEtimer.stop());
-        createButton("Decrease Speed", e -> {
+
+        this.add(createButton("≡", actionListener));
+
+        this.add(Box.createVerticalStrut(20)); // 5px gap
+
+        this.add(createButton("-", e -> {
             Settings.ticks = Math.min(Settings.ticks + 10, 100);
             this.ticksLabel.setText("" + (110 - Settings.ticks));
             this.HTEtimer.setDelay(Settings.ticks);
-        });
-        createButton("Increase Speed", e -> {
-            Settings.ticks = Math.max(Settings.ticks - 10, 10);
-            this.ticksLabel.setText("" + (110 - Settings.ticks));
-            this.HTEtimer.setDelay(Settings.ticks);
-        });
+        }));
 
         this.add(
                 new JLabel("Speed: ")
         );
-
-
         this.add(ticksLabel);
+
+        this.add(createButton("+", e -> {
+            Settings.ticks = Math.max(Settings.ticks - 10, 10);
+            this.ticksLabel.setText("" + (110 - Settings.ticks));
+            this.HTEtimer.setDelay(Settings.ticks);
+        }));
+
+
+        Component x = Box.createVerticalStrut(3);
+        this.add(x); // 5px gap
+
+
+        JButton startButton = createButton("Start", null);
+
+
+        JButton pauseButton = createButton("Pause", null);
+
+        pauseButton.addActionListener(e -> {
+            if (!started) return;
+            if (this.paused) {
+                pauseButton.setText("Pause");
+                this.HTEtimer.start();
+                this.paused = false;
+            } else {
+                pauseButton.setText("Resume");
+                this.HTEtimer.stop();
+                this.paused = true;
+            }
+        });
+        pauseButton.setForeground(Color.LIGHT_GRAY);
+
+
+
+
+        startButton.addActionListener(e -> {
+            if (this.started) {
+                this.simulation.reset();
+                this.HTEtimer.stop();
+                startButton.setText("Start");
+                pauseButton.setForeground(Color.GRAY);
+              this.started = false;
+            } else {
+                this.started = true;
+                this.HTEtimer.start();
+                startButton.setText("Reset");
+                startButton.setForeground(Color.RED);
+                pauseButton.setForeground(Color.BLACK);
+            }
+        });
+        this.add(startButton);
+
+
+
+        this.add(pauseButton);
+
+
+
+
+//        createButton("Reset", e -> {
+//            this.simulation.reset();
+//            this.HTEtimer.stop();
+//        });
     }
 
     public int getRunTime() {
@@ -59,12 +114,12 @@ public class SimulationController extends JPanel {
     }
 
     // compose later
-    public void createButton(String text, ActionListener actionListener) {
+    public JButton createButton(String text, ActionListener actionListener) {
         JButton startKnop = new JButton(text);
         startKnop.setFocusable(false);
-
+        startKnop.setAlignmentX(Component.RIGHT_ALIGNMENT);
         startKnop.addActionListener(actionListener);
-        this.add(startKnop);
+        return startKnop;
     }
 
 

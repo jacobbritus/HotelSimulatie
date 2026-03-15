@@ -1,43 +1,107 @@
-// Source - https://stackoverflow.com/a/66369769
-// Posted by dmitry
-// Retrieved 2026-03-13, License - CC BY-SA 4.0
-
 import javax.swing.*;
+import javax.swing.border.MatteBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 
 public class MyScrollPane extends JScrollPane {
     public MyScrollPane(Component view) {
         super(view);
-    }
 
-    @Override
-    public JScrollBar createVerticalScrollBar() {
-        return new MyScrollBar(JScrollBar.VERTICAL);
-    }
-
-    @Override
-    public JScrollBar createHorizontalScrollBar() {
-        return new MyScrollBar(JScrollBar.HORIZONTAL);
-    }
+        // Change scroll speed
+        this.getVerticalScrollBar().setUnitIncrement(9);
+        this.getHorizontalScrollBar().setUnitIncrement(9);
+        this.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
 
-    protected class MyScrollBar extends ScrollBar {
-        public MyScrollBar(int orientation) {
-            super(orientation);
-//            setUI(this.createU);
-            setOpaque(false);
-        }
+        this.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            protected void configureScrollBarColors() {
+                this.trackColor = Color.RED;
+            }
+        });
 
-        public void paintComponent(Graphics g) {
-            Graphics2D g2 = (Graphics2D) g;
 
-            int borderDiameter = 32;
+        this.setBackground(Settings.themeColor);
+        this.setOpaque(true);
+        this.setBorder(null);
 
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(Color.gray);
-            g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, borderDiameter, borderDiameter);
+        this.getVerticalScrollBar().setFocusable(false);
+        this.getHorizontalScrollBar().setFocusable(false);
 
-            super.paintComponent(g);
-        }
+        this.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0));
+        this.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8));
+
+
+        this.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = Settings.themeColor2; // draggable part
+                this.trackColor = Settings.themeColor;    // background track
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0,0));
+                button.setMinimumSize(new Dimension(0,0));
+                button.setMaximumSize(new Dimension(0,0));
+                button.setFocusable(false);
+                return button;
+            }
+        });
+
+
+
+        this.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
+
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = Settings.themeColor2; // draggable part
+                this.trackColor = Settings.themeColor;    // background track
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0,0));
+                button.setMinimumSize(new Dimension(0,0));
+                button.setMaximumSize(new Dimension(0,0));
+                button.setFocusable(false);
+                return button;
+            }
+        });
+
+
+
+        JPanel cornerTopRight = new JPanel();
+        cornerTopRight.setBackground(Settings.themeColor);
+        this.setCorner(JScrollPane.UPPER_RIGHT_CORNER, cornerTopRight);
+
+
+        JPanel cornerTopLeft = new JPanel();
+        cornerTopLeft.setBackground(Settings.themeColor);
+        this.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerTopLeft);
+
+        JPanel cornerBottomRight = new JPanel();
+        cornerBottomRight.setBackground(Settings.themeColor);
+        this.setCorner(JScrollPane.LOWER_RIGHT_CORNER, cornerBottomRight);
     }
 }

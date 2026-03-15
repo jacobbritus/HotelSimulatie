@@ -2,8 +2,6 @@
 
 <label text="Lift" row="2" column="2" rowSpan="2" colSpan="2" />
 
-
-
 <label text="Kamer" row="0" column="1" colSpan="4" />
 
 <label text="Kamer" row="1" column="0" rowSpan="4" />

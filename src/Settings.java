@@ -9,7 +9,13 @@ public final class Settings {
 
     // Achtergrond Kleur
     // Default = Color.WHITE
-    public static Color achtergrondKleur = Color.BLACK;
+    public static Color achtergrondKleur = new Color(230, 230, 230, 255);
+    public static Color themeColor = new Color(240, 240, 240,255);
+    public static Color themeColor2 = new Color(200, 200, 200,255);
+
+//    public static Color achtergrondKleur = new Color(20, 20, 20, 255);
+//    public static Color themeColor = new Color(30, 30, 30,255);
+//    public static Color themeColor2 = new Color(56, 56, 56,255);
 
     // Bepaald hoe hoog en breed elk Oppervlakte is
     // Default = 100

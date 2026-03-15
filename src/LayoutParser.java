@@ -57,10 +57,10 @@ public class LayoutParser {
 
         //  Read span attributes and check if it fits
         int rowSpan = label.getAttribute("rowSpan").isEmpty() ? 1 :
-                Integer.parseInt(label.getAttribute("rowSpan")) + row > this.gridRows - 1 ? 1 :
+                Integer.parseInt(label.getAttribute("rowSpan")) + row > this.gridRows  ? 1 :
                 Integer.parseInt(label.getAttribute("rowSpan"));
         int colSpan = label.getAttribute("colSpan").isEmpty() ? 1 :
-                Integer.parseInt(label.getAttribute("colSpan")) + col > this.gridColumns - 1 ? 1 :
+                Integer.parseInt(label.getAttribute("colSpan")) + col > this.gridColumns  ? 1 :
                 Integer.parseInt(label.getAttribute("colSpan"));
 
         return Map.ofEntries(
@@ -79,13 +79,14 @@ public class LayoutParser {
         NodeList labels = doc.getElementsByTagName("label");
 
         boolean[][] occupied = new boolean[this.gridRows][this.gridColumns]; // Track which cells are taken
+        boolean includesLobby = false;
 
         for (int i = 0; i < labels.getLength(); i++) {
             Node child = labels.item(i);
 
             if (child.getNodeType() != Node.ELEMENT_NODE) continue; // skip #text nodes
-
             Element label = (Element) child;
+            if (label.getAttribute("text").equals("Lobby")) includesLobby = true;
 
             if (!label.getAttribute("fill").isEmpty()) {
                 this.fill = label.getAttribute("text");
@@ -137,6 +138,7 @@ public class LayoutParser {
                 }
             }
         }
+        if (!includesLobby) return null;
         return grid;
     }
 
