@@ -1,6 +1,3 @@
-import enums.FacilityState;
-import facility.Facility;
-import facility.Room;
 import settings.FacilityColors;
 import settings.Settings;
 import simulation.Simulation;
@@ -44,26 +41,18 @@ public class Applicatie extends JFrame implements KeyListener {
         SimulationSidebar simulationSidebar = new SimulationSidebar(simulation);
         simulation.setSimulationSidebar(simulationSidebar);
 
-        SimulationController simulationController = new SimulationController(simulation, e -> {
-            System.out.println(this.sidebarVisible);
-            if (this.sidebarVisible) {
-                simulationSidebar.setPreferredSize(new Dimension(0, Settings.schermHoogte));
-                this.sidebarVisible = false;
-            } else {
-                this.sidebarVisible = true;
-                simulationSidebar.setPreferredSize(new Dimension(Settings.schermBreedte / 4, Settings.schermHoogte));
-            }
 
-            simulationSidebar.revalidate();
-            simulationSidebar.repaint();
-        });
+        SimulationController simulationController = new SimulationController(simulation, simulationSidebar);
         simulation.setSimulationController(simulationController);
         this.add(simulationController, BorderLayout.NORTH);
 
         this.add(simulationSidebar, BorderLayout.WEST);
         this.setVisible(true);
 
-        simulation.zoom(Settings.facilityTilesSize * -1);
+
+
+        simulation.init();
+        simulation.zoom(Settings.facilityTilesSize);
     }
 
 

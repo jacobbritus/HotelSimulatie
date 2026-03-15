@@ -3,6 +3,7 @@ package facility;
 import enums.FacilityState;
 import settings.FacilityColors;
 import settings.Settings;
+import simulation.SimulationController;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -12,18 +13,25 @@ import java.util.HashMap;
 public class Facility extends JPanel {
     private final int row;
     private final int column;
+    private final SimulationController simulationController;
     Tile[][] tiles;
     Facility[][] facilites;
 
-    public Facility(JPanel superPanel, Facility[][] facilites, int row, int column) {
+    public Facility(JPanel superPanel, Facility[][] facilites, int row, int column, SimulationController simC) {
         this.row = row;
         this.column = column;
         this.facilites = facilites;
         this.setBorder(new LineBorder(this.getColor(FacilityState.DEFAULT2), 2));
-
+        this.simulationController = simC;
         this.addTiles();
+        this.setOpaque(true);
 
         superPanel.add(this);
+    }
+
+    public SimulationController getSimulationController() {
+        System.out.println(this.simulationController);
+        return this.simulationController;
     }
 
     public int getRow() {

@@ -6,14 +6,17 @@ public final class Settings {
     private Settings() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 1080;
-    public static int schermHoogte = 720;
+    public static int schermBreedte = 1440;
+    public static int schermHoogte = 1080;
+
+    // Sidebar width
+    public static int sidebarWidth = 400;
 
     // Achtergrond Kleur
     // Default = Color.WHITE
-    public static Color achtergrondKleur = new Color(230, 230, 230, 255);
-    public static Color themeColor = new Color(240, 240, 240,255);
-    public static Color themeColor2 = new Color(200, 200, 200,255);
+    public static Color achtergrondKleur = new Color(240, 240, 240, 255);
+    public static Color themeColor = new Color(255, 255, 255,255);
+    public static Color themeColor2 = new Color(220, 220, 220,255);
 
 //    public static Color achtergrondKleur = new Color(25, 25, 25, 255);
 //    public static Color themeColor = new Color(30, 30, 30,255);

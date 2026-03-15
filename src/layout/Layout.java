@@ -91,11 +91,11 @@ public class Layout extends JPanel {
                 String type = grid[r][c];
                 Facility o;
                 switch (type) {
-                    case "Kamer" -> o = new Room(this, facilities, r, c);
-                    case "Lift" -> o = new Lift(this, facilities, r, c);
-                    case "Trap" -> o = new Stairs(this, facilities, r, c);
-                    case "Lobby" -> o = new Lobby(this, facilities, r, c);
-                    case "Hall" -> o = new Hall(this, facilities, r, c);
+                    case "Kamer" -> o = new Room(this, facilities, r, c, simulationController);
+                    case "Lift" -> o = new Lift(this, facilities, r, c, simulationController);
+                    case "Trap" -> o = new Stairs(this, facilities, r, c, simulationController);
+                    case "Lobby" -> o = new Lobby(this, facilities, r, c, simulationController);
+                    case "Hall" -> o = new Hall(this, facilities, r, c, simulationController);
                     default -> {
                         JPanel inaccessible = new JPanel();
                         inaccessible.setBackground(Settings.achtergrondKleur);

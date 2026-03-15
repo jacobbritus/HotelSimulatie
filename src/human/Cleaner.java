@@ -10,18 +10,24 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Cleaner extends Human {
-    Room roomToClean;
-    boolean isCleaning;
+    private Room roomToClean;
+    private boolean isCleaning;
+    private int roomsCleaned;
     public Cleaner(Tile tile) {
         super(tile);
         this.getTile().setBackground(Color.BLUE);
         this.roomToClean = null;
         this.isCleaning = false;
+        this.roomsCleaned = 0;
     }
 
     @Override
     public void setTile(Tile newTile, Color color) {
         super.setTile(newTile, Color.BLUE);
+    }
+
+    public int getRoomsCleaned() {
+        return roomsCleaned;
     }
 
     @Override
@@ -30,7 +36,7 @@ public class Cleaner extends Human {
             return;
         }
 
-        if (!this.isAtDestination()) {
+        if (!this.isAtDestination() && (this.getTile().getFacility() != this.roomToClean)) {
             this.move();
         } else {
             this.setAtDestination(false);
@@ -56,19 +62,19 @@ public class Cleaner extends Human {
 
             } else if (this.getTile().getFacility() == this.roomToClean) {
                 if (!this.isCleaning) {
-                    this.isCleaning =true;
-                    this.setCooldown(Settings.cleanerBaseCleaningTime);;
+                    this.isCleaning = true;
+                    this.setCooldown(Settings.cleanerBaseCleaningTime);
                 } else {
                     this.roomToClean.clean(this);
                     this.isCleaning = false;
                     this.roomToClean = null;
+                    this.roomsCleaned++;
                     this.getTile().setBackground(Color.BLUE);
                 }
                 destination = layout.getRandomTile(this.roomToClean);
 
             } else {
                 destination = layout.getRandomTile(null);
-//                setCooldown(1000);
             }
 
             if (destination != null) this.bfs(destination);

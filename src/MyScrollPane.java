@@ -22,7 +22,6 @@ public class MyScrollPane extends JScrollPane {
 
 
         this.setBackground(Settings.themeColor);
-        this.setOpaque(true);
         this.setBorder(null);
 
         this.getVerticalScrollBar().setFocusable(false);

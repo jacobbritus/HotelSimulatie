@@ -1,5 +1,7 @@
 package simulation;
 
+import facility.Room;
+import helper.FontHelper;
 import settings.Settings;
 
 import javax.swing.*;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 
 public class SimulationController extends JPanel {
     private final Simulation simulation;
+    private final SimulationSidebar simulationSidebar;
     private final Timer HTEtimer;
     private final JLabel ticksLabel;
     private final JLabel timeLabel;
@@ -17,11 +20,12 @@ public class SimulationController extends JPanel {
     private boolean paused;
     private boolean started;
 
-    public SimulationController(Simulation simulation, ActionListener actionListener) {
+    public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
         this.runTime = 0;
         this.simulation = simulation;
+        this.simulationSidebar = simulationSidebar;
 
-        this.timeLabel = new JLabel("00:00:00");
+        this.timeLabel = new JLabel("00:00:00  ");
 
         this.HTEtimer = new Timer(Settings.ticks, e -> {
             this.runTime += 1000 / Settings.ticks ;
@@ -40,17 +44,18 @@ public class SimulationController extends JPanel {
         // Children (compose later)
 
 
-        this.add(createButton("Menu", actionListener));
+        this.add(createButton("Menu", e -> {
+            this.simulationSidebar.toggle();
+        }));
 
-        this.add(timeLabel);
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
-        this.ticksLabel = new JLabel("x" + (1000 / Settings.ticks));
+        this.ticksLabel = new JLabel("  x" + (1000 / Settings.ticks) + "  ");
 
         this.add(createButton("-", e -> {
             Settings.ticks = Math.min(Settings.ticks * 2, 1000);
-            this.ticksLabel.setText("x" + (1000 / Settings.ticks));
+            this.ticksLabel.setText("  x" + (1000 / Settings.ticks) + "  ");
             this.HTEtimer.setDelay(Settings.ticks);
         }));
 
@@ -60,7 +65,7 @@ public class SimulationController extends JPanel {
         this.add(createButton("+", e -> {
             Settings.ticks = Math.max(Settings.ticks / 2, 31);
             System.out.println(Settings.ticks);
-            this.ticksLabel.setText("x" + (1000 / Settings.ticks));
+            this.ticksLabel.setText("  x" + (1000 / Settings.ticks) + "  ");
             this.HTEtimer.setDelay(Settings.ticks);
         }));
 
@@ -69,8 +74,7 @@ public class SimulationController extends JPanel {
         this.add(x); // 5px gap
 
 
-        JButton startButton = createButton("Start", null);
-        startButton.setForeground(Color.GREEN);
+
 
 
         JButton pauseButton = createButton("Pause", null);
@@ -89,41 +93,50 @@ public class SimulationController extends JPanel {
         });
         pauseButton.setForeground(Color.LIGHT_GRAY);
 
+        JButton startButton = createButton("Start", null);
+        startButton.setForeground(new Color(99, 196, 74,255));
+
         startButton.addActionListener(e -> {
             if (this.started) {
                 this.simulation.reset();
                 this.runTime = 0;
                 this.HTEtimer.stop();
-                startButton.setForeground(Color.GREEN);
+                startButton.setForeground(new Color(99, 196, 74,255));
                 startButton.setText("Start");
-                this.timeLabel.setText("00:00:00");
+                this.timeLabel.setText("00:00:00  ");
               this.started = false;
             } else {
                 this.started = true;
+                this.simulationSidebar.init();
                 this.HTEtimer.start();
                 startButton.setText("Reset");
                 startButton.setForeground(Color.RED);
                 pauseButton.setForeground(Color.BLACK);
             }
         });
+
+        this.add(timeLabel);
         this.add(startButton);
         this.add(pauseButton);
+
     }
 
     public int getRunTime() {
         return runTime;
     }
 
-
-
-
     // compose later
     public JButton createButton(String text, ActionListener actionListener) {
         JButton startKnop = new JButton(text);
+        startKnop.setFont(FontHelper.getFont("Regular").deriveFont(12f));
         startKnop.setFocusable(false);
         startKnop.setAlignmentX(Component.RIGHT_ALIGNMENT);
         startKnop.addActionListener(actionListener);
         return startKnop;
+    }
+
+    public void setShowRoom(Room room) {
+        this.simulationSidebar.setShowRoom(room);
     }
 }
 

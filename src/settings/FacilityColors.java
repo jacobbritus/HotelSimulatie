@@ -15,8 +15,6 @@ public final  class FacilityColors {
 
     public static Map<Class<? extends Facility>, HashMap<FacilityState, Color>> map = new HashMap<>();
 
-    // get Kamer -> map -> Kamer
-
     public static HashMap<FacilityState, Color> room = new HashMap<>();
     public static HashMap<FacilityState, Color> hall = new HashMap<>();
     public static HashMap<FacilityState, Color> lobby = new HashMap<>();

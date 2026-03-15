@@ -4,6 +4,7 @@ import enums.FacilityState;
 import human.Cleaner;
 import human.Guest;
 import settings.Settings;
+import simulation.SimulationController;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -19,8 +20,8 @@ public class Room extends Facility {
     private boolean isDirty;
     private MouseListener onHover;
 
-    public Room(JPanel superPanel, Facility[][] ruimtes, int row, int column) {
-        super(superPanel, ruimtes, row, column);
+    public Room(JPanel superPanel, Facility[][] ruimtes, int row, int column, SimulationController simulationController) {
+        super(superPanel, ruimtes, row, column, simulationController);
         this.guest = null;
         this.isDirty = false;
         this.cleaner =  null;
@@ -49,7 +50,6 @@ public class Room extends Facility {
 
 
         if (guest != null) {
-            this.isDirty = true;
             this.guest = guest;
             this.setBorder(new LineBorder(getColor(FacilityState.UNAVAILABLE2) , 2));
             changeGroundColor(getColor(FacilityState.UNAVAILABLE1), getColor(FacilityState.UNAVAILABLE2));
@@ -57,17 +57,24 @@ public class Room extends Facility {
 
             this.onHover = new MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    System.out.println(Settings.convertTime(guest.getLifeTime()));
                     kamer.setBorder(new LineBorder(Color.YELLOW, 2));
+
+                    kamer.getSimulationController().setShowRoom(kamer);
+
                 }
                 public void mouseExited(java.awt.event.MouseEvent evt) {
                     kamer.setBorder(new LineBorder(kamer.getColor(FacilityState.UNAVAILABLE2), 2));
+                    kamer.getSimulationController().setShowRoom(null);
                 }
             };
             this.addMouseListener(this.onHover);
         } else {
+            this.isDirty = true;
+            this.getSimulationController().setShowRoom(null);
             this.removeMouseListener(this.onHover);
             this.guest = null;
+
+
 
             changeGroundColor(getColor(FacilityState.DIRTY1), getColor(FacilityState.DIRTY2));
             this.setBorder(new LineBorder(getColor(FacilityState.DIRTY2), 2));
