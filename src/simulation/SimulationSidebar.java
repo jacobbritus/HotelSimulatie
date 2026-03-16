@@ -8,6 +8,7 @@ import settings.Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class SimulationSidebar extends JPanel {
     private JLabel humanCount;
     private JLabel title;
     private JPanel overviewPage;
-    private ArrayList<SidebarRow> rows;
+    private ArrayList<StatRow> rows;
     private HashMap <Statistic, HashMap<Statistic, String>> sections;
     private JPanel generalSection;
 
@@ -62,7 +63,7 @@ public class SimulationSidebar extends JPanel {
         this.add(title);
     }
 
-    public void toggle() {
+    public boolean toggle() {
         if (this.visible) {
             this.setPreferredSize(new Dimension(0, Settings.schermHoogte));
             this.visible = false;
@@ -72,6 +73,8 @@ public class SimulationSidebar extends JPanel {
         }
         this.revalidate();
         this.repaint();
+
+        return this.visible;
     }
 
     public void setShowRoom(Room roomtoShow) {
@@ -97,20 +100,54 @@ public class SimulationSidebar extends JPanel {
 
             for (Statistic statistic : statistics.keySet()) {
                 if (!statistic.getSection().equals(section.getString())) continue;
-                String title = statistic.getString() + ": ";
+                String title = statistic.getString() ;
                 Supplier<String> function = statistics.get(statistic);
-                SidebarRow row = new SidebarRow(title, this, function);
+                StatRow row = new StatRow(title, this, function, statistic.getUnit());
 
                 this.rows.add(row);
                sectionPanel.add(row);
             }
+
+
         }
 
+        JPanel buttonpanel = new JPanel();
+        buttonpanel.setOpaque(false);
+        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
+
+        SidebarButton test = new SidebarButton("Rooms");
+
+        JProgressBar b = new JProgressBar();
+
+        // set initial value
+
+
+
+        buttonpanel.add(test);
+        buttonpanel.add(Box.createVerticalStrut(10));
+        buttonpanel.add(new SidebarButton("Guests"));
+        buttonpanel.add(Box.createVerticalStrut(10));
+        buttonpanel.add(new SidebarButton("Something"));
+        buttonpanel.add(Box.createVerticalStrut(10));
+        buttonpanel.add(new SidebarButton("Cleaners"));
+
+        buttonpanel.add(Box.createVerticalGlue());
+        buttonpanel.add(Box.createVerticalStrut(10));
+        buttonpanel.add(new SidebarButton("Settings"));
+        buttonpanel.add(Box.createVerticalStrut(10));
+        buttonpanel.add(new SidebarButton("Quit Simulation"));
+
+
+        buttonpanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte));
+
+        buttonpanel.setBorder(new EmptyBorder(15 ,15, 15, 15));
+
+        this.add(buttonpanel);
 
         this.repaint();
         this.revalidate();
 
-        for (SidebarRow stat : this.rows) {
+        for (StatRow stat : this.rows) {
             stat.update();
         }
     }
@@ -118,7 +155,7 @@ public class SimulationSidebar extends JPanel {
 
 
     public void update() {
-        for (SidebarRow stat : this.rows) {
+        for (StatRow stat : this.rows) {
            stat.update();
         }
 

@@ -43,9 +43,18 @@ public class SimulationController extends JPanel {
 
 
         // Children (compose later)
-        this.add(createButton("Menu", e -> {
-            this.simulationSidebar.toggle();
-        }));
+        JButton menuButton = createButton("Close Menu", null);
+
+
+        menuButton.addActionListener( e -> {
+            if (this.simulationSidebar.toggle()) {
+                menuButton.setText("Close Menu");
+            } else {
+                menuButton.setText("Open Menu");
+            }
+        });
+
+        this.add(menuButton);
 
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
@@ -113,7 +122,6 @@ public class SimulationController extends JPanel {
         this.add(timeLabel);
         this.add(startButton);
         this.add(pauseButton);
-
     }
 
     public int getRunTime() {

@@ -18,7 +18,10 @@ public class Applicatie extends JFrame implements KeyListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
+
+        this.setBackground(Color.BLACK);
         FacilityColors.setup();
+
     }
 
     public void startSimulatie(String[][] rauweGrid) {
@@ -51,6 +54,7 @@ public class Applicatie extends JFrame implements KeyListener {
         
         simulation.init();
         simulation.zoom(Settings.facilityTilesSize);
+        simulationSidebar.init();
     }
 
 

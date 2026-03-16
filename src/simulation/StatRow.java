@@ -1,0 +1,99 @@
+package simulation;
+
+import helper.FontHelper;
+import settings.Settings;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.util.function.Supplier;
+
+public class StatRow extends JPanel {
+    Supplier<String> supplier;
+    JLabel valueLabel;
+    JProgressBar progressBar;
+    String unit;
+    public StatRow(String title, JPanel parent, Supplier<String> supplier, String unit) {
+        this.unit = unit;
+        this.supplier = supplier;
+        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        this.setOpaque(false);
+        JLabel item = new JLabel(title);
+        item.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+
+        Dimension size = item.getPreferredSize();
+        item.setPreferredSize(new Dimension(size.width + 20, size.height));
+
+
+        Component x = Box.createHorizontalGlue();
+        this.add(item);
+        this.add(x);
+
+
+        if (this.unit.equals("Percentage")) {
+            createProgressBar();
+        }
+
+        createNumericalValueLabel();
+
+
+
+        this.setBorder(new EmptyBorder(0, 2, 10, 25));
+
+        this.setMaximumSize(new Dimension(Short.MAX_VALUE, this.getPreferredSize().height));
+        this.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        parent.add(this);
+    }
+
+    public void createNumericalValueLabel() {
+        this.valueLabel = new JLabel();
+        this.valueLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        this.valueLabel.setForeground(Color.LIGHT_GRAY);
+        this.add(this.valueLabel);
+    }
+
+    public void createProgressBar() {
+        JProgressBar bar = new JProgressBar();
+
+        bar.setForeground(Settings.textColor);
+
+        bar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+            protected Color getSelectionBackground() { return Color.black; } // Text color over background
+            protected Color getSelectionForeground() { return Color.white; } // Text color over progress
+        });
+
+        bar.setMaximumSize(new Dimension(32, 4));
+
+// 1. Set the fill color (The progress)
+        bar.setForeground(new Color(46, 204, 113));
+
+// 2. Set the track color (The background)
+        bar.setBackground(Settings.themeColor2);
+
+        bar.setOpaque(true);
+
+// 3. IMPORTANT: On some OS, the border draws over the color.
+// This clears the "native" feel so your custom colors show up.
+        bar.setBorderPainted(false);
+
+//        bar.setBorder(new LineBorder(Color.RED, 4));
+
+
+        this.progressBar = bar;
+        this.add(this.progressBar);
+    }
+
+    public void update() {
+         if (this.unit.equals("Percentage")) {
+             int percentage = (int) Double.parseDouble(this.supplier.get());
+             if (percentage > 50) this.progressBar.setForeground(Color.YELLOW);
+             if (percentage > 90) this.progressBar.setForeground(Color.RED);
+             this.progressBar.setValue(percentage);
+             this.valueLabel.setText("   " + this.supplier.get() + "%");
+         } else {
+             this.valueLabel.setText(this.supplier.get());
+         }
+    }
+}

@@ -24,6 +24,7 @@ public class Simulation extends JPanel {
      private final JPanel testPanel;
      private final String[][] rauweGrid;
      private int millisecondsPassed;
+     private int spawnCooldown;
      private HashMap <Statistic, Supplier<String>> statisticsSupplierMap;
 
 //
@@ -32,6 +33,7 @@ public class Simulation extends JPanel {
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.rauweGrid = rauweGrid;
         this.statisticsSupplierMap = new HashMap<>();
+        this.spawnCooldown = Settings.guestSpawnTime;
 
         testPanel = new JPanel(new GridBagLayout());
         testPanel.setBackground(Settings.achtergrondKleur);
@@ -60,8 +62,23 @@ public class Simulation extends JPanel {
                 .filter(h -> h instanceof Cleaner).count() + "");
 
         // Rooms
-        this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> this.layout.getRooms().stream()
-                .filter(r -> r instanceof Room room && room.getGuest() != null).count() + "");
+        this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> {
+            long occupied = layout.getRooms().stream()
+                    .filter(r -> r instanceof Room room && room.getGuest() != null)
+                    .count();
+
+            int total = layout.getRooms().size();
+
+            // Check for 0 to avoid "Division by Zero" errors if the hotel is empty
+            if (total == 0) return "1";
+
+            // Casting (double) forces Java to use floating-point math
+            double percentage = (double) occupied / total * 100;
+
+            // Use String.format to round to 1 decimal place (e.g., 85.5%)
+            return String.format("%.1f", percentage);
+        });
+
         this.statisticsSupplierMap.put(Statistic.DirtyRooms, () -> this.layout.getRooms().stream()
                 .filter(r -> r instanceof Room room && room.isDirty()).count() + "");
 
@@ -110,9 +127,11 @@ public class Simulation extends JPanel {
         humans.removeIf(g -> g instanceof Guest guest&& guest.isLeaving());
 
 //        // Adding guests
-        if (simulationController.getRunTime() % 100 < 3) {
+        spawnCooldown -= (1000 / Settings.ticks);
+        if (spawnCooldown < 0) {
             Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
             humans.add(new Guest(tile));
+            this.spawnCooldown = Settings.guestSpawnTime;
         }
     }
 

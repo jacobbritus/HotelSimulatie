@@ -1,12 +1,17 @@
 import layout.LayoutParser;
 import org.w3c.dom.Document;
+import settings.Settings;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
         Applicatie applicatie = new Applicatie();
+        UIManager.put("Label.foreground", Settings.textColor);
 
         LayoutParser layoutParser = new LayoutParser();
-        Document doc = layoutParser.loadFile("layouts/realistic2.layout");
+        Document doc = layoutParser.loadFile("layouts/realistic.layout");
 
         if (doc == null) {
             System.out.println("Kon layout niet laden.");
