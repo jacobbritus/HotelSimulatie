@@ -144,7 +144,7 @@ public class Screen extends JFrame {
         back.setBounds(550, 600, 250, 60);
         back.addActionListener(e -> cardLayout.show(mainPanel, "title"));
         panel.add(back);
-        
+
         return panel;
     }
 
