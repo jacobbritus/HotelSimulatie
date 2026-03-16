@@ -43,13 +43,12 @@ public static Color textColor2 = Color.LIGHT_GRAY;
     // Oppervlakte Kleuren
 
     // Milliseconden per tik
-    public static int ticks = 1000;
-
+    public static int delay = 1000;
 
     // Guest times
 
     public static int guestBaseStayTime = 60 * 60;
-    public static int guestBaseSpawnTime = 60 * 30;
+    public static int guestBaseSpawnTime = 60 * 10;
     public static int guestBaseCheckInTime = 60 * 15;
 
     // Cleaner times

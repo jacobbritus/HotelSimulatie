@@ -23,10 +23,13 @@ public class SidebarSection extends JPanel {
                 Settings.themeColor2), new EmptyBorder(5, 15, 10, 0)));
 
         // --- Title ---
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setPreferredSize(new Dimension(Settings.sidebarWidth, 48));
-        titleLabel.setFont(FontHelper.getFont("SemiBold").deriveFont(16f));
-        titleLabel.setBorder(new EmptyBorder(0, 0, 10, 60));
-        this.add(titleLabel);
+        if (title != null) {
+
+            JLabel titleLabel = new JLabel(title);
+            titleLabel.setPreferredSize(new Dimension(Settings.sidebarWidth, 48));
+            titleLabel.setFont(FontHelper.getFont("SemiBold").deriveFont(16f));
+            titleLabel.setBorder(new EmptyBorder(0, 0, 10, 60));
+            this.add(titleLabel);
+        }
     }
 }

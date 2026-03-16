@@ -16,14 +16,12 @@ public abstract class Human implements RoomOccupant {
     private Tile destination;
     private Integer cooldown;
     private Integer lifeTime;
+    private Integer actionTime;
     private boolean isLeaving;
     private Room assignedRoom;
 
     public Human(Tile tile) {
-        this.cooldown = null;
-        this.destination = null;
         this.stepsTaken = 0;
-
         this.tile = tile;
         this.tile.setHuman(this);
     }
@@ -32,10 +30,9 @@ public abstract class Human implements RoomOccupant {
         return this.isLeaving;
     }
 
-    public void setIsLeaving(boolean bool) {
-        this.isLeaving = bool;
+    public void setIsLeaving() {
+        this.isLeaving = true;
     }
-
 
     public Tile getTile() {
         return tile;
@@ -67,7 +64,7 @@ public abstract class Human implements RoomOccupant {
 
     public boolean activeCooldown() {
         if (cooldown != null) {
-            this.cooldown -= Settings.ticks;
+            this.cooldown -= Settings.delay;
             if (cooldown < 0) this.cooldown = null;
             return true;
         }
@@ -77,13 +74,21 @@ public abstract class Human implements RoomOccupant {
     public Integer getLifeTime() {
         return lifeTime;
     }
-
-    public void setLifeTime(int lifeTime) {
+    public void setLifeTime(Integer lifeTime) {
         this.lifeTime = lifeTime;
     }
-
     public void decreaseLifeTime() {
-        this.lifeTime = Math.max(this.lifeTime - 1000 / Settings.ticks, 0);
+        this.lifeTime = Math.max(this.lifeTime - 1000 / Settings.delay, 0);
+    }
+
+    public Integer getActionTime() {
+        return actionTime;
+    }
+    public void setActionTime(Integer actionTime) {
+        this.actionTime = actionTime;
+    }
+    public void decreaseActionTime() {
+        this.actionTime = Math.max(this.actionTime - (1000 / Settings.delay), 0);
     }
 
     public void despawn() {
@@ -103,7 +108,6 @@ public abstract class Human implements RoomOccupant {
     }
 
     public abstract void decisionMaking(Layout layout);
-
 
     public void move() {
         if (stepsTaken < destinationPath.size() - 1) {

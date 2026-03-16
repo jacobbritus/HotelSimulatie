@@ -60,7 +60,6 @@ public class Applicatie extends JFrame implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
         if (e.getKeyChar() == '+') {
             simulation.zoom(Settings.facilityTilesSize);
         } else if (e.getKeyChar() == '-') {

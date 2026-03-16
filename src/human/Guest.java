@@ -14,8 +14,8 @@ import java.awt.*;
 public class Guest extends Human {
     private boolean isCheckedIn;
     private Room room;
-    private Color arrivalColor = Color.RED;
-    private Color checkedInColor = Color.GREEN;
+    private final Color arrivalColor = Color.RED;
+    private final Color checkedInColor = Color.GREEN;
 
     public Guest(Tile tile) {
         super(tile);
@@ -38,9 +38,8 @@ public class Guest extends Human {
 
     @Override
     public void decisionMaking(Layout layout) {
-        System.out.println(this.getLifeTime());
         // No room availability, walk around randomly in lobby. Maybe leave and note statistics (start lifetime and if they leave, add statistic)
-        if (!this.isCheckedIn || this.getLifeTime() == null || this.getLifeTime() < 1) { // Check in at lobby, find a room
+        if (!this.isCheckedIn || this.getLifeTime() == null || this.getLifeTime() <= 0) { // Check in at lobby, find a room
 //             this.setCooldown(settings.Settings.ticks * 100);
             if ((this.getTile().getFacility().getType() == FacilityType.LOBBY)) {
                 if (this.getLifeTime() == null) {
@@ -66,7 +65,7 @@ public class Guest extends Human {
     public void checkOut(Layout layout) {
         if (this.room != null) this.removeRoom(this.room);
 
-        this.setIsLeaving(true);
+        this.setIsLeaving();
         this.isCheckedIn = false;
     }
 

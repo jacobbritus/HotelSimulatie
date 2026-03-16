@@ -63,6 +63,7 @@ public class SimulationSidebar extends JPanel {
         pagesButtonsPanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte));
 
         pagesButtonsPanel.setBorder(new EmptyBorder(40 ,40, 30, 40));
+//        pagesButtonsPanel.setBorder(new LineBorder(Color.RED, 5));
 
         // Stats to update
         this.componentsToUpdate = new ArrayList<>();
@@ -93,6 +94,7 @@ public class SimulationSidebar extends JPanel {
         topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
 
         if (this.openedPages.size() > 1) {
+            topSection.setBorder(new EmptyBorder(10 ,0, 10, 0));
             addBackButton();
         }
 
@@ -142,7 +144,7 @@ public class SimulationSidebar extends JPanel {
     }
 
     public void openNewPage(SidebarPage activePage) {
-        removeAll();
+        this.removeAll();
         this.componentsToUpdate = new ArrayList<>();
         addTitle(activePage.getTitle());
         this.pagesButtonsPanel.removeAll();
@@ -151,7 +153,7 @@ public class SimulationSidebar extends JPanel {
     public void updateRoomButton(JButton button, Room  room) {
         Color[] activeColors = room.getActiveColors();
 
-        button.setBackground(activeColors[0]);
+//        button.setBackground(activeColors[0]);
         button.setBorderPainted(true);
         button.setBorder(new LineBorder(activeColors[1], 2));
     }
@@ -159,11 +161,34 @@ public class SimulationSidebar extends JPanel {
 
     public void getRoomsPage() {
         openNewPage(SidebarPage.ROOMS);
-        for (Room room : this.simulation.returnLayout().getRooms()) {
+
+
+//        HashMap<Statistic, Supplier<String>> statistics = simulation.getStatisticsSupplierMap();
+//
+//        StatisticSection section = StatisticSection.Rooms;
+//            JPanel sectionPanel = new SidebarSection(this, null);
+//
+//            this.add(sectionPanel);
+//
+//            for (Statistic statistic : statistics.keySet()) {
+//                if (!statistic.getSection().equals(section.getString())) continue;
+//                String title = statistic.getString() ;
+//                Supplier<String> function = statistics.get(statistic);
+//                StatRow row = new StatRow(title, this, function, statistic.getUnit());
+//                this.componentsToUpdate.add(row);
+//                row.update();
+//                this.add(row);
+//                sectionPanel.add(row);
+//            }
+
+        ArrayList<Room> rooms = this.simulation.returnLayout().getRooms();
+        for (int i = 0; i < rooms.size() ; i++) {
+            Room room = rooms.get(i);
+
             pagesButtonsPanel.setOpaque(false);
             pagesButtonsPanel.setLayout(new BoxLayout(pagesButtonsPanel, BoxLayout.Y_AXIS));
             pagesButtonsPanel.add(Box.createVerticalStrut(10));
-            SidebarButton button = new SidebarButton("Room");
+            SidebarButton button = new SidebarButton("Room " + (i + 1));
 
             updateRoomButton(button, room);
 
@@ -172,7 +197,7 @@ public class SimulationSidebar extends JPanel {
             pagesButtonsPanel.add(button);
         }
 
-        pagesButtonsPanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte / 2));
+        pagesButtonsPanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte ));
         this.add(pagesButtonsPanel);
 
         this.revalidate();
@@ -194,9 +219,7 @@ public class SimulationSidebar extends JPanel {
 
         for (StatisticSection section : StatisticSection.values()) {
             JPanel sectionPanel = new SidebarSection(this, section.getString());
-
             this.add(sectionPanel);
-
             for (Statistic statistic : statistics.keySet()) {
                 if (!statistic.getSection().equals(section.getString())) continue;
                 String title = statistic.getString() ;
@@ -204,7 +227,7 @@ public class SimulationSidebar extends JPanel {
                 StatRow row = new StatRow(title, this, function, statistic.getUnit());
                 row.update();
                 this.componentsToUpdate.add(row);
-               sectionPanel.add(row);
+                sectionPanel.add(row);
             }
         }
 

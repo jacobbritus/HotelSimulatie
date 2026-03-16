@@ -11,7 +11,7 @@ public class Main {
         UIManager.put("Label.foreground", Settings.textColor);
 
         LayoutParser layoutParser = new LayoutParser();
-        Document doc = layoutParser.loadFile("layouts/realistic.layout");
+        Document doc = layoutParser.loadFile("layouts/realistic2.layout");
 
         if (doc == null) {
             System.out.println("Kon layout niet laden.");

@@ -3,7 +3,6 @@ package simulation;
 import enums.RoomStatus;
 import enums.Statistic;
 import facility.Facility;
-import facility.Room;
 import facility.Tile;
 import human.Cleaner;
 import human.Guest;
@@ -132,7 +131,7 @@ public class Simulation extends JPanel {
         humans.removeIf(Human::isLeaving);
 
 //        // Adding guests
-        spawnCooldown -= (1000 / Settings.ticks);
+        spawnCooldown -= (1000 / Settings.delay);;
         if (spawnCooldown < 0) {
             Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
             humans.add(new Guest(tile));

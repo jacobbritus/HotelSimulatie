@@ -19,6 +19,8 @@ public class SimulationController extends JPanel {
     private int runTime;
     private boolean paused;
     private boolean started;
+    public final int[] speedMultipliers = {1, 2, 4, 8, 16, 32};
+    public int activeSpeedMultiplier = 0;
 
     public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
         this.runTime = 0;
@@ -27,8 +29,8 @@ public class SimulationController extends JPanel {
 
         this.timeLabel = new JLabel("00:00:00");
 
-        this.HTEtimer = new Timer(Settings.ticks, e -> {
-            this.runTime += 1000 / Settings.ticks ;
+        this.HTEtimer = new Timer(Settings.delay, e -> {
+            this.runTime += (1000 / Settings.delay);
             this.timeLabel.setText(Settings.convertTime(this.runTime));
             simulation.update();
         });
@@ -58,11 +60,11 @@ public class SimulationController extends JPanel {
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
-        this.ticksLabel = new JLabel((1000 / Settings.ticks) + "x");
+        this.ticksLabel = new JLabel(this.speedMultipliers[this.activeSpeedMultiplier] + "x");
         this.ticksLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
 
         this.add(createButton("-", e -> {
-            Settings.ticks = Math.min(Settings.ticks * 2, 1000);
+            this.activeSpeedMultiplier = Math.max(this.activeSpeedMultiplier - 1, 0);
             updateSpeed();
         }));
 
@@ -71,14 +73,13 @@ public class SimulationController extends JPanel {
         this.add(Box.createHorizontalStrut(20));
 
         this.add(createButton("+", e -> {
-            Settings.ticks = Math.max(Settings.ticks / 2, 31);
+            this.activeSpeedMultiplier = Math.min(this.activeSpeedMultiplier + 1, this.speedMultipliers.length - 1);
             updateSpeed();
         }));
 
 
         Component x = Box.createVerticalStrut(3);
         this.add(x); // 5px gap
-
 
 
         JButton pauseButton = createButton("Pause", null);
@@ -133,8 +134,9 @@ public class SimulationController extends JPanel {
     }
 
     public void updateSpeed() {
-        this.ticksLabel.setText((1000 / Settings.ticks) + "x");
-        this.HTEtimer.setDelay(Settings.ticks);
+        Settings.delay = 1000 / this.speedMultipliers[activeSpeedMultiplier];
+        this.ticksLabel.setText(this.speedMultipliers[this.activeSpeedMultiplier] + "x");
+        this.HTEtimer.setDelay(Settings.delay);
     }
 
     // compose later

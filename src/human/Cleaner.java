@@ -10,15 +10,12 @@ import java.awt.*;
 
 public class Cleaner extends Human {
     private Room room;
-    private boolean isCleaning;
-    private Integer currentCleaningTime;
     private int roomsCleaned;
 
     public Cleaner(Tile tile) {
         super(tile);
         this.getTile().setBackground(Color.BLUE);
         this.room = null;
-        this.isCleaning = false;
         this.roomsCleaned = 0;
     }
 
@@ -33,29 +30,26 @@ public class Cleaner extends Human {
 
     @Override
     public void decisionMaking(Layout layout) {
-        System.out.println(currentCleaningTime);
         if (this.room == null) {
 //                setCooldown(100);
             Room nearestRoom = layout.getNearestRoom(this); // assign room
             if (nearestRoom != null && nearestRoom.getStatus() == RoomStatus.DIRTY) {
                 assignRoom(nearestRoom);
-            } else {
-
             }
             setDestination(layout.getRandomTile(this.room));
 
 
         } else if (this.getTile().getFacility() == this.room) {
-            if (this.currentCleaningTime == null) {
-                this.currentCleaningTime = Settings.cleanerBaseCleaningTime;
+            if (this.getActionTime() == null) {
+                this.setActionTime(Settings.cleanerBaseCleaningTime);
                 this.setDestination(layout.getRandomTile(this.room));
             }
 
-            this.currentCleaningTime -= 1000 / Settings.ticks;
+            this.decreaseActionTime();
 
-            if (this.currentCleaningTime <= 0) {
+            if (this.getActionTime() <= 0) {
                 this.removeRoom(this.room);
-                this.currentCleaningTime = null;
+                this.setActionTime(null);
             }
 
         } else this.setDestination(layout.getRandomTile(this.room));

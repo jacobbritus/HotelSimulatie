@@ -3,9 +3,10 @@ package enums;
 public enum Statistic {
     Guests("Agents", "Guests", "Numerical"),
     Cleaners("Agents", "Cleaners", "Numerical"),
-    RoomsOccupied("Rooms", "Rooms Occupied", "Percentage"),
+    RoomsOccupied("Rooms", "Room Occupation", "Percentage"),
     DirtyRooms("Rooms", "Dirty Rooms", "Numerical"),
     TotalRoomsCleaned("Rooms", "Rooms Cleaned", "Numerical");
+//    TotalRoomsBooked("Rooms", "Rooms Booked", "Numerical");
 
 
     private final String section;
