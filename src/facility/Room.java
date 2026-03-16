@@ -1,84 +1,77 @@
 package facility;
 
 import enums.FacilityState;
-import human.Cleaner;
-import human.Guest;
+import enums.FacilityType;
+import enums.RoomStatus;
+import human.Human;
 import settings.Settings;
 import simulation.SimulationController;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
 
-// I've to create a file that holds all colors really
+//this.onHover = new MouseAdapter() {
+//    public void mouseEntered(java.awt.event.MouseEvent evt) {
+//        kamer.setBorder(new LineBorder(Color.YELLOW, 2));
+//        kamer.getSimulationController().setShowRoom(kamer);
+//
+//    }
+//    public void mouseExited(java.awt.event.MouseEvent evt) {
+//        kamer.setBorder(new LineBorder(kamer.getColor(FacilityState.UNAVAILABLE2), 2));
+//        kamer.getSimulationController().setShowRoom(null);
+//    }
+//};
+//            this.addMouseListener(this.onHover);
 
 public class Room extends Facility {
-    private Guest guest;
-    private Cleaner cleaner;
-    private boolean isDirty;
+    private Human occupant;
+    private RoomStatus status;
     private MouseListener onHover;
+    private Color color1;
+    private Color color2;
 
-    public Room(JPanel superPanel, Facility[][] ruimtes, int row, int column, SimulationController simulationController) {
-        super(superPanel, ruimtes, row, column, simulationController);
-        this.guest = null;
-        this.isDirty = false;
-        this.cleaner =  null;
+    public Room(JPanel superPanel, FacilityType type, int row, int column, SimulationController simulationController) {
+        super(superPanel, type, row, column, simulationController);
+        this.setStatus(RoomStatus.AVAILABLE);
     }
 
-    public Cleaner getCleaner() {
-        return this.cleaner;
+    @Override
+    public boolean isAccessible(Human human) {
+        return  human == this.occupant || human.getTile().getFacility() == this;
     }
 
-    public void setCleaner(Cleaner cleaner) {
-        this.cleaner = cleaner;
+    public void setStatus(RoomStatus status) {
+        this.status = status;
+        this.color1 = getColor(FacilityState.getSafe(status.toString() + "1"));
+        this.color2 = getColor(FacilityState.getSafe(status.toString() + "2"));
+        this.applyColor();
     }
 
-    public void clean(Cleaner cleaner) {
-        changeGroundColor(getColor(FacilityState.AVAILABLE1), this.getColor(FacilityState.AVAILABLE2));
-        this.cleaner = null;
-        this.isDirty = false;
-        this.setBorder(new LineBorder(this.getColor(FacilityState.AVAILABLE2), 2));
+    public RoomStatus getStatus() {
+        return status;
     }
 
-    public boolean isDirty() {
-        return this.isDirty;
+    public Color[] getActiveColors() {
+        Color[] colors = {this.color1, this.color2};
+        return colors;
     }
 
-    public void setGuest(Guest guest) {
-        if (guest != null) {
-            this.guest = guest;
-            this.setBorder(new LineBorder(getColor(FacilityState.UNAVAILABLE2) , 2));
-            changeGroundColor(getColor(FacilityState.UNAVAILABLE1), getColor(FacilityState.UNAVAILABLE2));
-            Room kamer = this;
-
-            this.onHover = new MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    kamer.setBorder(new LineBorder(Color.YELLOW, 2));
-                    kamer.getSimulationController().setShowRoom(kamer);
-
-                }
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    kamer.setBorder(new LineBorder(kamer.getColor(FacilityState.UNAVAILABLE2), 2));
-                    kamer.getSimulationController().setShowRoom(null);
-                }
-            };
-            this.addMouseListener(this.onHover);
-        } else {
-            this.isDirty = true;
-            this.getSimulationController().setShowRoom(null);
-            this.removeMouseListener(this.onHover);
-            this.guest = null;
-
-
-
-            changeGroundColor(getColor(FacilityState.DIRTY1), getColor(FacilityState.DIRTY2));
-            this.setBorder(new LineBorder(getColor(FacilityState.DIRTY2), 2));
-        }
+    public void setOccupant(Human human, RoomStatus status) {
+        this.occupant = human;
+        this.setStatus(status);
     }
 
-    public void changeGroundColor(Color color1, Color color2) {
+    public void removeOccupant(RoomStatus status) {
+        this.occupant = null;
+        this.setStatus(status);
+    }
+
+    public void applyColor() {
+
+
+        this.setBorder(new LineBorder(color2, 2));
         for (int r = 0; r < this.tiles.length; r++) {
             for (int c = 0; c <this.tiles[0].length ; c++) {
                 Color activeColor;
@@ -89,14 +82,11 @@ public class Room extends Facility {
                     activeColor = color2;
                 }
                 tile.setActiveColor(activeColor);
-                if (this.cleaner != null && tile == this.cleaner.getTile()) continue;
                 tile.setBackground(activeColor);
 
             }
         }
     }
-
-    public Guest getGuest() {
-        return this.guest;
-    }
 }
+
+

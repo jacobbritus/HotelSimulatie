@@ -2,7 +2,6 @@ package human;
 
 import facility.Facility;
 import facility.Room;
-import facility.Lift;
 import facility.Tile;
 import layout.Layout;
 import settings.Settings;
@@ -10,40 +9,45 @@ import settings.Settings;
 import java.awt.Color;
 import java.util.*;
 
-public class Human {
+public abstract class Human implements RoomOccupant {
     private Tile tile;
     private int stepsTaken;
     private ArrayList<Tile> destinationPath;
-    private boolean atDestination;
+    private Tile destination;
     private Integer cooldown;
     private Integer lifeTime;
-    private final boolean isUsingLift;
-    Color color;
+    private boolean isLeaving;
+    private Room assignedRoom;
 
     public Human(Tile tile) {
         this.cooldown = null;
-        this.atDestination = true;
+        this.destination = null;
         this.stepsTaken = 0;
-        this.isUsingLift = false;
 
         this.tile = tile;
         this.tile.setHuman(this);
     }
 
-    public boolean isUsingLift() {
-        return isUsingLift;
+    public boolean isLeaving() {
+        return this.isLeaving;
     }
+
+    public void setIsLeaving(boolean bool) {
+        this.isLeaving = bool;
+    }
+
 
     public Tile getTile() {
         return tile;
     }
 
-    public boolean isAtDestination() {
-        return this.atDestination;
+
+    public Tile getDestination() {
+        return destination;
     }
 
-    public void setAtDestination(boolean bool) {
-        this.atDestination = bool;
+    public void setDestination(Tile destination) {
+        this.destination = destination;
     }
 
     public void setTile(Tile newTile, Color color) {
@@ -87,8 +91,19 @@ public class Human {
     }
 
     public void update(Layout layout) {
+        if (this.activeCooldown()) return;
+        if (this.getLifeTime() != null) decreaseLifeTime();
 
+        if (this.getDestination() != null) {
+            this.move();
+        } else {
+            this.decisionMaking(layout);
+            if (this.getDestination() != null) this.bfs(this.getDestination());
+        }
     }
+
+    public abstract void decisionMaking(Layout layout);
+
 
     public void move() {
         if (stepsTaken < destinationPath.size() - 1) {
@@ -100,7 +115,7 @@ public class Human {
             stepsTaken++;
         } else {
             this.stepsTaken = 0;
-            this.atDestination = true;
+            this.destination = null;
         }
     }
 
@@ -133,37 +148,32 @@ public class Human {
             }
 
             for (Tile neighbour : current.getNeighbours().values()) {
-                if (neighbour == null || closed.contains(neighbour) || (neighbour.getFacility() instanceof Lift && !this.isUsingLift)
-                        || !neighbour.isWalkable() || isKamer(neighbour)) {
+                if (neighbour == null || closed.contains(neighbour)
+                        || !neighbour.isWalkable(this) ||
+                        !inaccessibleFacility(neighbour) || moveFilter(neighbour)) {
                     continue;
                 }
-
                 open.add(neighbour);
                 breadcrumbs.put(neighbour, current);
             }
         }
     }
 
-    public boolean isKamer(Tile neighbour) {
+    public abstract boolean moveFilter(Tile neighbour);
+
+    public boolean inaccessibleFacility(Tile neighbour) {
         Facility facility = neighbour.getFacility();
-        if  (this instanceof Guest) return facility instanceof Room kamer && kamer.getGuest() != this;
-        else if (this instanceof Cleaner cleaner)  return facility instanceof Room kamer && (kamer.getCleaner() != this && this.getTile().getFacility() != kamer);
-        return false;
+        return facility.isAccessible(this);
     }
 
     public void retraceSteps(Tile destination, HashMap<Tile, Tile> breadcrumbs) {
         Tile step = destination;
-
         while (step != this.getTile()) {
             step = breadcrumbs.get(step);
             this.destinationPath.add(step);
         }
         Collections.reverse(this.destinationPath);
-
     }
-
-
-
 }
 
 

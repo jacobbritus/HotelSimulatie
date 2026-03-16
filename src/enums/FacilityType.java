@@ -1,24 +1,24 @@
 package enums;
 
-import java.util.Arrays;
+import facility.Facility;
 
-public enum FacilityState {
-    DEFAULT1,
-    DEFAULT2,
-    AVAILABLE1,
-    AVAILABLE2,
-    UNAVAILABLE1,
-    UNAVAILABLE2,
-    DIRTY1,
-    DIRTY2,
-    CLEANING1,
-    CLEANING2;
+import java.util.Arrays;
+import java.util.Optional;
+
+public enum FacilityType {
+    LIFT,
+    HALL,
+    ROOM,
+    LOBBY,
+    STAIRS,
+    EMPTY;
 
     // Check if the provided string value has an associated Facility type
-    public static FacilityState getSafe(String name) {
+    public static FacilityType getSafe(String name) {
         return Arrays.stream(values())
                 .filter(type -> type.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
     }
+
 }

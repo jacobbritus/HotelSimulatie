@@ -1,6 +1,7 @@
 package settings;
 
 import enums.FacilityState;
+import enums.FacilityType;
 import facility.*;
 
 import java.awt.Color;
@@ -10,10 +11,10 @@ import java.util.Map;
 
 
 
-public final  class FacilityColors {
+public final class FacilityColors {
     private FacilityColors() {}
 
-    public static Map<Class<? extends Facility>, HashMap<FacilityState, Color>> map = new HashMap<>();
+    public static Map<FacilityType, HashMap<FacilityState, Color>> map = new HashMap<>();
 
     public static HashMap<FacilityState, Color> room = new HashMap<>();
     public static HashMap<FacilityState, Color> hall = new HashMap<>();
@@ -35,6 +36,10 @@ public final  class FacilityColors {
         room.put(FacilityState.DIRTY1, new Color(249, 252, 224,255));
         room.put(FacilityState.DIRTY2, new Color(247, 253, 136,255));
 
+        room.put(FacilityState.CLEANING1, new Color(225, 245, 254));
+        room.put(FacilityState.CLEANING2, new Color(179, 229, 252));
+
+
         // --- Hall ---
         hall.put(FacilityState.DEFAULT1, new Color(241, 220, 193));
         hall.put(FacilityState.DEFAULT2, new Color(238, 200, 157));
@@ -44,19 +49,21 @@ public final  class FacilityColors {
         lobby.put(FacilityState.DEFAULT2, new Color(247, 179, 252));
 
         // --- Lift ---
-        lift.put(FacilityState.DEFAULT1, new Color(225, 245, 254));
-        lift.put(FacilityState.DEFAULT2, new Color(179, 229, 252));
+        lift.put(FacilityState.DEFAULT1, new Color(222, 227, 231));
+        lift.put(FacilityState.DEFAULT2, new Color(208, 208, 208));
 
 
         // --- Trap ---
         stairs.put(FacilityState.DEFAULT1, new Color(255, 248, 225));
         stairs.put(FacilityState.DEFAULT2, new Color(240, 230, 190));
 
-        map.put(Room.class, room);
-        map.put(Hall.class, hall);
-        map.put(Lobby.class, lobby);
-        map.put(Lift.class, lift);
-        map.put(Stairs.class, stairs);
+        map.put(FacilityType.ROOM, room);
+        map.put(FacilityType.HALL, hall);
+        map.put(FacilityType.LOBBY, lobby);
+        map.put(FacilityType.LIFT, lift);
+        map.put(FacilityType.STAIRS, stairs);
     }
+
+
 
 }

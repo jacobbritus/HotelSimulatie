@@ -6,7 +6,6 @@ import settings.Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -26,11 +25,11 @@ public class SimulationController extends JPanel {
         this.simulation = simulation;
         this.simulationSidebar = simulationSidebar;
 
-        this.timeLabel = new JLabel("00:00:00  ");
+        this.timeLabel = new JLabel("00:00:00");
 
         this.HTEtimer = new Timer(Settings.ticks, e -> {
             this.runTime += 1000 / Settings.ticks ;
-            this.timeLabel.setText(Settings.convertTime(this.runTime) + "  ");
+            this.timeLabel.setText(Settings.convertTime(this.runTime));
             simulation.update();
         });
 
@@ -59,7 +58,7 @@ public class SimulationController extends JPanel {
 
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
-        this.ticksLabel = new JLabel("  " + (1000 / Settings.ticks) + "x  ");
+        this.ticksLabel = new JLabel((1000 / Settings.ticks) + "x");
         this.ticksLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
 
         this.add(createButton("-", e -> {
@@ -67,8 +66,9 @@ public class SimulationController extends JPanel {
             updateSpeed();
         }));
 
-
+        this.add(Box.createHorizontalStrut(20));
         this.add(ticksLabel);
+        this.add(Box.createHorizontalStrut(20));
 
         this.add(createButton("+", e -> {
             Settings.ticks = Math.max(Settings.ticks / 2, 31);
@@ -95,7 +95,7 @@ public class SimulationController extends JPanel {
                 this.paused = true;
             }
         });
-        pauseButton.setForeground(Color.LIGHT_GRAY);
+        pauseButton.setForeground(Color.DARK_GRAY);
 
         JButton startButton = createButton("Start", null);
         startButton.setForeground(new Color(99, 196, 74,255));
@@ -106,20 +106,24 @@ public class SimulationController extends JPanel {
                 this.runTime = 0;
                 this.HTEtimer.stop();
                 startButton.setForeground(new Color(99, 196, 74,255));
+                pauseButton.setForeground(Color.DARK_GRAY);
                 startButton.setText("Start");
-                this.timeLabel.setText("00:00:00  ");
-              this.started = false;
+                this.timeLabel.setText("00:00:00");
+                this.simulationSidebar.reset();
+                this.started = false;
             } else {
                 this.started = true;
                 this.simulationSidebar.init();
+                this.simulationSidebar.getOverviewPage();
                 this.HTEtimer.start();
                 startButton.setText("Reset");
                 startButton.setForeground(Color.RED);
-                pauseButton.setForeground(Color.BLACK);
+                pauseButton.setForeground(Settings.textColor);
             }
         });
 
         this.add(timeLabel);
+        this.add(Box.createHorizontalStrut(20));
         this.add(startButton);
         this.add(pauseButton);
     }
@@ -129,16 +133,14 @@ public class SimulationController extends JPanel {
     }
 
     public void updateSpeed() {
-        this.ticksLabel.setText("  " + (1000 / Settings.ticks) + "x  ");
+        this.ticksLabel.setText((1000 / Settings.ticks) + "x");
         this.HTEtimer.setDelay(Settings.ticks);
     }
 
     // compose later
     public JButton createButton(String text, ActionListener actionListener) {
-        JButton button = new JButton(text);
-        button.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        JButton button = new SidebarButton(text);
         button.setFocusable(false);
-        button.setAlignmentX(Component.RIGHT_ALIGNMENT);
         button.addActionListener(actionListener);
         return button;
     }

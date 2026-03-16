@@ -1,5 +1,6 @@
 package simulation;
 
+import enums.RoomStatus;
 import enums.Statistic;
 import facility.Facility;
 import facility.Room;
@@ -33,11 +34,15 @@ public class Simulation extends JPanel {
         this.setSize(new Dimension(Settings.schermBreedte, Settings.schermHoogte));
         this.rauweGrid = rauweGrid;
         this.statisticsSupplierMap = new HashMap<>();
-        this.spawnCooldown = Settings.guestSpawnTime;
+        this.spawnCooldown = Settings.guestBaseSpawnTime;
 
         testPanel = new JPanel(new GridBagLayout());
         testPanel.setBackground(Settings.achtergrondKleur);
         testPanel.setPreferredSize(new Dimension(Settings.schermBreedte , Settings.schermHoogte - 128 ));
+    }
+
+    public Layout returnLayout() {
+        return this.layout;
     }
 
     public ArrayList<Human> getHumans() {
@@ -64,7 +69,7 @@ public class Simulation extends JPanel {
         // Rooms
         this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> {
             long occupied = layout.getRooms().stream()
-                    .filter(r -> r instanceof Room room && room.getGuest() != null)
+                    .filter(r -> r.getStatus() == RoomStatus.UNAVAILABLE)
                     .count();
 
             int total = layout.getRooms().size();
@@ -80,7 +85,7 @@ public class Simulation extends JPanel {
         });
 
         this.statisticsSupplierMap.put(Statistic.DirtyRooms, () -> this.layout.getRooms().stream()
-                .filter(r -> r instanceof Room room && room.isDirty()).count() + "");
+                .filter(r -> r.getStatus() == RoomStatus.DIRTY).count() + "");
 
         this.statisticsSupplierMap.put(Statistic.TotalRoomsCleaned, () -> this.getHumans().stream()
                 .filter(h -> h instanceof Cleaner)
@@ -120,18 +125,18 @@ public class Simulation extends JPanel {
     public void update() {
         for (Human human : this.humans) {
             human.update(this.layout);
-            if (human instanceof Guest guest &&  guest.isLeaving()) guest.despawn();
+            if (human.isLeaving()) human.despawn();
         }
         this.simulationSidebar.update();
 
-        humans.removeIf(g -> g instanceof Guest guest&& guest.isLeaving());
+        humans.removeIf(Human::isLeaving);
 
 //        // Adding guests
         spawnCooldown -= (1000 / Settings.ticks);
         if (spawnCooldown < 0) {
             Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
             humans.add(new Guest(tile));
-            this.spawnCooldown = Settings.guestSpawnTime;
+            this.spawnCooldown = Settings.guestBaseSpawnTime;
         }
     }
 
@@ -148,8 +153,7 @@ public class Simulation extends JPanel {
                 Settings.oppervlakGrootte * hoogte *2));
         layout.setPreferredSize(new Dimension(
                 Settings.oppervlakGrootte * breedte,
-                Settings.oppervlakGrootte * hoogte
-        ));
+                Settings.oppervlakGrootte * hoogte));
 
 
 

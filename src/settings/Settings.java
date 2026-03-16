@@ -10,20 +10,23 @@ public final class Settings {
     public static int schermHoogte = 1080;
 
     // Sidebar width
-    public static int sidebarWidth = 400;
+    public static int sidebarWidth = 300;
 
     // Theme
     // Default = Color.WHITE
-//    public static Color achtergrondKleur = new Color(240, 240, 240, 255);
+//    public static Color achtergrondKleur = new Color(230, 230, 230, 255);
 //    public static Color themeColor = new Color(255, 255, 255,255);
-//    public static Color themeColor2 = new Color(220, 220, 220,255);
+//    public static Color themeColor2 = new Color(240, 240, 240,255);
+//    public static Color themeColor3 = new Color(247, 247, 247,255);
 //    public static Color textColor = Color.BLACK;
+//    public static Color textColor2 = Color.GRAY;
 
     public static Color achtergrondKleur = new Color(25, 25, 25, 255);
     public static Color themeColor = new Color(30, 30, 30,255);
     public static Color themeColor2 = new Color(40, 40, 40,255);
     public static Color themeColor3 = new Color(50, 50, 50,255);
     public static Color textColor = Color.WHITE;
+public static Color textColor2 = Color.LIGHT_GRAY;
 
     // Bepaald hoe hoog en breed elk Oppervlakte is
     // Default = 100
@@ -42,13 +45,14 @@ public final class Settings {
     // Milliseconden per tik
     public static int ticks = 1000;
 
-    // human.Guest staytime (3 hours)
-    public static int guestBaseStayTime = 60 * 60 * 3; // can be used like: this * random number between 1 and 5
 
-    // Guest spawn time (1 per hour)
-    public static int guestSpawnTime = 60 * 60;
+    // Guest times
 
-    // human.Cleaner cleaningTime (30 minutes)
+    public static int guestBaseStayTime = 60 * 60;
+    public static int guestBaseSpawnTime = 60 * 30;
+    public static int guestBaseCheckInTime = 60 * 15;
+
+    // Cleaner times
     public static int cleanerBaseCleaningTime = 60 * 30 ;
 
     public static String convertTime(int milliseconds) {

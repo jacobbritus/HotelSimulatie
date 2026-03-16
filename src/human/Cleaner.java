@@ -1,22 +1,23 @@
 package human;
 
-import facility.Facility;
+import enums.RoomStatus;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
 import settings.Settings;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class Cleaner extends Human {
-    private Room roomToClean;
+    private Room room;
     private boolean isCleaning;
+    private Integer currentCleaningTime;
     private int roomsCleaned;
+
     public Cleaner(Tile tile) {
         super(tile);
         this.getTile().setBackground(Color.BLUE);
-        this.roomToClean = null;
+        this.room = null;
         this.isCleaning = false;
         this.roomsCleaned = 0;
     }
@@ -31,65 +32,58 @@ public class Cleaner extends Human {
     }
 
     @Override
-    public void update(Layout layout) {
-        if (this.activeCooldown()) {
-                return;
-        }
-
-        if (!this.isAtDestination() && (this.getTile().getFacility() != this.roomToClean)) {
-            this.move();
-        } else {
-            this.setAtDestination(false);
-            Tile destination = null;
-
-            if (this.roomToClean == null) {
+    public void decisionMaking(Layout layout) {
+        System.out.println(currentCleaningTime);
+        if (this.room == null) {
 //                setCooldown(100);
-                Room nearestRoom = getNearestRoom(layout);
-                if (nearestRoom != null) {
-                    this.roomToClean = nearestRoom;
-                    this.roomToClean.setCleaner(this);
-                }
-
-                destination = layout.getRandomTile(this.roomToClean);
-
-            } else if (this.getTile().getFacility() == this.roomToClean) {
-                if (!this.isCleaning) {
-                    this.isCleaning = true;
-                    this.setCooldown(Settings.cleanerBaseCleaningTime);
-                } else {
-                    this.roomToClean.clean(this);
-                    this.isCleaning = false;
-                    this.roomToClean = null;
-                    this.roomsCleaned++;
-                    this.getTile().setBackground(Color.BLUE);
-                }
-                destination = layout.getRandomTile(this.roomToClean);
-
+            Room nearestRoom = layout.getNearestRoom(this); // assign room
+            if (nearestRoom != null && nearestRoom.getStatus() == RoomStatus.DIRTY) {
+                assignRoom(nearestRoom);
             } else {
-                destination = layout.getRandomTile(null);
+
+            }
+            setDestination(layout.getRandomTile(this.room));
+
+
+        } else if (this.getTile().getFacility() == this.room) {
+            if (this.currentCleaningTime == null) {
+                this.currentCleaningTime = Settings.cleanerBaseCleaningTime;
+                this.setDestination(layout.getRandomTile(this.room));
             }
 
-            if (destination != null) this.bfs(destination);
+            this.currentCleaningTime -= 1000 / Settings.ticks;
 
-        }
+            if (this.currentCleaningTime <= 0) {
+                this.removeRoom(this.room);
+                this.currentCleaningTime = null;
+            }
 
+        } else this.setDestination(layout.getRandomTile(this.room));
     }
 
-    private Room getNearestRoom(Layout layout) {
-        ArrayList<Room> rooms = layout.getRooms();
-        Room nearestRoom = null;
-        Integer distance = null;
-        for (Room kamer : rooms) {
-            Facility current = this.getTile().getFacility();
+    @Override
+    public boolean moveFilter(Tile neighbour) {
+        return false;
+    }
 
-            int c = Math.abs(current.getRow() - kamer.getRow()) + Math.abs(current.getColumn() - kamer.getColumn());
-            if ((kamer.isDirty() && kamer.getCleaner() == null && kamer.getGuest() == null)
-                    && (distance == null || distance > c)) {
-                distance = c;
-                nearestRoom = kamer;
-            }
+    @Override
+    public void assignRoom(Room room) {
+        this.room = room;
+        room.setOccupant(this, RoomStatus.CLEANING);
+    }
 
-        }
-        return nearestRoom;
+    @Override
+    public void removeRoom(Room room) {
+        this.room = null;
+        room.removeOccupant(RoomStatus.AVAILABLE);
+        this.getTile().setBackground(Color.BLUE);
+        this.roomsCleaned++;
+    }
+
+    @Override
+    public boolean roomFilter(Room room) {
+        return room.getStatus() == RoomStatus.DIRTY;
     }
 }
+
+

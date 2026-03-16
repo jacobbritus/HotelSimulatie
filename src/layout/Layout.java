@@ -1,7 +1,10 @@
 package layout;
 
 import enums.Direction;
+import enums.FacilityType;
+import enums.RoomStatus;
 import facility.*;
+import human.Human;
 import settings.Settings;
 import simulation.SimulationController;
 
@@ -41,8 +44,8 @@ public class Layout extends JPanel {
             for (int c = 0; c < facilities[0].length; c++) {
                 Facility facility = this.facilities[r][c];
                 if (facility == null) continue;
-                if (facility instanceof Lobby lobby) lobbies.add(lobby);
-                if (facility instanceof Room kamer) rooms.add(kamer);
+                if (facility.getType() ==  FacilityType.LOBBY) lobbies.add((Lobby) facility);
+                if (facility.getType() ==  FacilityType.ROOM) rooms.add((Room) facility);
             }
         }
 
@@ -54,8 +57,39 @@ public class Layout extends JPanel {
     }
 
     public ArrayList<Room> getRooms() {
-        Collections.shuffle(this.rooms);
         return this.rooms;
+    }
+
+    public Room getRandomRoom() {
+        ArrayList<Room> rooms = this.getRooms();
+        Collections.shuffle(rooms);
+        Room randomRoom = null;
+
+        Room k = null;
+        for (Room room : rooms) {
+            if (room.getStatus() == RoomStatus.AVAILABLE) {
+                randomRoom = room;
+                break;
+            }
+        }
+
+        return randomRoom;
+    }
+
+    public Room getNearestRoom(Human human) { // Current applies manhattan distance and filters depending on their role.
+        Integer lowestDistance = null;
+        Room nearestRoom= null;
+        Facility current = human.getTile().getFacility();
+
+        for (Room room : rooms) {
+            int c = Math.abs(current.getRow() - room.getRow()) + Math.abs(current.getColumn() - room.getColumn());
+
+            if (human.roomFilter(room) && (lowestDistance == null || c < lowestDistance)) {
+                nearestRoom = room;
+                lowestDistance = c;
+            }
+        }
+        return nearestRoom;
     }
 
     public Facility[][] getFacilities() {
@@ -88,20 +122,22 @@ public class Layout extends JPanel {
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
 
-                String type = grid[r][c];
-                Facility o;
-                switch (type) {
-                    case "Kamer" -> o = new Room(this, facilities, r, c, simulationController);
-                    case "Lift" -> o = new Lift(this, facilities, r, c, simulationController);
-                    case "Trap" -> o = new Stairs(this, facilities, r, c, simulationController);
-                    case "Lobby" -> o = new Lobby(this, facilities, r, c, simulationController);
-                    case "Hall" -> o = new Hall(this, facilities, r, c, simulationController);
-                    default -> {
-                        JPanel inaccessible = new JPanel();
-                        inaccessible.setBackground(Settings.achtergrondKleur);
-                        this.add(inaccessible);
-                        continue;
-                    }
+                String string = grid[r][c];
+                FacilityType type = FacilityType.getSafe(string.toUpperCase());
+
+                Facility o = switch (type) {
+                    case ROOM ->  new Room(this, type, r, c, simulationController);
+                    case LIFT ->  new Lift(this, type, r, c, simulationController);
+                    case STAIRS ->  new Stairs(this, type, r, c, simulationController);
+                    case LOBBY ->  new Lobby(this, type, r, c, simulationController);
+                    case HALL ->  new Hall(this, type, r, c, simulationController);
+                    default -> null;};
+
+                if (o == null) {
+                    JPanel inaccessible = new JPanel();
+                    inaccessible.setBackground(Settings.achtergrondKleur);
+                    this.add(inaccessible);
+                    continue;
                 }
 
                 facilities[r][c] = o;
@@ -138,22 +174,26 @@ public class Layout extends JPanel {
                         Tile tile = tiles[dr][dc];
 
                         if (r > 0 && dr == 0) {
-                            if ((facilities[r - 1][c]) == null) continue;
-                            tile.setNeighbour(Direction.UP, facilities[r - 1][c].getTiles()[tiles.length - 1][dc]);
+                            Facility neighbour = this.facilities[r - 1][c];
+                            if (neighbour == null || neighbour.notConnectedTo(facility)) continue; // Handling empty spots
+                            tile.setNeighbour(Direction.UP, this.facilities[r - 1][c].getTiles()[tiles.length - 1][dc]);
                         } else if (dr > 0) tile.setNeighbour(Direction.UP, tiles[dr - 1][dc]);
 
-                        if (dr == tiles.length - 1 && r < facilities.length - 1) {
-                            if ((facilities[r + 1][c]) == null) continue;
-                            tile.setNeighbour(Direction.DOWN, facilities[r + 1][c].getTiles()[0][dc]);
+                        if (dr == tiles.length - 1 && r < this.facilities.length - 1) {
+                            Facility neighbour = this.facilities[r + 1][c];
+                            if (neighbour == null || neighbour.notConnectedTo(facility)) continue;
+                            tile.setNeighbour(Direction.DOWN, this.facilities[r + 1][c].getTiles()[0][dc]);
                         }  else if (dr < tiles.length - 1) tile.setNeighbour(Direction.DOWN, tiles[dr +1][dc]);
 
                         if (c > 0 && dc == 0) {
-                            if ((facilities[r][c - 1]) == null) continue;
-                            tile.setNeighbour(Direction.LEFT, facilities[r][c - 1].getTiles()[dr][tiles[0].length - 1]);
+                            Facility neighbour = this.facilities[r][c - 1];
+                            if ((this.facilities[r][c - 1]) == null || neighbour.notConnectedTo(facility)) continue;
+                            tile.setNeighbour(Direction.LEFT, this.facilities[r][c - 1].getTiles()[dr][tiles[0].length - 1]);
                         } else if (dc > 0) tile.setNeighbour(Direction.LEFT, tiles[dr][dc - 1]);
 
-                        if (c < facilities[0].length - 1 && dc == tiles[0].length - 1) {
-                            if ((facilities[r][c + 1]) == null) continue;
+                        if (c < this.facilities[0].length - 1 && dc == tiles[0].length - 1) {
+                            Facility neighbour = this.facilities[r][c + 1];
+                            if (neighbour == null || neighbour.notConnectedTo(facility)) continue;
                             tile.setNeighbour(Direction.RIGHT, facilities[r][c+1].getTiles()[dr][0]);
                         }  else if (dc < tiles[0].length - 1) tile.setNeighbour(Direction.RIGHT, tiles[dr][dc + 1]);
                     }

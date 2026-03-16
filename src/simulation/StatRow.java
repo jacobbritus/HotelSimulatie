@@ -50,7 +50,7 @@ public class StatRow extends JPanel {
     public void createNumericalValueLabel() {
         this.valueLabel = new JLabel();
         this.valueLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
-        this.valueLabel.setForeground(Color.LIGHT_GRAY);
+        this.valueLabel.setForeground(Settings.textColor2);
         this.add(this.valueLabel);
     }
 
@@ -64,22 +64,12 @@ public class StatRow extends JPanel {
             protected Color getSelectionForeground() { return Color.white; } // Text color over progress
         });
 
-        bar.setMaximumSize(new Dimension(32, 4));
-
-// 1. Set the fill color (The progress)
+        bar.setMaximumSize(new Dimension(10, 4));
+        bar.setMinimumSize(new Dimension(10, 4));
         bar.setForeground(new Color(46, 204, 113));
-
-// 2. Set the track color (The background)
         bar.setBackground(Settings.themeColor2);
-
         bar.setOpaque(true);
-
-// 3. IMPORTANT: On some OS, the border draws over the color.
-// This clears the "native" feel so your custom colors show up.
         bar.setBorderPainted(false);
-
-//        bar.setBorder(new LineBorder(Color.RED, 4));
-
 
         this.progressBar = bar;
         this.add(this.progressBar);

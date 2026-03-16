@@ -53,8 +53,7 @@ public class Applicatie extends JFrame implements KeyListener {
         this.setVisible(true);
         
         simulation.init();
-        simulation.zoom(Settings.facilityTilesSize);
-        simulationSidebar.init();
+        simulation.zoom(Settings.facilityTilesSize*  1);
     }
 
 

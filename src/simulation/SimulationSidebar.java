@@ -1,5 +1,7 @@
 package simulation;
 
+import enums.FacilityState;
+import enums.SidebarPage;
 import enums.Statistic;
 import enums.StatisticSection;
 import facility.Room;
@@ -16,13 +18,16 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 public class SimulationSidebar extends JPanel {
-    private Simulation simulation;
-    private JLabel humanCount;
-    private JLabel title;
-    private JPanel overviewPage;
-    private ArrayList<StatRow> rows;
+    private final Simulation simulation;
+    private final JLabel emptyLabel;
+    private ArrayList<Component> componentsToUpdate;
     private HashMap <Statistic, HashMap<Statistic, String>> sections;
     private JPanel generalSection;
+    private JPanel topSection;
+    private final JPanel pagesButtonsPanel;
+
+    private final ArrayList<SidebarPage> openedPages;
+    private HashMap<SidebarPage, Runnable> pages;
 
     boolean visible;
     Room roomtoShow;
@@ -30,6 +35,9 @@ public class SimulationSidebar extends JPanel {
 
 
     public SimulationSidebar(Simulation simulation) {
+        this.openedPages = new ArrayList<>();
+        this.openedPages.add(SidebarPage.OVERVIEW);
+
         this.visible = true;
         this.roomtoShow = null;
         this.simulation = simulation;
@@ -38,30 +46,83 @@ public class SimulationSidebar extends JPanel {
         this.setBorder(new MatteBorder(0, 0, 0, 1, Settings.themeColor2));
 
         this.setLayout(new BorderLayout());
-
         this.setOpaque(true);
 
-        JLabel label = new JLabel("Nothing to show yet.");
-        label.setFont(FontHelper.getFont("Regular").deriveFont(14f));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
+        // Simulation not started
+        this.emptyLabel = new JLabel("Nothing to show yet.");
+        emptyLabel.setFont(FontHelper.getFont("Regular").deriveFont(14f));
+        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.add(emptyLabel);
 
-        this.add(label);
+        // button page Panel to hold navigation to pages
+         this.pagesButtonsPanel = new JPanel();
 
-        this.rows = new ArrayList<>();
+        pagesButtonsPanel.setOpaque(false);
+        pagesButtonsPanel.setLayout(new BoxLayout(pagesButtonsPanel, BoxLayout.Y_AXIS));
+
+        pagesButtonsPanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte));
+
+        pagesButtonsPanel.setBorder(new EmptyBorder(40 ,40, 30, 40));
+
+        // Stats to update
+        this.componentsToUpdate = new ArrayList<>();
+        this.initializePages();
     }
 
-    public void addTitle() {
-        this.title = new JLabel("Hotel Overview");
-        title.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
+    public void reset() {
+        this.removeAll();
+        this.setLayout(new BorderLayout());
+        this.add(emptyLabel);
+    }
+
+    public void initializePages() {
+        this.pages = new HashMap<>();
+
+        for (SidebarPage page : SidebarPage.values()) {
+            switch (page) {
+                case ROOMS -> this.pages.put(page, this::getRoomsPage);
+
+                case OVERVIEW -> this.pages.put(page, this::getOverviewPage);
+            }
+        }
+    }
+
+    public void addTitle(String title) {
+        this.topSection = new JPanel();
+        this.topSection.setOpaque(false);
+        topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
+
+        if (this.openedPages.size() > 1) {
+            addBackButton();
+        }
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
                 Settings.themeColor2), new EmptyBorder(20, 15, 20, 0)));
-        Dimension size = title.getPreferredSize();
+        Dimension size = titleLabel.getPreferredSize();
 
-        title.setPreferredSize(new Dimension(size.width + 50, size.height));
-        title.setMaximumSize(new Dimension(Settings.sidebarWidth, 64));
-        title.setFont(FontHelper.getFont("SemiBold").deriveFont(24f));
+        titleLabel.setPreferredSize(new Dimension(size.width + 50, size.height));
+        titleLabel.setMaximumSize(new Dimension(Settings.sidebarWidth, 64));
+        titleLabel.setFont(FontHelper.getFont("SemiBold").deriveFont(24f));
 
-        this.add(title);
+        topSection.add(titleLabel);
+
+        this.add(topSection);
     }
+
+    public void addBackButton() {
+        SidebarButton sidebarButton = new SidebarButton("<");
+        sidebarButton.setMaximumSize(new Dimension(64, 32));
+        sidebarButton.addActionListener(e -> {
+            this.openedPages.removeLast();
+            SidebarPage lastPage = this.openedPages.getLast();
+            System.out.println(this.openedPages);
+            System.out.println(lastPage);
+            this.pages.get(lastPage).run();
+        });
+        this.topSection.add(sidebarButton);
+    }
+
 
     public boolean toggle() {
         if (this.visible) {
@@ -73,7 +134,6 @@ public class SimulationSidebar extends JPanel {
         }
         this.revalidate();
         this.repaint();
-
         return this.visible;
     }
 
@@ -81,16 +141,55 @@ public class SimulationSidebar extends JPanel {
         this.roomtoShow = roomtoShow;
     }
 
-    public void init() {
+    public void openNewPage(SidebarPage activePage) {
         removeAll();
+        this.componentsToUpdate = new ArrayList<>();
+        addTitle(activePage.getTitle());
+        this.pagesButtonsPanel.removeAll();
+    }
+
+    public void updateRoomButton(JButton button, Room  room) {
+        Color[] activeColors = room.getActiveColors();
+
+        button.setBackground(activeColors[0]);
+        button.setBorderPainted(true);
+        button.setBorder(new LineBorder(activeColors[1], 2));
+    }
+
+
+    public void getRoomsPage() {
+        openNewPage(SidebarPage.ROOMS);
+        for (Room room : this.simulation.returnLayout().getRooms()) {
+            pagesButtonsPanel.setOpaque(false);
+            pagesButtonsPanel.setLayout(new BoxLayout(pagesButtonsPanel, BoxLayout.Y_AXIS));
+            pagesButtonsPanel.add(Box.createVerticalStrut(10));
+            SidebarButton button = new SidebarButton("Room");
+
+            updateRoomButton(button, room);
+
+
+            this.componentsToUpdate.add(button);
+            pagesButtonsPanel.add(button);
+        }
+
+        pagesButtonsPanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte / 2));
+        this.add(pagesButtonsPanel);
+
+        this.revalidate();
+        this.repaint();
+
+    }
+
+    public void init() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(0, 0, 0, 0));
+    }
 
-        addTitle();
+    public void getOverviewPage() {
+        openNewPage(SidebarPage.OVERVIEW);
 
         // Iterate through the map that holds statistic type and their respective function
         // and create rows that can update their value;
-
         HashMap<Statistic, Supplier<String>> statistics = simulation.getStatisticsSupplierMap();
 
         for (StatisticSection section : StatisticSection.values()) {
@@ -103,60 +202,50 @@ public class SimulationSidebar extends JPanel {
                 String title = statistic.getString() ;
                 Supplier<String> function = statistics.get(statistic);
                 StatRow row = new StatRow(title, this, function, statistic.getUnit());
-
-                this.rows.add(row);
+                row.update();
+                this.componentsToUpdate.add(row);
                sectionPanel.add(row);
             }
-
-
         }
 
-        JPanel buttonpanel = new JPanel();
-        buttonpanel.setOpaque(false);
-        buttonpanel.setLayout(new BoxLayout(buttonpanel, BoxLayout.Y_AXIS));
 
-        SidebarButton test = new SidebarButton("Rooms");
+        for (SidebarPage page : SidebarPage.values()) {
+            if (page == SidebarPage.SETTINGS) pagesButtonsPanel.add(Box.createVerticalGlue());
+            else if (page == SidebarPage.OVERVIEW) continue;
+            SidebarButton button = new SidebarButton(page.getTitle());
+            button.addActionListener(_ -> {
+                this.openedPages.add(page);
+                this.pages.get(page).run();
+            });
+            pagesButtonsPanel.add(button);
+            pagesButtonsPanel.add(Box.createVerticalStrut(10));
+        }
 
-        JProgressBar b = new JProgressBar();
-
-        // set initial value
-
-
-
-        buttonpanel.add(test);
-        buttonpanel.add(Box.createVerticalStrut(10));
-        buttonpanel.add(new SidebarButton("Guests"));
-        buttonpanel.add(Box.createVerticalStrut(10));
-        buttonpanel.add(new SidebarButton("Something"));
-        buttonpanel.add(Box.createVerticalStrut(10));
-        buttonpanel.add(new SidebarButton("Cleaners"));
-
-        buttonpanel.add(Box.createVerticalGlue());
-        buttonpanel.add(Box.createVerticalStrut(10));
-        buttonpanel.add(new SidebarButton("Settings"));
-        buttonpanel.add(Box.createVerticalStrut(10));
-        buttonpanel.add(new SidebarButton("Quit Simulation"));
-
-
-        buttonpanel.setMaximumSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte));
-
-        buttonpanel.setBorder(new EmptyBorder(15 ,15, 15, 15));
-
-        this.add(buttonpanel);
+        this.add(pagesButtonsPanel);
 
         this.repaint();
         this.revalidate();
-
-        for (StatRow stat : this.rows) {
-            stat.update();
-        }
     }
 
-
-
+    // if stat page 1, else if navigation page 2
     public void update() {
-        for (StatRow stat : this.rows) {
-           stat.update();
+        switch (openedPages.getLast()) {
+            case OVERVIEW -> {
+                for (Component stat : this.componentsToUpdate) {
+                    ((StatRow) stat).update();
+                }
+            }
+
+            case ROOMS -> {
+                this.pagesButtonsPanel.getComponents();
+                ArrayList<Room> rooms = this.simulation.returnLayout().getRooms();
+                for (int i = 0; i < rooms.size(); i++) {
+                    Room room = rooms.get(i);
+                    SidebarButton button =  (SidebarButton) componentsToUpdate.get(i);
+
+                    updateRoomButton(button, room);
+                }
+            }
         }
 
 //        if (roomtoShow != null) {

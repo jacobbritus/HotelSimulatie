@@ -12,11 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class SidebarButton extends JButton {
+    private Color hoverColor;
+
     public SidebarButton(String text) {
         this.setText(text);
         this.setForeground(Settings.textColor);
         this.setFont(FontHelper.getFont("Medium").deriveFont(12f));
         this.setBorderPainted(false);
+        this.setFocusPainted(false);
 //        this.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Settings.themeColor3, 1),
 //                new EmptyBorder(20, 15, 20, 0)));
         this.setMaximumSize(new Dimension(Settings.sidebarWidth, 50));

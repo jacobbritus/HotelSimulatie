@@ -59,8 +59,11 @@ public class Tile extends JLabel {
         return this.color;
     }
 
-    public boolean isWalkable() {
-        return human == null || this.facility == null;
+    public boolean isWalkable(Human newHuman) {
+
+        return human == null || this.facility == null ||
+
+                         newHuman.getDestination().getFacility().getLevel() != this.getFacility().getLevel();
     }
 
     public int getgCost() {
