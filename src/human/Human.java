@@ -18,13 +18,29 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
     private Tile destination;
     private Room assignedRoom;
     private final Role role;
+    private boolean isReadyToDespawn;
+    private final int id;
 
-    public Human(Tile tile, Layout layout, Role role) {
+    public Human(Tile tile, Layout layout, Role role, int id) {
         this.role = role;
+        this.id = id;
         this.layout = layout;
+        this.isReadyToDespawn = false;
         this.stepsTaken = 0;
         this.tile = tile;
         this.tile.setHuman(this);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isReadyToDespawn() {
+        return this.isReadyToDespawn;
+    }
+
+    public void setReadyToDespawn() {
+        this.isReadyToDespawn = true;
     }
 
     public Role getRole() {
@@ -54,6 +70,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
 
     public void setDestination(Tile destination) {
         this.destination = destination;
+        this.bfs(destination);
     }
 
     public void setTile(Tile newTile, Color color) {
@@ -69,6 +86,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
         }
     }
 
+    public abstract void onFacilityInteract(Facility facility);
     public void move() {
         if (stepsTaken < destinationPath.size() - 1) {
             Tile tile = destinationPath.get(stepsTaken);
@@ -78,6 +96,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
             stepsTaken++;
             stepsTaken++;
         } else {
+            this.onFacilityInteract(destination.getFacility());
             this.stepsTaken = 0;
             this.destination = null;
             this.destinationPath = null;

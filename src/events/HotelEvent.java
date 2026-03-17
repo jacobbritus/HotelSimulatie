@@ -17,7 +17,7 @@ public class HotelEvent {
         return this.eventType;
     }
 
-    public Integer getGuestId() {
+    public Integer getId() {
         return this.guestId;
     }
 

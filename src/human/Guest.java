@@ -1,9 +1,11 @@
 package human;
 
+import enums.FacilityType;
+import enums.GuestStatus;
 import enums.Role;
 import enums.RoomStatus;
 import events.HotelEvent;
-import events.HotelEventType;
+import facility.Facility;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
@@ -12,26 +14,32 @@ import java.awt.*;
 
 
 public class Guest extends Human {
-    private boolean isCheckedIn;
     private final Color arrivalColor = Color.RED;
     private final Color checkedInColor = Color.GREEN;
-    private int guestId;
+    private GuestStatus status;
 
-    public Guest(Tile tile, Layout layout) {
-        super(tile, layout, Role.GUEST);
-        this.isCheckedIn = false;
+    public Guest(Tile tile, Layout layout, int id) {
+        super(tile, layout, Role.GUEST, id);
         this.getTile().setBackground(arrivalColor);
+        this.status = GuestStatus.ARRIVED;
     }
 
-    public void setGuestId(int guestId) {
-        this.guestId = guestId;
-    }
+
 
     @Override
     public void setTile(Tile newTile, Color color) {
-        if (this.isCheckedIn) color = checkedInColor;
+        if (this.status == GuestStatus.CHECKED_IN) color = checkedInColor;
         else color = arrivalColor;
         super.setTile(newTile, color);
+    }
+
+    @Override
+    public void onFacilityInteract(Facility facility) {
+        if (facility.getType() == FacilityType.LOBBY && this.status == GuestStatus.CHECKING_OUT) {
+            System.out.println("arrived");
+            this.setReadyToDespawn();
+            this.getTile().revertColor();
+        }
     }
 
 
@@ -42,7 +50,7 @@ public class Guest extends Human {
 
     public void checkOut(Layout layout) {
         if (this.getAssignedRoom() != null) this.removeRoom(this.getAssignedRoom());
-        this.isCheckedIn = false;
+        this.status = GuestStatus.CHECKING_OUT;
     }
 
     @Override
@@ -51,7 +59,7 @@ public class Guest extends Human {
         room.setOccupant(this, RoomStatus.UNAVAILABLE);
         // Stop at lobby for a moment and check in
 //        this.setCooldown(settings.Settings.ticks * 20);  // Get an actual formula
-        this.isCheckedIn = true;
+        this.status = GuestStatus.CHECKED_IN;
     }
 
     @Override
@@ -67,7 +75,7 @@ public class Guest extends Human {
 
     @Override
     public void notify(HotelEvent hotelEvent) {
-        if (hotelEvent.getGuestId() != null && hotelEvent.getGuestId() != this.guestId) return;
+        if (hotelEvent.getId() != null && hotelEvent.getId() != this.getId()) return;
 
         switch (hotelEvent.getEventType()) {
             case ASSIGN_ROOM -> {
@@ -76,10 +84,16 @@ public class Guest extends Human {
                     return;
                 }
                 this.assignRoom(nearestRoom);
+                this.status = GuestStatus.CHECKED_IN;
+                this.getTile().setBackground(Color.GREEN);
             }
             case GO_ROOM -> {
                 this.setDestination(this.getLayout().getRandomTile(this.getAssignedRoom()));
-                this.bfs(getDestination());
+            }
+            case CHECK_OUT -> {
+                this.setDestination(this.getLayout().getRandomTile(this.getLayout().getLobbies().getFirst()));
+                this.removeRoom(this.getAssignedRoom());
+                this.status = GuestStatus.CHECKING_OUT;
             }
         }
     }

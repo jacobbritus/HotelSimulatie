@@ -27,7 +27,6 @@ public class EventsPage extends SidebarPage {
         this.add(scrollPane);
         this.repaint();
         this.revalidate();
-
     }
 
     public MyScrollPane createScrollPanel() {
@@ -80,7 +79,7 @@ public class EventsPage extends SidebarPage {
         title.setPreferredSize(new Dimension(this.getPreferredSize().width  , 40));
 
         eventPanel.add(Box.createHorizontalGlue());
-        JLabel a = new MyLabel("Guest ID: " +hotelEvent.getGuestId().toString(), FontWeight.MEDIUM, TextSize.SMALL);
+        JLabel a = new MyLabel("Human ID: " +hotelEvent.getId().toString(), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(a);
 
         eventPanel.add(Box.createHorizontalGlue());

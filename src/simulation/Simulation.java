@@ -23,6 +23,7 @@ public class Simulation extends JPanel implements HotelEventListener {
      SimulationController simulationController;
      SimulationSidebar simulationSidebar;
      private ArrayList<Human> humans;
+     private ArrayList<Human> humansLeaving;
      private final JPanel testPanel;
      private final String[][] rauweGrid;
      private int millisecondsPassed;
@@ -98,17 +99,24 @@ public class Simulation extends JPanel implements HotelEventListener {
         testPanel.add(layout);
         this.add(testPanel);
         this.humans = new ArrayList<>();
+        this.humansLeaving = new ArrayList<>();
     }
 
+    public void addHumansLeaving(Human human) {
+        this.humansLeaving.add(human);
+    }
 
     @Override
     public void notify(HotelEvent hotelEvent) {
         switch (hotelEvent.getEventType()) {
             case SPAWN_GUEST -> {
                 Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-                Guest guest = new Guest(tile, this.layout);
-                guest.setGuestId(hotelEvent.getGuestId());
+                Guest guest = new Guest(tile, this.layout, hotelEvent.getId());
                 humans.add(guest);
+            }
+
+            case CHECK_OUT -> {
+                this.humansLeaving.addAll(humans.stream().filter(Human::isReadyToDespawn).toList());
             }
         }
     }
@@ -133,6 +141,28 @@ public class Simulation extends JPanel implements HotelEventListener {
         for (Human human : this.humans) {
             human.update();
         }
+
+        humans.removeIf(h -> {
+            if (h.isReadyToDespawn()) {
+                removeHuman(h);
+                return true;
+            }
+            return false;
+        });
+
+//        if (!humansLeaving.isEmpty()) {
+//            for (Human human : humans) {
+//                if (humansLeaving.contains(human)) {
+//                    this.simulationController.removeListener(human);
+//                    human.
+//                }
+//            }
+//        }
+
+    }
+
+    public void removeHuman(Human h) {
+        this.simulationController.removeListener(h);
     }
 
     public void zoom(int aantal) {

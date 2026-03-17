@@ -67,6 +67,7 @@ public class SimulationController extends JPanel {
         hotelEvents.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 30, 0, 0));
         hotelEvents.add(new HotelEvent(HotelEventType.GO_ROOM, 50, 1, 0));
         hotelEvents.add(new HotelEvent(HotelEventType.GO_ROOM, 50, 0, 0));
+        hotelEvents.add(new HotelEvent(HotelEventType.CHECK_OUT, 75, 0, 0));
 
         this.HTEtimer = new Timer(Settings.delay, e -> {
             this.clockTime += (1000 / Settings.delay);
@@ -82,7 +83,7 @@ public class SimulationController extends JPanel {
                     if (event.getEventType() == HotelEventType.SPAWN_GUEST) {
                         simulation.getHumans().stream()
                                 .filter(h -> !this.hotelEventListeners.contains(h))
-                                .forEach(this::register);
+                                .forEach(this::registerListener);
                     }
                 }
             }
@@ -91,9 +92,14 @@ public class SimulationController extends JPanel {
         });
     }
 
-    public void register(HotelEventListener hotelEventListener) {
+    public void registerListener(HotelEventListener hotelEventListener) {
         this.hotelEventListeners.add(hotelEventListener);
     }
+
+    public void removeListener(HotelEventListener hotelEventListener) {
+        this.hotelEventListeners.remove(hotelEventListener);
+    }
+
 
     public boolean isStarted() {
         return started;
@@ -185,7 +191,7 @@ public class SimulationController extends JPanel {
                 pauseButton.setForeground(Color.DARK_GRAY);
                 startButton.setText("Start");
                 this.timeLabel.setText("00:00:00");
-                this.ticksLabel.setText("0");
+                this.ticksLabel.setText("Ticks: 0");
                 this.simulationSidebar.reset();
                 this.started = false;
             } else {
