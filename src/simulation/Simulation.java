@@ -40,6 +40,10 @@ public class Simulation extends JPanel {
         testPanel.setPreferredSize(new Dimension(Settings.schermBreedte , Settings.schermHoogte - 128 ));
     }
 
+    public SimulationController getSimulationController() {
+        return simulationController;
+    }
+
     public Layout returnLayout() {
         return this.layout;
     }

@@ -3,9 +3,11 @@ package facility;
 import enums.FacilityState;
 import enums.FacilityType;
 import enums.RoomStatus;
+import enums.SidebarPage;
 import human.Human;
 import settings.Settings;
 import simulation.SimulationController;
+import simulation.SimulationSidebar;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -27,6 +29,7 @@ import java.awt.event.MouseListener;
 
 public class Room extends Facility {
     private Human occupant;
+    private int roomNumber;
     private RoomStatus status;
     private MouseListener onHover;
     private Color color1;
@@ -37,15 +40,25 @@ public class Room extends Facility {
         this.setStatus(RoomStatus.AVAILABLE);
     }
 
+
+
     @Override
     public boolean isAccessible(Human human) {
         return  human == this.occupant || human.getTile().getFacility() == this;
     }
 
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
     public void setStatus(RoomStatus status) {
         this.status = status;
-        this.color1 = getColor(FacilityState.getSafe(status.toString() + "1"));
-        this.color2 = getColor(FacilityState.getSafe(status.toString() + "2"));
+        this.color1 = getColor(FacilityState.getSafe(status + "1"));
+        this.color2 = getColor(FacilityState.getSafe(status + "2"));
         this.applyColor();
     }
 
@@ -54,8 +67,7 @@ public class Room extends Facility {
     }
 
     public Color[] getActiveColors() {
-        Color[] colors = {this.color1, this.color2};
-        return colors;
+        return new Color[]{this.color1, this.color2};
     }
 
     public void setOccupant(Human human, RoomStatus status) {
@@ -69,9 +81,8 @@ public class Room extends Facility {
     }
 
     public void applyColor() {
-
-
         this.setBorder(new LineBorder(color2, 2));
+        this.setBackground(color1);
         for (int r = 0; r < this.tiles.length; r++) {
             for (int c = 0; c <this.tiles[0].length ; c++) {
                 Color activeColor;
@@ -85,6 +96,21 @@ public class Room extends Facility {
                 tile.setBackground(activeColor);
 
             }
+        }
+    }
+
+    @Override
+    public void mouseExited() {
+        this.setBorder(new LineBorder(color2, 2));
+    }
+
+    @Override
+    public void mouseClicked() {
+        SimulationSidebar sidebar = this.getSimulationController().getSimulationSidebar();
+        System.out.println();
+
+        if (!sidebar.getOpenedPages().getLast().equals(SidebarPage.ROOM.getTitle()+this.roomNumber)) {
+            sidebar.openNewPage(SidebarPage.ROOM.getTitle()+this.roomNumber);
         }
     }
 }

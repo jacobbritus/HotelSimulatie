@@ -1,5 +1,6 @@
 package simulation;
 
+import enums.SidebarPage;
 import facility.Room;
 import helper.FontHelper;
 import settings.Settings;
@@ -14,13 +15,14 @@ public class SimulationController extends JPanel {
     private final Simulation simulation;
     private final SimulationSidebar simulationSidebar;
     private final Timer HTEtimer;
-    private final JLabel ticksLabel;
+    private JLabel ticksLabel;
     private final JLabel timeLabel;
     private int runTime;
     private boolean paused;
     private boolean started;
     public final int[] speedMultipliers = {1, 2, 4, 8, 16, 32};
     public int activeSpeedMultiplier = 0;
+
 
     public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
         this.runTime = 0;
@@ -42,10 +44,26 @@ public class SimulationController extends JPanel {
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
                 Settings.themeColor2), new EmptyBorder(10, 10, 10, 10)));
 
+        addControlButtons();
 
-        // Children (compose later)
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public int getRunTime() {
+        return runTime;
+    }
+
+    public void updateSpeed() {
+        Settings.delay = 1000 / this.speedMultipliers[activeSpeedMultiplier];
+        this.ticksLabel.setText(this.speedMultipliers[this.activeSpeedMultiplier] + "x");
+        this.HTEtimer.setDelay(Settings.delay);
+    }
+
+    public void addControlButtons() {
         JButton menuButton = createButton("Close Menu", null);
-
 
         menuButton.addActionListener( e -> {
             if (this.simulationSidebar.toggle()) {
@@ -115,7 +133,7 @@ public class SimulationController extends JPanel {
             } else {
                 this.started = true;
                 this.simulationSidebar.init();
-                this.simulationSidebar.getOverviewPage();
+                this.simulationSidebar.openNewPage(SidebarPage.OVERVIEW.getTitle());
                 this.HTEtimer.start();
                 startButton.setText("Reset");
                 startButton.setForeground(Color.RED);
@@ -129,16 +147,6 @@ public class SimulationController extends JPanel {
         this.add(pauseButton);
     }
 
-    public int getRunTime() {
-        return runTime;
-    }
-
-    public void updateSpeed() {
-        Settings.delay = 1000 / this.speedMultipliers[activeSpeedMultiplier];
-        this.ticksLabel.setText(this.speedMultipliers[this.activeSpeedMultiplier] + "x");
-        this.HTEtimer.setDelay(Settings.delay);
-    }
-
     // compose later
     public JButton createButton(String text, ActionListener actionListener) {
         JButton button = new SidebarButton(text);
@@ -147,8 +155,8 @@ public class SimulationController extends JPanel {
         return button;
     }
 
-    public void setShowRoom(Room room) {
-        this.simulationSidebar.setShowRoom(room);
+    public SimulationSidebar getSimulationSidebar() {
+        return simulationSidebar;
     }
 }
 

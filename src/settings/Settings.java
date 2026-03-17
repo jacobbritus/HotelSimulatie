@@ -47,7 +47,7 @@ public static Color textColor2 = Color.LIGHT_GRAY;
 
     // Guest times
 
-    public static int guestBaseStayTime = 60 * 60;
+    public static int guestBaseStayTime = 60 * 60 * 3;
     public static int guestBaseSpawnTime = 60 * 10;
     public static int guestBaseCheckInTime = 60 * 15;
 

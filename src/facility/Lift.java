@@ -16,5 +16,4 @@ public class Lift extends Facility {
         return human.getDestination().getFacility().getLevel() != human.getTile().getFacility().getLevel();
     }
 
-
 }

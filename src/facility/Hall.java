@@ -10,4 +10,6 @@ public class Hall extends Facility {
     public Hall(JPanel superPanel, FacilityType type, int row, int column, SimulationController simC) {
         super(superPanel, type, row, column, simC);
     }
+
+
 }

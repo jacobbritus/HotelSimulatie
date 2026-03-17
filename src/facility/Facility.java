@@ -10,14 +10,16 @@ import simulation.SimulationController;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.util.HashMap;
 
-public class Facility extends JPanel {
-    private FacilityType type;
+public abstract class Facility extends JPanel implements FacilityMouseInteractions {
+    private final FacilityType type;
     private final int row;
     private final int column;
     private final SimulationController simulationController;
     private final int level;
+    private MouseAdapter mouseEvents;
     Tile[][] tiles;
 
     public Facility(JPanel superPanel, FacilityType type, int row, int column, SimulationController simC) {
@@ -26,12 +28,36 @@ public class Facility extends JPanel {
         this.row = row;
         this.column = column;
         this.setBorder(new LineBorder(this.getColor(FacilityState.DEFAULT2), 2));
+        this.setBackground(this.getColor(FacilityState.DEFAULT1));
+        this.setOpaque(true);
         this.simulationController = simC;
         this.addTiles();
-        this.setOpaque(true);
 
         superPanel.add(this);
+
+        onMouse();
     }
+
+    public void onMouse() {
+        Facility facility = this;
+        this.mouseEvents = new MouseAdapter() {
+        public void mouseEntered(java.awt.event.MouseEvent evt) {
+            facility.mouseEntered();
+        }
+        public void mouseExited(java.awt.event.MouseEvent evt) {
+            facility.mouseExited();
+        }
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            facility.mouseClicked();
+        }
+    };
+    this.addMouseListener(this.mouseEvents);
+    }
+
+    public void mouseExited () {this.setBorder(new LineBorder(this.getColor(FacilityState.DEFAULT2), 2));}
+    public void mouseEntered () { this.setBorder(new LineBorder(Color.YELLOW, 4));}
+    public void mouseClicked() {}
+
 
     public FacilityType getType() {
         return type;

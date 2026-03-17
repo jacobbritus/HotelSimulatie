@@ -1,7 +1,9 @@
 package enums;
 
+
 public enum SidebarPage {
-    ROOMS("Rooms"),
+    ROOM("Room "),
+    ROOMS("Rooms Overview"),
     GUESTS("Guests"),
     CLEANERS("Cleaners"),
     OVERVIEW("Hotel Overview"),
@@ -15,6 +17,6 @@ public enum SidebarPage {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 }

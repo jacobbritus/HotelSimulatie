@@ -1,6 +1,5 @@
 package simulation;
 
-import enums.FacilityState;
 import enums.SidebarPage;
 import enums.Statistic;
 import enums.StatisticSection;
@@ -13,9 +12,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
+
+import static enums.SidebarPage.ROOM;
 
 public class SimulationSidebar extends JPanel {
     private final Simulation simulation;
@@ -26,8 +31,8 @@ public class SimulationSidebar extends JPanel {
     private JPanel topSection;
     private final JPanel pagesButtonsPanel;
 
-    private final ArrayList<SidebarPage> openedPages;
-    private HashMap<SidebarPage, Runnable> pages;
+    private final ArrayList<String> openedPages;
+    private Map<String, Runnable> pages;
 
     boolean visible;
     Room roomtoShow;
@@ -36,8 +41,7 @@ public class SimulationSidebar extends JPanel {
 
     public SimulationSidebar(Simulation simulation) {
         this.openedPages = new ArrayList<>();
-        this.openedPages.add(SidebarPage.OVERVIEW);
-
+        this.openedPages.add(SidebarPage.OVERVIEW.title);
         this.visible = true;
         this.roomtoShow = null;
         this.simulation = simulation;
@@ -67,7 +71,10 @@ public class SimulationSidebar extends JPanel {
 
         // Stats to update
         this.componentsToUpdate = new ArrayList<>();
-        this.initializePages();
+    }
+
+    public ArrayList<String> getOpenedPages() {
+        return openedPages;
     }
 
     public void reset() {
@@ -81,12 +88,17 @@ public class SimulationSidebar extends JPanel {
 
         for (SidebarPage page : SidebarPage.values()) {
             switch (page) {
-                case ROOMS -> this.pages.put(page, this::getRoomsPage);
+                case ROOMS -> this.pages.put(page.getTitle(), this::getRoomsPage);
 
-                case OVERVIEW -> this.pages.put(page, this::getOverviewPage);
+                case OVERVIEW -> this.pages.put(page.getTitle(), this::getOverviewPage);
             }
         }
+        for (Room room : this.simulation.returnLayout().getRooms()) {
+            this.pages.put(SidebarPage.ROOM.getTitle() + room.getRoomNumber(), () -> getRoomPage(room));
+        }
     }
+
+
 
     public void addTitle(String title) {
         this.topSection = new JPanel();
@@ -116,11 +128,13 @@ public class SimulationSidebar extends JPanel {
         SidebarButton sidebarButton = new SidebarButton("<");
         sidebarButton.setMaximumSize(new Dimension(64, 32));
         sidebarButton.addActionListener(e -> {
+            System.out.println(this.openedPages.getLast());
             this.openedPages.removeLast();
-            SidebarPage lastPage = this.openedPages.getLast();
-            System.out.println(this.openedPages);
+            String lastPage = this.openedPages.getLast();
             System.out.println(lastPage);
-            this.pages.get(lastPage).run();
+            openNewPage(lastPage);
+            this.repaint();
+            this.revalidate();
         });
         this.topSection.add(sidebarButton);
     }
@@ -139,30 +153,30 @@ public class SimulationSidebar extends JPanel {
         return this.visible;
     }
 
-    public void setShowRoom(Room roomtoShow) {
-        this.roomtoShow = roomtoShow;
+    public void getRoomPage(Room room) {
+        this.repaint();
+        this.revalidate();
     }
 
-    public void openNewPage(SidebarPage activePage) {
+    public void openNewPage(String activePage) {
+//        if (!this.simulation.getSimulationController().isStarted()) return;
+        if (!activePage.equals(SidebarPage.OVERVIEW.getTitle())) this.openedPages.add(activePage); // Don't add the root.
         this.removeAll();
         this.componentsToUpdate = new ArrayList<>();
-        addTitle(activePage.getTitle());
+        addTitle(activePage);
         this.pagesButtonsPanel.removeAll();
+        this.pages.get(activePage).run();
     }
 
     public void updateRoomButton(JButton button, Room  room) {
         Color[] activeColors = room.getActiveColors();
-
-//        button.setBackground(activeColors[0]);
         button.setBorderPainted(true);
         button.setBorder(new LineBorder(activeColors[1], 2));
+
     }
 
 
     public void getRoomsPage() {
-        openNewPage(SidebarPage.ROOMS);
-
-
 //        HashMap<Statistic, Supplier<String>> statistics = simulation.getStatisticsSupplierMap();
 //
 //        StatisticSection section = StatisticSection.Rooms;
@@ -179,20 +193,15 @@ public class SimulationSidebar extends JPanel {
 //                row.update();
 //                this.add(row);
 //                sectionPanel.add(row);
-//            }
-
+//
         ArrayList<Room> rooms = this.simulation.returnLayout().getRooms();
         for (int i = 0; i < rooms.size() ; i++) {
             Room room = rooms.get(i);
-
             pagesButtonsPanel.setOpaque(false);
             pagesButtonsPanel.setLayout(new BoxLayout(pagesButtonsPanel, BoxLayout.Y_AXIS));
             pagesButtonsPanel.add(Box.createVerticalStrut(10));
-            SidebarButton button = new SidebarButton("Room " + (i + 1));
-
+            SidebarButton button = getPageButton(i, room);
             updateRoomButton(button, room);
-
-
             this.componentsToUpdate.add(button);
             pagesButtonsPanel.add(button);
         }
@@ -202,17 +211,36 @@ public class SimulationSidebar extends JPanel {
 
         this.revalidate();
         this.repaint();
+    }
 
+    private SidebarButton getPageButton(int i, Room room) {
+        SidebarButton button = new SidebarButton(ROOM.getTitle() + room.getRoomNumber());
+        SimulationSidebar sidebar = this;
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                room.mouseEntered();
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                room.mouseExited();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                sidebar.pages.get(SidebarPage.ROOM.getTitle() + room.getRoomNumber()).run();
+            }
+        });
+        return button;
     }
 
     public void init() {
+        this.initializePages();
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new EmptyBorder(0, 0, 0, 0));
     }
 
     public void getOverviewPage() {
-        openNewPage(SidebarPage.OVERVIEW);
-
         // Iterate through the map that holds statistic type and their respective function
         // and create rows that can update their value;
         HashMap<Statistic, Supplier<String>> statistics = simulation.getStatisticsSupplierMap();
@@ -232,19 +260,18 @@ public class SimulationSidebar extends JPanel {
         }
 
 
-        for (SidebarPage page : SidebarPage.values()) {
-            if (page == SidebarPage.SETTINGS) pagesButtonsPanel.add(Box.createVerticalGlue());
-            else if (page == SidebarPage.OVERVIEW) continue;
-            SidebarButton button = new SidebarButton(page.getTitle());
-            button.addActionListener(_ -> {
-                this.openedPages.add(page);
-                this.pages.get(page).run();
-            });
-            pagesButtonsPanel.add(button);
-            pagesButtonsPanel.add(Box.createVerticalStrut(10));
-        }
-
-        this.add(pagesButtonsPanel);
+//        for (SidebarPage page : SidebarPage.values()) {
+//            if (page == SidebarPage.SETTINGS) pagesButtonsPanel.add(Box.createVerticalGlue());
+//            else if (page == SidebarPage.OVERVIEW || page == SidebarPage.ROOM) continue;
+//            SidebarButton button = new SidebarButton(page.getTitle());
+//            button.addActionListener(_ -> {
+//                openNewPage(page.getTitle());
+//            });
+//            pagesButtonsPanel.add(button);
+//            pagesButtonsPanel.add(Box.createVerticalStrut(10));
+//        }
+//
+//        this.add(pagesButtonsPanel);
 
         this.repaint();
         this.revalidate();
@@ -252,14 +279,15 @@ public class SimulationSidebar extends JPanel {
 
     // if stat page 1, else if navigation page 2
     public void update() {
+        System.out.println(this.openedPages);
         switch (openedPages.getLast()) {
-            case OVERVIEW -> {
+            case "Hotel Overview" -> {
                 for (Component stat : this.componentsToUpdate) {
                     ((StatRow) stat).update();
                 }
             }
 
-            case ROOMS -> {
+            case "Room Overview" -> {
                 this.pagesButtonsPanel.getComponents();
                 ArrayList<Room> rooms = this.simulation.returnLayout().getRooms();
                 for (int i = 0; i < rooms.size(); i++) {

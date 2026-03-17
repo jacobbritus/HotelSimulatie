@@ -45,7 +45,10 @@ public class Layout extends JPanel {
                 Facility facility = this.facilities[r][c];
                 if (facility == null) continue;
                 if (facility.getType() ==  FacilityType.LOBBY) lobbies.add((Lobby) facility);
-                if (facility.getType() ==  FacilityType.ROOM) rooms.add((Room) facility);
+                if (facility.getType() ==  FacilityType.ROOM) {
+                    rooms.add((Room) facility);
+                    ((Room) facility).setRoomNumber(490 + c + r + 1);
+                }
             }
         }
 
