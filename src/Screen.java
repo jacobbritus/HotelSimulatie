@@ -1,10 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JSlider;
+import org.w3c.dom.Document;
 
 public class Screen extends JFrame {
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
+    private String[][] loadedGrid = null;
 
     public Screen() {
         setTitle("Hotel Simulator");
@@ -58,6 +60,15 @@ public class Screen extends JFrame {
 
         settings.addActionListener(e -> cardLayout.show(mainPanel, "settings"));
         layout.addActionListener(e -> cardLayout.show(mainPanel, "layout"));
+        start.addActionListener(e -> {
+            if (loadedGrid != null) {
+                Applicatie app = new Applicatie();
+                app.startSimulatie(loadedGrid);
+                setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please load a valid layout first.");
+            }
+        });
 
         return panel;
     }
@@ -129,9 +140,22 @@ public class Screen extends JFrame {
 
         load.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("layouts"));
             int result = chooser.showOpenDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                log.append("Loaded: " + chooser.getSelectedFile().getName() + "\n");
+                LayoutParser parser = new LayoutParser();
+                Document doc = parser.loadFile(chooser.getSelectedFile().getAbsolutePath());
+                if (doc != null) {
+                    String[][] grid = parser.convertLayout(doc);
+                    if (grid != null) {
+                        loadedGrid = grid;
+                        log.append("Layout loaded successfully: " + chooser.getSelectedFile().getName() + "\n");
+                    } else {
+                        log.append("Invalid layout: " + chooser.getSelectedFile().getName() + "\n");
+                    }
+                } else {
+                    log.append("Failed to load file: " + chooser.getSelectedFile().getName() + "\n");
+                }
             }
         });
 

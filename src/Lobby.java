@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.Color;
 
 
-public class Kamer extends Oppervlakte {
-    public Kamer(JPanel superPanel, Oppervlakte[][] ruimtes) {
-        super(superPanel, new Color(255, 248, 225),
-                new Color(240, 230, 190),
+public class Lobby extends Oppervlakte {
+    public Lobby(JPanel superPanel, Oppervlakte[][] ruimtes) {
+        super(superPanel, new Color(230, 230, 200),
+                new Color(240, 210, 255),
                 ruimtes
         );
     }

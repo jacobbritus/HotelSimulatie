@@ -1,4 +1,6 @@
-import java.awt.*;
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeert ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
+
+import java.awt.Color;
 
 public final class Instellingen {
     private Instellingen() {} // Geen instanties kunnen gemaakt worden.
@@ -20,8 +22,17 @@ public final class Instellingen {
     public static int oppervlakVakjes = 16;
 
 
-    // Vakjes View
-    public static boolean vakjesAlternerendeKleuren = true;
-
     // Oppervlakte Kleuren
+
+    // Milliseconden per tik
+    public static int millisecondenPerTik = 1000;
+
+    //maximale aantal gasten
+    public static int maxGasten = 200;
+
+    //Heatmap toggle
+    public static boolean heatmapAan = true;
+
+    //debug toggle
+    public static boolean debugAan = false;
 }

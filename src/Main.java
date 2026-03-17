@@ -1,24 +1,7 @@
-// Document Object Model (DOM)
-// Loads the entire XML file into the memory as a tree structure.
+//BELANGRIJK IMPORT NERGENS JAVA.AWT.*!! Deze importeert ook java.awt.List en werkt de java.util.List tegen. Dan werkt pathfinding niet meer!!!
 
-// Setup for parsing any XML file using DOM.
-
-import org.w3c.dom.Document;
-
-import javax.swing.*;
-import java.awt.*;
-
-public class Main {
+public class    Main {
     public static void main(String[] args) {
-        Applicatie applicatie = new Applicatie();
-
-        LayoutParser layoutParser = new LayoutParser();
-        Document doc = layoutParser.loadFile("layouts/small.layout");
-
-        if (doc == null) {
-            return;
-        }
-
-        applicatie.startSimulatie(layoutParser.convertLayout(doc));
+        new Screen();
     }
 }
