@@ -60,9 +60,7 @@ public class Tile extends JLabel {
     }
 
     public boolean isWalkable(Human newHuman) {
-
         return human == null || this.facility == null ||
-
                          newHuman.getDestination().getFacility().getLevel() != this.getFacility().getLevel();
     }
 

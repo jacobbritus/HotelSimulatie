@@ -10,23 +10,23 @@ public final class Settings {
     public static int schermHoogte = 1080;
 
     // Sidebar width
-    public static int sidebarWidth = 300;
+    public static int sidebarWidth = 400;
 
     // Theme
     // Default = Color.WHITE
-    public static Color achtergrondKleur = new Color(230, 230, 230, 255);
-    public static Color themeColor = new Color(255, 255, 255,255);
-    public static Color themeColor2 = new Color(240, 240, 240,255);
-    public static Color themeColor3 = new Color(247, 247, 247,255);
-    public static Color textColor = Color.BLACK;
-    public static Color textColor2 = Color.GRAY;
+//    public static Color achtergrondKleur = new Color(250, 250, 250, 255);
+//    public static Color themeColor = new Color(255, 255, 255,255);
+//    public static Color themeColor2 = new Color(240, 240, 240,255);
+//    public static Color themeColor3 = new Color(247, 247, 247,255);
+//    public static Color textColor = Color.BLACK;
+//    public static Color textColor2 = Color.GRAY;
 
-//    public static Color achtergrondKleur = new Color(25, 25, 25, 255);
-//    public static Color themeColor = new Color(30, 30, 30,255);
-//    public static Color themeColor2 = new Color(40, 40, 40,255);
-//    public static Color themeColor3 = new Color(50, 50, 50,255);
-//    public static Color textColor = Color.WHITE;
-//public static Color textColor2 = Color.LIGHT_GRAY;
+    public static Color achtergrondKleur = new Color(25, 25, 25, 255);
+    public static Color themeColor = new Color(30, 30, 30,255);
+    public static Color themeColor2 = new Color(40, 40, 40,255);
+    public static Color themeColor3 = new Color(50, 50, 50,255);
+    public static Color textColor = Color.WHITE;
+public static Color textColor2 = Color.LIGHT_GRAY;
 
     // Bepaald hoe hoog en breed elk Oppervlakte is
     // Default = 100

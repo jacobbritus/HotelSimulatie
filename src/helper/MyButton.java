@@ -1,27 +1,26 @@
-package simulation;
+package helper;
 
-import helper.FontHelper;
+import enums.FontWeight;
 import settings.Settings;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SidebarButton extends JButton {
+public class MyButton extends JButton {
     private Color hoverColor;
 
-    public SidebarButton(String text) {
+    public MyButton(String text, ActionListener actionListener) {
         this.setText(text);
         this.setForeground(Settings.textColor);
-        this.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        this.setFont(FontHelper.getFont(FontWeight.MEDIUM).deriveFont(12f));
         this.setBorderPainted(false);
         this.setFocusPainted(false);
-//        this.setBorder(BorderFactory.createCompoundBorder(new LineBorder(Settings.themeColor3, 1),
-//                new EmptyBorder(20, 15, 20, 0)));
+        this.setFocusable(false);
+        this.addActionListener(actionListener);
+
         this.setMaximumSize(new Dimension(Settings.sidebarWidth, 50));
         this.setBackground(Settings.themeColor2);
         this.setOpaque(true);

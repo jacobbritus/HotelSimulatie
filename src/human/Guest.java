@@ -69,16 +69,6 @@ public class Guest extends Human {
     public void notify(HotelEvent hotelEvent) {
         if (hotelEvent.getGuestId() != null && hotelEvent.getGuestId() != this.guestId) return;
 
-        System.out.println(hotelEvent.getEventType());
-        System.out.println(this.guestId);
-        System.out.println(hotelEvent.getGuestId());
-
-        System.out.println();
-
-
-//        System.out.println(hotelEvent.getEventType());
-//        if (hotelEvent.getEventType() == HotelEventType.GO_ROOM) {
-//        }
         switch (hotelEvent.getEventType()) {
             case ASSIGN_ROOM -> {
                 Room nearestRoom = this.getLayout().getNearestRoom(this); // assign room

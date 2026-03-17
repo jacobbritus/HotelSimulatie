@@ -1,6 +1,7 @@
 package simulation;
 
 import enums.Role;
+import enums.RoomStatus;
 import enums.Statistic;
 import events.HotelEvent;
 import events.HotelEventListener;
@@ -60,28 +61,29 @@ public class Simulation extends JPanel implements HotelEventListener {
     public void initializeStatisticSuppliers() {
         // Create a map that holds statistic type and their respective function returning a value in order to update it.
         // General
-//        this.statisticsSupplierMap.put(Statistic.Guests, () -> this.getHumans().stream()
-//                .filter(h -> h instanceof Guest).count() + "");
-//        this.statisticsSupplierMap.put(Statistic.Cleaners, () -> this.getHumans().stream()
-//                .filter(h -> h instanceof Cleaner).count() + "");
+        this.statisticsSupplierMap.put(Statistic.GUEST_COUNT, () -> this.getHumans().stream()
+                .filter(h -> h.getRole() == Role.GUEST).count() + "");
+
+        this.statisticsSupplierMap.put(Statistic.CLEANER_COUNT, () -> this.getHumans().stream()
+                .filter(h -> h.getRole() == Role.CLEANER).count() + "");
 //
-//        // Rooms
-//        this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> {
-//            long occupied = layout.getRooms().stream()
-//                    .filter(r -> r.getStatus() == RoomStatus.UNAVAILABLE)
-//                    .count();
-//
-//            int total = layout.getRooms().size();
-//
-//            // Check for 0 to avoid "Division by Zero" errors if the hotel is empty
-//            if (total == 0) return "1";
-//
-//            // Casting (double) forces Java to use floating-point math
-//            double percentage = (double) occupied / total * 100;
-//
-//            // Use String.format to round to 1 decimal place (e.g., 85.5%)
-//            return String.format("%.1f", percentage);
-//        });
+        // Rooms
+        this.statisticsSupplierMap.put(Statistic.ROOMS_OCCUPIED, () -> {
+            long occupied = layout.getRooms().stream()
+                    .filter(r -> r.getStatus() == RoomStatus.UNAVAILABLE)
+                    .count();
+
+            int total = layout.getRooms().size();
+
+            // Check for 0 to avoid "Division by Zero" errors if the hotel is empty
+            if (total == 0) return "1";
+
+            // Casting (double) forces Java to use floating-point math
+            double percentage = (double) occupied / total * 100;
+
+            // Use String.format to round to 1 decimal place (e.g., 85.5%)
+            return String.format("%.1f", percentage);
+        });
 //
 //        this.statisticsSupplierMap.put(Statistic.DirtyRooms, () -> this.layout.getRooms().stream()
 //                .filter(r -> r.getStatus() == RoomStatus.DIRTY).count() + "");

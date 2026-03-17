@@ -1,3 +1,5 @@
+package helper;
+
 import settings.Settings;
 
 import javax.swing.*;

@@ -30,3 +30,10 @@ public enum Statistic {
         return this.section;
     }
 }
+
+//
+//Guest Satisfaction
+//Average Cleaning Time
+//Queue Length
+//Agent Idle Time
+//Room Turnover Rate

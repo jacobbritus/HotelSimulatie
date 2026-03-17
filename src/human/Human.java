@@ -119,7 +119,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
             for (Tile neighbour : current.getNeighbours().values()) {
                 if (neighbour == null || closed.contains(neighbour)
                         || !neighbour.isWalkable(this) ||
-                        !inaccessibleFacility(neighbour) || moveFilter(neighbour)) {
+                        !accessibleFacility(neighbour) || moveFilter(neighbour)) {
                     continue;
                 }
                 open.add(neighbour);
@@ -130,7 +130,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
 
     public abstract boolean moveFilter(Tile neighbour);
 
-    public boolean inaccessibleFacility(Tile neighbour) {
+    public boolean accessibleFacility(Tile neighbour) {
         Facility facility = neighbour.getFacility();
         return facility.isAccessible(this);
     }

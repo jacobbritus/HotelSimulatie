@@ -1,35 +1,34 @@
 package simulation;
 
+import enums.FontWeight;
+import enums.TextSize;
 import helper.FontHelper;
+import helper.MyLabel;
 import settings.Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class SidebarSection extends JPanel {
-    private JPanel parent;
     private ArrayList<JPanel> statRows;
 
     public SidebarSection(JPanel parent, String title) {
-        this.parent = parent;
         parent.add(this);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setOpaque(false);
+        this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 0));
 
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
-                Settings.themeColor2), new EmptyBorder(5, 15, 10, 0)));
+        Settings.themeColor2), new EmptyBorder(0, 0, 0, 0)));
 
         // --- Title ---
-        if (title != null) {
-
-            JLabel titleLabel = new JLabel(title);
-            titleLabel.setPreferredSize(new Dimension(Settings.sidebarWidth, 48));
-            titleLabel.setFont(FontHelper.getFont("SemiBold").deriveFont(16f));
-            titleLabel.setBorder(new EmptyBorder(0, 0, 10, 60));
-            this.add(titleLabel);
-        }
+        JLabel titleLabel = new MyLabel(title, FontWeight.SEMIBOLD, TextSize.MEDIUM);
+        titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+        titleLabel.setBorder(new EmptyBorder(10, 10, 10, 0));
+        this.add(titleLabel);
     }
 }

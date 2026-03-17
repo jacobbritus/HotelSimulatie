@@ -1,3 +1,4 @@
+import helper.MyScrollPane;
 import settings.FacilityColors;
 import settings.Settings;
 import simulation.Simulation;
@@ -39,19 +40,21 @@ public class Applicatie extends JFrame implements KeyListener {
 //        scrollPane.setColumnHeaderView(simulationController);
 
 
-        SimulationSidebar simulationSidebar = new SimulationSidebar(simulation);
-        simulation.setSimulationSidebar(simulationSidebar);
 
+        SimulationSidebar simulationSidebar = new SimulationSidebar();
+        simulation.setSimulationSidebar(simulationSidebar);
 
         SimulationController simulationController = new SimulationController(simulation, simulationSidebar);
         simulation.setSimulationController(simulationController);
         this.add(simulationController, BorderLayout.NORTH);
 
+        simulationSidebar.setSimulationController(simulationController);
         this.add(simulationSidebar, BorderLayout.WEST);
         this.setVisible(true);
         
         simulation.init();
-        simulation.zoom(Settings.facilityTilesSize*  1);
+
+        simulation.zoom(Settings.facilityTilesSize*  2);
     }
 
 

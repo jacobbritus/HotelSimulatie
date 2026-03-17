@@ -1,11 +1,14 @@
 package helper;
 
+import enums.FontWeight;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 public class FontHelper {
-    public static Font getFont(String weight) {
+    public static Font getFont(FontWeight fontWeight) {
+        String weight = fontWeight.getStr();
         File font_file = new File(
                 String.format("assets/fonts/OpenSans-%s.ttf", weight)
         );

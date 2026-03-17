@@ -1,7 +1,10 @@
 package simulation;
 
+import enums.FontWeight;
+import enums.TextSize;
 import enums.UnitType;
 import helper.FontHelper;
+import helper.MyLabel;
 import settings.Settings;
 
 import javax.swing.*;
@@ -20,8 +23,7 @@ public class StatRow extends JPanel {
         this.supplier = supplier;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setOpaque(false);
-        JLabel item = new JLabel(title);
-        item.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        JLabel item = new MyLabel(title, FontWeight.MEDIUM, TextSize.SMALL);
 
         Dimension size = item.getPreferredSize();
         item.setPreferredSize(new Dimension(size.width + 20, size.height));
@@ -47,8 +49,7 @@ public class StatRow extends JPanel {
     }
 
     public void createNumericalValueLabel() {
-        this.valueLabel = new JLabel();
-        this.valueLabel.setFont(FontHelper.getFont("Medium").deriveFont(12f));
+        this.valueLabel = new MyLabel("", FontWeight.MEDIUM, TextSize.SMALL);
         this.valueLabel.setForeground(Settings.textColor2);
         this.add(this.valueLabel);
     }
@@ -61,6 +62,8 @@ public class StatRow extends JPanel {
             protected Color getSelectionForeground() { return Color.white; } // Text color over progress
         });
 
+        bar.setMaximumSize(new Dimension(10, 4));
+        bar.setMinimumSize(new Dimension(10, 4));
         bar.setForeground(new Color(46, 204, 113));
         bar.setBackground(Settings.themeColor2);
         bar.setOpaque(true);

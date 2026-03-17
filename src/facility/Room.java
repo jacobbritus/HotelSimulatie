@@ -3,7 +3,6 @@ package facility;
 import enums.FacilityState;
 import enums.FacilityType;
 import enums.RoomStatus;
-import enums.SidebarPage;
 import human.Human;
 import settings.Settings;
 import simulation.SimulationController;
@@ -109,9 +108,9 @@ public class Room extends Facility {
         SimulationSidebar sidebar = this.getSimulationController().getSimulationSidebar();
         System.out.println();
 
-        if (!sidebar.getOpenedPages().getLast().equals(SidebarPage.ROOM.getTitle()+this.roomNumber)) {
+//        if (!sidebar.getOpenedPages().getLast().equals(SidebarPage.ROOM.getTitle()+this.roomNumber)) {
 //            sidebar.openNewPage(SidebarPage.ROOM.getTitle()+this.roomNumber);
-        }
+//        }
     }
 }
 
