@@ -1,5 +1,6 @@
 package human;
 
+import events.HotelEventListener;
 import facility.Facility;
 import facility.Room;
 import facility.Tile;
@@ -9,21 +10,28 @@ import settings.Settings;
 import java.awt.Color;
 import java.util.*;
 
-public abstract class Human implements RoomOccupant {
+public abstract class Human implements RoomOccupant, HotelEventListener {
     private Tile tile;
+    private final Layout layout;
     private int stepsTaken;
     private ArrayList<Tile> destinationPath;
     private Tile destination;
     private Integer cooldown;
     private Integer lifeTime;
     private Integer actionTime;
+
     private boolean isLeaving;
     private Room assignedRoom;
 
-    public Human(Tile tile) {
+    public Human(Tile tile, Layout layout) {
+        this.layout = layout;
         this.stepsTaken = 0;
         this.tile = tile;
         this.tile.setHuman(this);
+    }
+
+    public Layout getLayout() {
+        return layout;
     }
 
     public boolean isLeaving() {
@@ -96,15 +104,16 @@ public abstract class Human implements RoomOccupant {
     }
 
     public void update(Layout layout) {
-        if (this.activeCooldown()) return;
-        if (this.getLifeTime() != null) decreaseLifeTime();
-
-        if (this.getDestination() != null) {
+//        if (this.activeCooldown()) return;
+//        if (this.getLifeTime() != null) decreaseLifeTime();
+//
+        if (this.getDestinationPath() != null) {
             this.move();
-        } else {
-            this.decisionMaking(layout);
-            if (this.getDestination() != null) this.bfs(this.getDestination());
         }
+//        } else {
+//            this.decisionMaking(layout);
+//            if (this.getDestination() != null) this.bfs(this.getDestination());
+//        }
     }
 
     public abstract void decisionMaking(Layout layout);
@@ -120,6 +129,7 @@ public abstract class Human implements RoomOccupant {
         } else {
             this.stepsTaken = 0;
             this.destination = null;
+            this.destinationPath = null;
         }
     }
 
@@ -130,6 +140,10 @@ public abstract class Human implements RoomOccupant {
             }
         }
         return null;
+    }
+
+    public ArrayList<Tile> getDestinationPath() {
+        return destinationPath;
     }
 
     public void bfs(Tile destination) {

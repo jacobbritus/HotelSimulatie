@@ -2,6 +2,7 @@ package human;
 
 import enums.FacilityType;
 import enums.RoomStatus;
+import events.HotelEvent;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
@@ -17,8 +18,8 @@ public class Guest extends Human {
     private final Color arrivalColor = Color.RED;
     private final Color checkedInColor = Color.GREEN;
 
-    public Guest(Tile tile) {
-        super(tile);
+    public Guest(Tile tile, Layout layout) {
+        super(tile, layout);
         this.isCheckedIn = false;
         this.room = null;
         this.getTile().setBackground(arrivalColor);
@@ -98,4 +99,21 @@ public class Guest extends Human {
         return (room.getStatus() == RoomStatus.AVAILABLE);
     }
 
+    @Override
+    public void notify(HotelEvent hotelEvent) {
+        switch (hotelEvent.getEventType()) {
+            case ASSIGN_ROOM -> {
+                Room nearestRoom = this.getLayout().getNearestRoom(this); // assign room
+                if (nearestRoom == null) {
+                    return;
+                }
+                this.assignRoom(nearestRoom);
+            }
+
+            case GO_ROOM -> {
+                setDestination(this.getLayout().getRandomTile(this.room));
+                this.bfs(getDestination());
+            }
+        }
+    }
 }

@@ -1,10 +1,10 @@
 package simulation;
 
-import enums.RoomStatus;
 import enums.Statistic;
+import events.HotelEvent;
+import events.HotelEventListener;
 import facility.Facility;
 import facility.Tile;
-import human.Cleaner;
 import human.Guest;
 import human.Human;
 import layout.Layout;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class Simulation extends JPanel {
+public class Simulation extends JPanel implements HotelEventListener {
      Layout layout;
      SimulationController simulationController;
      SimulationSidebar simulationSidebar;
@@ -60,52 +60,64 @@ public class Simulation extends JPanel {
         layout = new Layout(rauweGrid, this.simulationController);
         testPanel.add(layout);
         this.add(testPanel);
-
+        this.humans = new ArrayList<>();
 
         // Create a map that holds statistic type and their respective function returning a value in order to update it.
         // General
-        this.statisticsSupplierMap.put(Statistic.Guests, () -> this.getHumans().stream()
-                .filter(h -> h instanceof Guest).count() + "");
-        this.statisticsSupplierMap.put(Statistic.Cleaners, () -> this.getHumans().stream()
-                .filter(h -> h instanceof Cleaner).count() + "");
-
-        // Rooms
-        this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> {
-            long occupied = layout.getRooms().stream()
-                    .filter(r -> r.getStatus() == RoomStatus.UNAVAILABLE)
-                    .count();
-
-            int total = layout.getRooms().size();
-
-            // Check for 0 to avoid "Division by Zero" errors if the hotel is empty
-            if (total == 0) return "1";
-
-            // Casting (double) forces Java to use floating-point math
-            double percentage = (double) occupied / total * 100;
-
-            // Use String.format to round to 1 decimal place (e.g., 85.5%)
-            return String.format("%.1f", percentage);
-        });
-
-        this.statisticsSupplierMap.put(Statistic.DirtyRooms, () -> this.layout.getRooms().stream()
-                .filter(r -> r.getStatus() == RoomStatus.DIRTY).count() + "");
-
-        this.statisticsSupplierMap.put(Statistic.TotalRoomsCleaned, () -> this.getHumans().stream()
-                .filter(h -> h instanceof Cleaner)
-                .mapToInt(i -> ((Cleaner) i).getRoomsCleaned()).sum() + "");
+//        this.statisticsSupplierMap.put(Statistic.Guests, () -> this.getHumans().stream()
+//                .filter(h -> h instanceof Guest).count() + "");
+//        this.statisticsSupplierMap.put(Statistic.Cleaners, () -> this.getHumans().stream()
+//                .filter(h -> h instanceof Cleaner).count() + "");
+//
+//        // Rooms
+//        this.statisticsSupplierMap.put(Statistic.RoomsOccupied, () -> {
+//            long occupied = layout.getRooms().stream()
+//                    .filter(r -> r.getStatus() == RoomStatus.UNAVAILABLE)
+//                    .count();
+//
+//            int total = layout.getRooms().size();
+//
+//            // Check for 0 to avoid "Division by Zero" errors if the hotel is empty
+//            if (total == 0) return "1";
+//
+//            // Casting (double) forces Java to use floating-point math
+//            double percentage = (double) occupied / total * 100;
+//
+//            // Use String.format to round to 1 decimal place (e.g., 85.5%)
+//            return String.format("%.1f", percentage);
+//        });
+//
+//        this.statisticsSupplierMap.put(Statistic.DirtyRooms, () -> this.layout.getRooms().stream()
+//                .filter(r -> r.getStatus() == RoomStatus.DIRTY).count() + "");
+//
+//        this.statisticsSupplierMap.put(Statistic.TotalRoomsCleaned, () -> this.getHumans().stream()
+//                .filter(h -> h instanceof Cleaner)
+//                .mapToInt(i -> ((Cleaner) i).getRoomsCleaned()).sum() + "");
 
         // test
-        this.humans = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-            humans.add(new Guest(tile));
-        }
+//        this.humans = new ArrayList<>();
+//        for (int i = 0; i < 1; i++) {
+//            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+//            humans.add(new Guest(tile));
+//        }
+//
+//        for (int i = 0; i < 7; i++) {
+//            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+//            humans.add(new Cleaner(tile));
+//        }
 
-        for (int i = 0; i < 7; i++) {
-            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-            humans.add(new Cleaner(tile));
-        }
+    }
 
+
+    @Override
+    public void notify(HotelEvent hotelEvent) {
+        switch (hotelEvent.getEventType()) {
+            case SPAWN_GUEST -> {
+                Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+                Guest guest = new Guest(tile, this.layout);
+                humans.add(new Guest(tile, this.layout));
+            }
+        }
     }
 
     public void reset() {
@@ -124,22 +136,9 @@ public class Simulation extends JPanel {
         this.simulationSidebar = simulationSidebar;
     }
 
-
-    public void update() {
+    public void updateHumans() {
         for (Human human : this.humans) {
             human.update(this.layout);
-            if (human.isLeaving()) human.despawn();
-        }
-        this.simulationSidebar.update();
-
-        humans.removeIf(Human::isLeaving);
-
-//        // Adding guests
-        spawnCooldown -= (1000 / Settings.delay);;
-        if (spawnCooldown < 0) {
-            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-            humans.add(new Guest(tile));
-            this.spawnCooldown = Settings.guestBaseSpawnTime;
         }
     }
 
@@ -158,14 +157,12 @@ public class Simulation extends JPanel {
                 Settings.oppervlakGrootte * breedte,
                 Settings.oppervlakGrootte * hoogte));
 
-
-
-
         layout.revalidate();
         layout.repaint();
 
         this.layout.reload();
         this.layout.revalidate();
     }
+
 
 }

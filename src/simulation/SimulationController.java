@@ -1,7 +1,9 @@
 package simulation;
 
 import enums.SidebarPage;
-import facility.Room;
+import events.HotelEvent;
+import events.HotelEventListener;
+import events.HotelEventType;
 import helper.FontHelper;
 import settings.Settings;
 
@@ -10,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class SimulationController extends JPanel {
     private final Simulation simulation;
@@ -17,24 +20,60 @@ public class SimulationController extends JPanel {
     private final Timer HTEtimer;
     private JLabel ticksLabel;
     private final JLabel timeLabel;
-    private int runTime;
+    private int clockTime;
     private boolean paused;
     private boolean started;
     public final int[] speedMultipliers = {1, 2, 4, 8, 16, 32};
     public int activeSpeedMultiplier = 0;
 
+    private int eventTicks;
+    private ArrayList<HotelEventListener> hotelEventListeners;
+    private ArrayList<HotelEventListener> pendingToRegister; //
+
 
     public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
-        this.runTime = 0;
+        this.clockTime = 0;
+        this.eventTicks = 0;
         this.simulation = simulation;
         this.simulationSidebar = simulationSidebar;
 
         this.timeLabel = new JLabel("00:00:00");
 
+        hotelEventListeners  = new ArrayList<>();
+        pendingToRegister = new ArrayList<>();
+        ArrayList<HotelEvent> events = new ArrayList<>();
+
+        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
+        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
+        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
+        events.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 100));
+        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
+        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
+        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
+
+
+        hotelEventListeners.add(this.simulation);
         this.HTEtimer = new Timer(Settings.delay, e -> {
-            this.runTime += (1000 / Settings.delay);
-            this.timeLabel.setText(Settings.convertTime(this.runTime));
-            simulation.update();
+            this.clockTime += (1000 / Settings.delay);
+            this.timeLabel.setText(Settings.convertTime(this.clockTime));
+
+            this.eventTicks++;
+            System.out.println(this.eventTicks);
+
+            for (HotelEvent event : events) {
+                if (event.getTime() == this.eventTicks) {
+                    for (HotelEventListener listener : hotelEventListeners) {
+                        listener.notify(event);
+                    }
+
+                    if (event.getEventType() == HotelEventType.SPAWN_GUEST) {
+                       simulation.getHumans().stream()
+                               .filter(h -> !this.hotelEventListeners.contains(h))
+                               .forEach(this::register);
+                    }
+                }
+            }
+            simulation.updateHumans();
         });
 
         this.setBackground(Settings.themeColor);
@@ -48,12 +87,20 @@ public class SimulationController extends JPanel {
 
     }
 
+//    public void setPendingToRegister(HotelEventListener hotelEventListener) {
+//        this.hotelEventListeners.add()
+//    }
+
+    public void register(HotelEventListener hotelEventListener) {
+        this.hotelEventListeners.add(hotelEventListener);
+    }
+
     public boolean isStarted() {
         return started;
     }
 
-    public int getRunTime() {
-        return runTime;
+    public int getClockTime() {
+        return clockTime;
     }
 
     public void updateSpeed() {
@@ -122,7 +169,7 @@ public class SimulationController extends JPanel {
         startButton.addActionListener(e -> {
             if (this.started) {
                 this.simulation.reset();
-                this.runTime = 0;
+                this.clockTime = 0;
                 this.HTEtimer.stop();
                 startButton.setForeground(new Color(99, 196, 74,255));
                 pauseButton.setForeground(Color.DARK_GRAY);

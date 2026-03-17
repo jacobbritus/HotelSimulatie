@@ -1,6 +1,7 @@
 package human;
 
 import enums.RoomStatus;
+import events.HotelEvent;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
@@ -12,8 +13,8 @@ public class Cleaner extends Human {
     private Room room;
     private int roomsCleaned;
 
-    public Cleaner(Tile tile) {
-        super(tile);
+    public Cleaner(Tile tile, Layout layout) {
+        super(tile, layout);
         this.getTile().setBackground(Color.BLUE);
         this.room = null;
         this.roomsCleaned = 0;
@@ -77,6 +78,11 @@ public class Cleaner extends Human {
     @Override
     public boolean roomFilter(Room room) {
         return room.getStatus() == RoomStatus.DIRTY;
+    }
+
+    @Override
+    public void notify(HotelEvent hotelEvent) {
+
     }
 }
 

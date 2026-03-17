@@ -6,8 +6,8 @@ public final class Settings {
     private Settings() {} // Geen instanties kunnen gemaakt worden.
 
     // Scherm Dimensies
-    public static int schermBreedte = 1920;
-    public static int schermHoogte = 1080;
+    public static int schermBreedte = 1080;
+    public static int schermHoogte = 720;
 
     // Sidebar width
     public static int sidebarWidth = 300;
