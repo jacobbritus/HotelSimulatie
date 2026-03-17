@@ -1,5 +1,6 @@
 package simulation;
 
+import enums.UnitType;
 import helper.FontHelper;
 import settings.Settings;
 
@@ -13,8 +14,8 @@ public class StatRow extends JPanel {
     Supplier<String> supplier;
     JLabel valueLabel;
     JProgressBar progressBar;
-    String unit;
-    public StatRow(String title, JPanel parent, Supplier<String> supplier, String unit) {
+    UnitType unit;
+    public StatRow(String title, JPanel parent, Supplier<String> supplier, UnitType unit) {
         this.unit = unit;
         this.supplier = supplier;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -31,12 +32,10 @@ public class StatRow extends JPanel {
         this.add(x);
 
 
-        if (this.unit.equals("Percentage")) {
+        if (this.unit == UnitType.PERCENTAGE) {
             createProgressBar();
         }
-
         createNumericalValueLabel();
-
 
 
         this.setBorder(new EmptyBorder(0, 2, 10, 25));
@@ -56,16 +55,12 @@ public class StatRow extends JPanel {
 
     public void createProgressBar() {
         JProgressBar bar = new JProgressBar();
-
         bar.setForeground(Settings.textColor);
-
         bar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
             protected Color getSelectionBackground() { return Color.black; } // Text color over background
             protected Color getSelectionForeground() { return Color.white; } // Text color over progress
         });
 
-        bar.setMaximumSize(new Dimension(10, 4));
-        bar.setMinimumSize(new Dimension(10, 4));
         bar.setForeground(new Color(46, 204, 113));
         bar.setBackground(Settings.themeColor2);
         bar.setOpaque(true);
@@ -76,7 +71,7 @@ public class StatRow extends JPanel {
     }
 
     public void update() {
-         if (this.unit.equals("Percentage")) {
+         if (this.unit == UnitType.PERCENTAGE) {
              int percentage = (int) Double.parseDouble(this.supplier.get());
              if (percentage > 50) this.progressBar.setForeground(Color.YELLOW);
              if (percentage > 90) this.progressBar.setForeground(Color.RED);

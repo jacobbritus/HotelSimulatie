@@ -4,6 +4,7 @@ import settings.Settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,6 +25,8 @@ public class Main {
             System.out.println("layout.Layout is ongeldig. Simulatie wordt niet gestart.");
             return;
         }
+
+//        UUID uuid = new UUID();
 
         applicatie.startSimulatie(grid);
     }

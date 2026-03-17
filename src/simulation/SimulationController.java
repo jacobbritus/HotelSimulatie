@@ -27,8 +27,7 @@ public class SimulationController extends JPanel {
     public int activeSpeedMultiplier = 0;
 
     private int eventTicks;
-    private ArrayList<HotelEventListener> hotelEventListeners;
-    private ArrayList<HotelEventListener> pendingToRegister; //
+    private final ArrayList<HotelEventListener> hotelEventListeners;
 
 
     public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
@@ -36,20 +35,16 @@ public class SimulationController extends JPanel {
         this.eventTicks = 0;
         this.simulation = simulation;
         this.simulationSidebar = simulationSidebar;
-
         this.timeLabel = new JLabel("00:00:00");
 
         hotelEventListeners  = new ArrayList<>();
-        pendingToRegister = new ArrayList<>();
         ArrayList<HotelEvent> events = new ArrayList<>();
 
-        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
-        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
-        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 50));
-        events.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 100));
-        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
-        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
-        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150));
+        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 10, 0, 100));
+        events.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 10, 1, 0));
+
+        events.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 30, 1, 0));
+        events.add(new HotelEvent(HotelEventType.GO_ROOM, 150, 1, 0));
 
 
         hotelEventListeners.add(this.simulation);
@@ -58,7 +53,6 @@ public class SimulationController extends JPanel {
             this.timeLabel.setText(Settings.convertTime(this.clockTime));
 
             this.eventTicks++;
-            System.out.println(this.eventTicks);
 
             for (HotelEvent event : events) {
                 if (event.getTime() == this.eventTicks) {
@@ -87,9 +81,6 @@ public class SimulationController extends JPanel {
 
     }
 
-//    public void setPendingToRegister(HotelEventListener hotelEventListener) {
-//        this.hotelEventListeners.add()
-//    }
 
     public void register(HotelEventListener hotelEventListener) {
         this.hotelEventListeners.add(hotelEventListener);
@@ -121,8 +112,6 @@ public class SimulationController extends JPanel {
         });
 
         this.add(menuButton);
-
-
         this.add(Box.createVerticalStrut(20)); // 5px gap
 
         this.ticksLabel = new JLabel(this.speedMultipliers[this.activeSpeedMultiplier] + "x");
@@ -180,7 +169,7 @@ public class SimulationController extends JPanel {
             } else {
                 this.started = true;
                 this.simulationSidebar.init();
-                this.simulationSidebar.openNewPage(SidebarPage.OVERVIEW.getTitle());
+                this.simulationSidebar.getOverviewPage();
                 this.HTEtimer.start();
                 startButton.setText("Reset");
                 startButton.setForeground(Color.RED);

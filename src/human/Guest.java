@@ -1,28 +1,30 @@
 package human;
 
-import enums.FacilityType;
+import enums.Role;
 import enums.RoomStatus;
 import events.HotelEvent;
+import events.HotelEventType;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
-import settings.Settings;
 
 import java.awt.*;
 
 
-// Status CHECKEDIN, ARRIVED, CHECKINGIN, LEAVING, CHECKINGOUT
 public class Guest extends Human {
     private boolean isCheckedIn;
-    private Room room;
     private final Color arrivalColor = Color.RED;
     private final Color checkedInColor = Color.GREEN;
+    private int guestId;
 
     public Guest(Tile tile, Layout layout) {
-        super(tile, layout);
+        super(tile, layout, Role.GUEST);
         this.isCheckedIn = false;
-        this.room = null;
         this.getTile().setBackground(arrivalColor);
+    }
+
+    public void setGuestId(int guestId) {
+        this.guestId = guestId;
     }
 
     @Override
@@ -32,31 +34,6 @@ public class Guest extends Human {
         super.setTile(newTile, color);
     }
 
-    public boolean getIsCheckedIn() {
-        return this.isCheckedIn;
-    }
-
-
-    @Override
-    public void decisionMaking(Layout layout) {
-        // No room availability, walk around randomly in lobby. Maybe leave and note statistics (start lifetime and if they leave, add statistic)
-        if (!this.isCheckedIn || this.getLifeTime() == null || this.getLifeTime() <= 0) { // Check in at lobby, find a room
-//             this.setCooldown(settings.Settings.ticks * 100);
-            if ((this.getTile().getFacility().getType() == FacilityType.LOBBY)) {
-                if (this.getLifeTime() == null) {
-                    Room nearestRoom = layout.getNearestRoom(this); // assign room
-                    if (nearestRoom == null) {
-                        return;
-                    }
-                    this.assignRoom(nearestRoom);
-                }
-                else this.checkOut(layout);
-            }
-            setDestination(layout.getRandomTile(layout.getLobbies().getFirst()));
-        } else { // Walk within room for now.
-            setDestination(layout.getRandomTile(this.room));
-        }
-    }
 
     @Override
     public boolean moveFilter(Tile neighbour) {
@@ -64,33 +41,22 @@ public class Guest extends Human {
     }
 
     public void checkOut(Layout layout) {
-        if (this.room != null) this.removeRoom(this.room);
-
-        this.setIsLeaving();
+        if (this.getAssignedRoom() != null) this.removeRoom(this.getAssignedRoom());
         this.isCheckedIn = false;
     }
 
     @Override
     public void assignRoom(Room room) {
-        this.room = room;
-
+        this.setAssignedRoom(room);
         room.setOccupant(this, RoomStatus.UNAVAILABLE);
-        // room state == OCCUPIED
-
-
-
-//        room.setGuest(this);
-
         // Stop at lobby for a moment and check in
 //        this.setCooldown(settings.Settings.ticks * 20);  // Get an actual formula
-        this.setCooldown(Settings.guestBaseCheckInTime);
         this.isCheckedIn = true;
-        this.setLifeTime(Settings.guestBaseStayTime);
     }
 
     @Override
     public void removeRoom(Room room) {
-        this.room = null;
+        this.setAssignedRoom(null);
         room.removeOccupant(RoomStatus.DIRTY);
     }
 
@@ -101,6 +67,18 @@ public class Guest extends Human {
 
     @Override
     public void notify(HotelEvent hotelEvent) {
+        if (hotelEvent.getGuestId() != null && hotelEvent.getGuestId() != this.guestId) return;
+
+        System.out.println(hotelEvent.getEventType());
+        System.out.println(this.guestId);
+        System.out.println(hotelEvent.getGuestId());
+
+        System.out.println();
+
+
+//        System.out.println(hotelEvent.getEventType());
+//        if (hotelEvent.getEventType() == HotelEventType.GO_ROOM) {
+//        }
         switch (hotelEvent.getEventType()) {
             case ASSIGN_ROOM -> {
                 Room nearestRoom = this.getLayout().getNearestRoom(this); // assign room
@@ -109,9 +87,8 @@ public class Guest extends Human {
                 }
                 this.assignRoom(nearestRoom);
             }
-
             case GO_ROOM -> {
-                setDestination(this.getLayout().getRandomTile(this.room));
+                this.setDestination(this.getLayout().getRandomTile(this.getAssignedRoom()));
                 this.bfs(getDestination());
             }
         }

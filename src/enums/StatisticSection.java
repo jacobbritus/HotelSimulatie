@@ -1,8 +1,8 @@
 package enums;
 
 public enum StatisticSection {
-    Agents("Agents"),
-    Rooms("Rooms");
+    AGENTS("Agents"),
+    ROOMS("Rooms");
 
     private final String str;
 

@@ -1,32 +1,32 @@
 package enums;
 
 public enum Statistic {
-    Guests("Agents", "Guests", "Numerical"),
-    Cleaners("Agents", "Cleaners", "Numerical"),
-    RoomsOccupied("Rooms", "Room Occupation", "Percentage"),
-    DirtyRooms("Rooms", "Dirty Rooms", "Numerical"),
-    TotalRoomsCleaned("Rooms", "Rooms Cleaned", "Numerical");
-//    TotalRoomsBooked("Rooms", "Rooms Booked", "Numerical");
+    GUEST_COUNT(StatisticSection.AGENTS, "Guests", UnitType.NUMERICAL),
+    CLEANER_COUNT(StatisticSection.AGENTS, "Cleaners", UnitType.NUMERICAL),
+    ROOMS_OCCUPIED(StatisticSection.ROOMS, "Room Occupation", UnitType.PERCENTAGE),
+    DIRTY_ROOM_COUNT(StatisticSection.ROOMS, "Dirty Rooms", UnitType.NUMERICAL);
+//    TotalRoomsCleaned(StatisticSection.Rooms, "Rooms Cleaned", UnitType.NUMERICAL);
+//    TotalRoomsBooked(StatisticSection.Rooms, "Rooms Booked", UnitType.NUMERICAL);
 
 
-    private final String section;
+    private final StatisticSection section;
 
-    private final String str;
-    private final String unit;
+    private final String title;
+    private final UnitType unit;
 
-    Statistic(String section, String str, String unit) {
+    Statistic(StatisticSection section, String title, UnitType unit) {
         this.section = section;
-        this.str = str;
+        this.title = title;
         this.unit = unit;
     }
 
-    public String getString() {
-        return this.str;
+    public String getTitle() {
+        return this.title;
     }
-    public String getUnit() {
+    public UnitType getUnit() {
         return this.unit;
     }
-    public String getSection() {
+    public StatisticSection getSection() {
         return this.section;
     }
 }

@@ -110,7 +110,7 @@ public class Room extends Facility {
         System.out.println();
 
         if (!sidebar.getOpenedPages().getLast().equals(SidebarPage.ROOM.getTitle()+this.roomNumber)) {
-            sidebar.openNewPage(SidebarPage.ROOM.getTitle()+this.roomNumber);
+//            sidebar.openNewPage(SidebarPage.ROOM.getTitle()+this.roomNumber);
         }
     }
 }

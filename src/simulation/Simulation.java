@@ -1,5 +1,6 @@
 package simulation;
 
+import enums.Role;
 import enums.Statistic;
 import events.HotelEvent;
 import events.HotelEventListener;
@@ -56,12 +57,7 @@ public class Simulation extends JPanel implements HotelEventListener {
         return statisticsSupplierMap;
     }
 
-    public void init() {
-        layout = new Layout(rauweGrid, this.simulationController);
-        testPanel.add(layout);
-        this.add(testPanel);
-        this.humans = new ArrayList<>();
-
+    public void initializeStatisticSuppliers() {
         // Create a map that holds statistic type and their respective function returning a value in order to update it.
         // General
 //        this.statisticsSupplierMap.put(Statistic.Guests, () -> this.getHumans().stream()
@@ -93,19 +89,13 @@ public class Simulation extends JPanel implements HotelEventListener {
 //        this.statisticsSupplierMap.put(Statistic.TotalRoomsCleaned, () -> this.getHumans().stream()
 //                .filter(h -> h instanceof Cleaner)
 //                .mapToInt(i -> ((Cleaner) i).getRoomsCleaned()).sum() + "");
+    }
 
-        // test
-//        this.humans = new ArrayList<>();
-//        for (int i = 0; i < 1; i++) {
-//            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-//            humans.add(new Guest(tile));
-//        }
-//
-//        for (int i = 0; i < 7; i++) {
-//            Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-//            humans.add(new Cleaner(tile));
-//        }
-
+    public void init() {
+        layout = new Layout(rauweGrid, this.simulationController);
+        testPanel.add(layout);
+        this.add(testPanel);
+        this.humans = new ArrayList<>();
     }
 
 
@@ -115,7 +105,8 @@ public class Simulation extends JPanel implements HotelEventListener {
             case SPAWN_GUEST -> {
                 Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
                 Guest guest = new Guest(tile, this.layout);
-                humans.add(new Guest(tile, this.layout));
+                guest.setGuestId(hotelEvent.getGuestId());
+                humans.add(guest);
             }
         }
     }
@@ -138,7 +129,7 @@ public class Simulation extends JPanel implements HotelEventListener {
 
     public void updateHumans() {
         for (Human human : this.humans) {
-            human.update(this.layout);
+            human.update();
         }
     }
 

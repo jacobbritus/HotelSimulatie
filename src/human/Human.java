@@ -1,11 +1,11 @@
 package human;
 
+import enums.Role;
 import events.HotelEventListener;
 import facility.Facility;
 import facility.Room;
 import facility.Tile;
 import layout.Layout;
-import settings.Settings;
 
 import java.awt.Color;
 import java.util.*;
@@ -16,30 +16,31 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
     private int stepsTaken;
     private ArrayList<Tile> destinationPath;
     private Tile destination;
-    private Integer cooldown;
-    private Integer lifeTime;
-    private Integer actionTime;
-
-    private boolean isLeaving;
     private Room assignedRoom;
+    private final Role role;
 
-    public Human(Tile tile, Layout layout) {
+    public Human(Tile tile, Layout layout, Role role) {
+        this.role = role;
         this.layout = layout;
         this.stepsTaken = 0;
         this.tile = tile;
         this.tile.setHuman(this);
     }
 
+    public Role getRole() {
+        return this.role;
+    }
+
+    public Room getAssignedRoom() {
+        return assignedRoom;
+    }
+
+    public void setAssignedRoom(Room assignedRoom) {
+        this.assignedRoom = assignedRoom;
+    }
+
     public Layout getLayout() {
         return layout;
-    }
-
-    public boolean isLeaving() {
-        return this.isLeaving;
-    }
-
-    public void setIsLeaving() {
-        this.isLeaving = true;
     }
 
     public Tile getTile() {
@@ -62,61 +63,11 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
         this.tile.setHuman(this);
     }
 
-    public Integer getCooldown() {
-        return cooldown;
-    }
-
-    public void setCooldown(Integer milliseconds) {
-        this.cooldown = milliseconds;
-    }
-
-    public boolean activeCooldown() {
-        if (cooldown != null) {
-            this.cooldown -= Settings.delay;
-            if (cooldown < 0) this.cooldown = null;
-            return true;
-        }
-        return false;
-    }
-
-    public Integer getLifeTime() {
-        return lifeTime;
-    }
-    public void setLifeTime(Integer lifeTime) {
-        this.lifeTime = lifeTime;
-    }
-    public void decreaseLifeTime() {
-        this.lifeTime = Math.max(this.lifeTime - 1000 / Settings.delay, 0);
-    }
-
-    public Integer getActionTime() {
-        return actionTime;
-    }
-    public void setActionTime(Integer actionTime) {
-        this.actionTime = actionTime;
-    }
-    public void decreaseActionTime() {
-        this.actionTime = Math.max(this.actionTime - (1000 / Settings.delay), 0);
-    }
-
-    public void despawn() {
-        this.tile.setHuman(null);
-    }
-
-    public void update(Layout layout) {
-//        if (this.activeCooldown()) return;
-//        if (this.getLifeTime() != null) decreaseLifeTime();
-//
+    public void update() {
         if (this.getDestinationPath() != null) {
             this.move();
         }
-//        } else {
-//            this.decisionMaking(layout);
-//            if (this.getDestination() != null) this.bfs(this.getDestination());
-//        }
     }
-
-    public abstract void decisionMaking(Layout layout);
 
     public void move() {
         if (stepsTaken < destinationPath.size() - 1) {
