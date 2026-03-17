@@ -31,13 +31,13 @@ public abstract class SidebarPage extends JPanel {
 
         JLabel titleLabel = new MyLabel(title, FontWeight.SEMIBOLD, TextSize.LARGE);
         this.topSection.setBorder(BorderFactory.createCompoundBorder( new MatteBorder(0, 0, 1, 0,
-                Settings.themeColor2), new EmptyBorder(20, 0, 20, 0)));
+                Settings.themeColor2), new EmptyBorder(20, 20, 20, 0)));
         Dimension size = titleLabel.getPreferredSize();
 
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         titleLabel.setPreferredSize(new Dimension(size.width + 50, size.height));
-        titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
+        titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, size.height));
 
         topSection.add(titleLabel);
 

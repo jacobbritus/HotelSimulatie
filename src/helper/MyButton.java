@@ -21,7 +21,7 @@ public class MyButton extends JButton {
         this.setFocusable(false);
         this.addActionListener(actionListener);
 
-        this.setMaximumSize(new Dimension(Settings.sidebarWidth, 50));
+        this.setMaximumSize(new Dimension(200, 50));
         this.setBackground(Settings.themeColor2);
         this.setOpaque(true);
 

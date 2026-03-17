@@ -14,20 +14,17 @@ import java.awt.*;
 import java.util.function.Supplier;
 
 public class StatRow extends JPanel {
-    Supplier<String> supplier;
     JLabel valueLabel;
     JProgressBar progressBar;
     UnitType unit;
-    public StatRow(String title, JPanel parent, Supplier<String> supplier, UnitType unit) {
+    public StatRow(String title, JPanel parent, UnitType unit) {
         this.unit = unit;
-        this.supplier = supplier;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         this.setOpaque(false);
         JLabel item = new MyLabel(title, FontWeight.MEDIUM, TextSize.SMALL);
 
         Dimension size = item.getPreferredSize();
         item.setPreferredSize(new Dimension(size.width + 20, size.height));
-
 
         Component x = Box.createHorizontalGlue();
         this.add(item);
@@ -49,13 +46,15 @@ public class StatRow extends JPanel {
     }
 
     public void createNumericalValueLabel() {
-        this.valueLabel = new MyLabel("", FontWeight.MEDIUM, TextSize.SMALL);
+        this.valueLabel = new MyLabel("0", FontWeight.MEDIUM, TextSize.SMALL);
+        this.valueLabel.setBorder(new EmptyBorder(0, 25, 0 ,0));
         this.valueLabel.setForeground(Settings.textColor2);
         this.add(this.valueLabel);
     }
 
     public void createProgressBar() {
         JProgressBar bar = new JProgressBar();
+        bar.setValue(0);
         bar.setForeground(Settings.textColor);
         bar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
             protected Color getSelectionBackground() { return Color.black; } // Text color over background
@@ -73,15 +72,17 @@ public class StatRow extends JPanel {
         this.add(this.progressBar);
     }
 
-    public void update() {
+
+
+    public void update(String newStat) {
          if (this.unit == UnitType.PERCENTAGE) {
-             int percentage = (int) Double.parseDouble(this.supplier.get());
+             int percentage = (int) Double.parseDouble(newStat);
              if (percentage > 50) this.progressBar.setForeground(Color.YELLOW);
              if (percentage > 90) this.progressBar.setForeground(Color.RED);
              this.progressBar.setValue(percentage);
-             this.valueLabel.setText("   " + this.supplier.get() + "%");
+             this.valueLabel.setText(" " + newStat + "%");
          } else {
-             this.valueLabel.setText(this.supplier.get());
+             this.valueLabel.setText(newStat);
          }
     }
 }

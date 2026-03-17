@@ -36,7 +36,7 @@ public class Room extends Facility {
 
     public Room(JPanel superPanel, FacilityType type, int row, int column, SimulationController simulationController) {
         super(superPanel, type, row, column, simulationController);
-        this.setStatus(RoomStatus.DIRTY);
+        this.setStatus(RoomStatus.AVAILABLE);
     }
 
 

@@ -36,6 +36,7 @@ public class EventsPage extends SidebarPage {
         eventsPanel.setBackground(Settings.themeColor3);
         eventsPanel.setOpaque(true);
         MyScrollPane scrollPane = new MyScrollPane(eventsPanel);
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         return scrollPane;
@@ -76,7 +77,7 @@ public class EventsPage extends SidebarPage {
 
         JLabel title = new MyLabel(hotelEvent.getEventType().getTitle(), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(title);
-        title.setPreferredSize(new Dimension(this.getPreferredSize().width * 2  , 40));
+        title.setPreferredSize(new Dimension(this.getPreferredSize().width   , 40));
 
         eventPanel.add(Box.createHorizontalGlue());
         JLabel a = new MyLabel("ID: " +hotelEvent.getHumanId().toString(), FontWeight.MEDIUM, TextSize.SMALL);

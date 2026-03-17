@@ -16,19 +16,18 @@ import java.util.ArrayList;
 public class SidebarSection extends JPanel {
     private ArrayList<JPanel> statRows;
 
-    public SidebarSection(JPanel parent, String title) {
-        parent.add(this);
+    public SidebarSection(String title) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setOpaque(false);
         this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 0));
 
-        this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
+        this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(1, 0, 1, 0,
         Settings.themeColor2), new EmptyBorder(0, 0, 0, 0)));
 
         // --- Title ---
         JLabel titleLabel = new MyLabel(title, FontWeight.SEMIBOLD, TextSize.MEDIUM);
         titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
-        titleLabel.setBorder(new EmptyBorder(10, 10, 10, 0));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
         this.add(titleLabel);
     }
 }

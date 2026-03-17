@@ -1,12 +1,18 @@
 package enums;
 
 public enum Statistic {
-    GUEST_COUNT(StatisticSection.AGENTS, "Guests", UnitType.NUMERICAL),
-    CLEANER_COUNT(StatisticSection.AGENTS, "Cleaners", UnitType.NUMERICAL),
-    ROOMS_OCCUPIED(StatisticSection.ROOMS, "Room Occupation", UnitType.PERCENTAGE),
-    DIRTY_ROOM_COUNT(StatisticSection.ROOMS, "Dirty Rooms", UnitType.NUMERICAL);
-//    TotalRoomsCleaned(StatisticSection.Rooms, "Rooms Cleaned", UnitType.NUMERICAL);
-//    TotalRoomsBooked(StatisticSection.Rooms, "Rooms Booked", UnitType.NUMERICAL);
+    GUEST_COUNT(StatisticSection.Hotel, "Guests", UnitType.NUMERICAL),
+    ROOMS_OCCUPIED(StatisticSection.Hotel, "Occupied Rooms", UnitType.PERCENTAGE),
+    AVAILABLE_ROOMS(StatisticSection.Hotel, "Available Rooms", UnitType.PERCENTAGE),
+
+    CLEANER_COUNT(StatisticSection.CLEANING, "Cleaners", UnitType.NUMERICAL),
+    DIRTY_ROOM_COUNT(StatisticSection.CLEANING, "Dirty Rooms", UnitType.NUMERICAL),
+    CLEAN_ROOM_COUNT(StatisticSection.CLEANING, "Clean Rooms", UnitType.NUMERICAL),
+
+    CHECK_INS(StatisticSection.Activity, "Check-ins", UnitType.NUMERICAL),
+    CHECK_OUTS(StatisticSection.Activity, "Check-outs", UnitType.NUMERICAL),
+    PENDING_EVENTS(StatisticSection.Activity, "Pending Events", UnitType.NUMERICAL);
+
 
 
     private final StatisticSection section;

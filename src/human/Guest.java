@@ -14,23 +14,17 @@ import java.awt.*;
 
 
 public class Guest extends Human {
-    private final Color arrivalColor = Color.RED;
-    private final Color checkedInColor = Color.GREEN;
     private GuestStatus status;
 
     public Guest(Tile tile, Layout layout, int id) {
         super(tile, layout, Role.GUEST, id);
-        this.getTile().setBackground(arrivalColor);
         this.status = GuestStatus.ARRIVED;
+        this.getTile().setBackground(this.status.getColor());
     }
-
-
 
     @Override
     public void setTile(Tile newTile, Color color) {
-        if (this.status == GuestStatus.CHECKED_IN) color = checkedInColor;
-        else color = arrivalColor;
-        super.setTile(newTile, color);
+        super.setTile(newTile, this.status.getColor());
     }
 
     @Override
@@ -41,19 +35,15 @@ public class Guest extends Human {
         }
     }
 
-
     @Override
     public boolean moveFilter(Tile neighbour) {
         return false;
     }
 
-
     @Override
     public void assignRoom(Room room) {
         this.setAssignedRoom(room);
         room.setOccupant(this, RoomStatus.UNAVAILABLE);
-        // Stop at lobby for a moment and check in
-//        this.setCooldown(settings.Settings.ticks * 20);  // Get an actual formula
         this.status = GuestStatus.CHECKED_IN;
     }
 

@@ -9,6 +9,7 @@ import helper.FontHelper;
 import helper.MyLabel;
 import settings.Settings;
 import simulation.pages.EventsPage;
+import simulation.pages.OverviewPage;
 import simulation.pages.SidebarPage;
 
 import javax.swing.*;
@@ -19,9 +20,10 @@ import java.util.HashMap;
 
 public class SimulationSidebar extends JPanel implements HotelEventListener {
     private JLabel emptyLabel;
-    private JPanel topSection;
+    private JPanel pageHolder;
     private HashMap<SidebarPageType, SidebarPage> pages;
     private SimulationController simulationController;
+    private SidebarNavigationPanel sidebarNavigationPanel;
     boolean visible;
 
     public SimulationSidebar() {
@@ -30,7 +32,15 @@ public class SimulationSidebar extends JPanel implements HotelEventListener {
         this.setPreferredSize(new Dimension(Settings.sidebarWidth, Settings.schermHoogte));
         this.setLayout(new BorderLayout());
         this.visible = true;
+        this.pageHolder = new JPanel(new BorderLayout());
+        this.pageHolder.setOpaque(false);
+        this.add(pageHolder);
         addNothingToShowLabel();
+
+        this.sidebarNavigationPanel = new SidebarNavigationPanel(this);
+
+
+        this.add(sidebarNavigationPanel, BorderLayout.WEST);
     }
 
     public void setSimulationController(SimulationController simulationController) {
@@ -43,14 +53,13 @@ public class SimulationSidebar extends JPanel implements HotelEventListener {
 
     public void addNothingToShowLabel() {
         // Simulation not started
-        this.emptyLabel = new MyLabel("Nothing to show yet.", FontWeight.REGULAR, TextSize.MEDIUM);
+        this.emptyLabel = new MyLabel("Nothing to show yet.", FontWeight.REGULAR, TextSize.SMALL);
         emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        this.add(emptyLabel);
+        pageHolder.add(emptyLabel);
     }
     public void reset() {
-        this.removeAll();
-        this.setLayout(new BorderLayout());
-        this.add(emptyLabel);
+        pageHolder.removeAll();
+        pageHolder.add(emptyLabel);
 
         this.revalidate();
         this.repaint();
@@ -70,15 +79,25 @@ public class SimulationSidebar extends JPanel implements HotelEventListener {
     }
 
     public void init() {
+        pageHolder.removeAll();
         this.pages = new HashMap<>();
         this.pages.put(SidebarPageType.EVENTS, new EventsPage());
+        this.pages.put(SidebarPageType.OVERVIEW, new OverviewPage());
 
-        this.removeAll();
-        this.add(this.pages.get(SidebarPageType.EVENTS));
+        pageHolder.add(this.pages.get(SidebarPageType.OVERVIEW));
 
         for (HotelEvent event : this.simulationController.getHotelEvents()) {
             this.pages.get(SidebarPageType.EVENTS).reactToEvent(event);
         }
+    }
+
+    public void openPage(SidebarPageType page) {
+        pageHolder.removeAll();
+        pageHolder.add(this.pages.get(page));
+        this.add(pageHolder);
+
+        this.repaint();
+        this.revalidate();
     }
 
     @Override
@@ -86,6 +105,8 @@ public class SimulationSidebar extends JPanel implements HotelEventListener {
         switch (hotelEvent.getEventType()) {
             case SPAWN_GUEST -> System.out.println();
         }
+
+        this.pages.get(SidebarPageType.OVERVIEW).reactToEvent(hotelEvent);
         this.pages.get(SidebarPageType.EVENTS).reactToEvent(hotelEvent);
 
     }

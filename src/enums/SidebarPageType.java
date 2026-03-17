@@ -8,7 +8,7 @@ public enum SidebarPageType {
 //    ROOMS("Rooms Overview"),
 //    GUESTS("Guests"),
 //    CLEANERS("Cleaners"),
-//    OVERVIEW("Hotel Overview"),
+    OVERVIEW("Hotel Overview"),
 //    SETTINGS("Settings"),
 //    QUIT("Quit Simulation");
     EVENTS("Events");

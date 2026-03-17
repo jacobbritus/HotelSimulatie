@@ -14,6 +14,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SimulationController extends JPanel {
     private final Simulation simulation;
@@ -62,13 +64,16 @@ public class SimulationController extends JPanel {
     public void initializeTimer() {
         this.hotelEvents = new ArrayList<>();
         hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 0, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 0, 255));
         hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 1, 255));
         hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 2, 255));
         hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 3, 255));
 
-        hotelEvents.add(new HotelEvent(HotelEventType.GO_DIRTY_ROOM, 30, 0, 255));
         hotelEvents.add(new HotelEvent(HotelEventType.CLEAN_ROOM, 150, 0, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.GO_DIRTY_ROOM, 30, 0, 255));
 
+        System.out.println();
+        hotelEvents.sort(Comparator.comparing(HotelEvent::getTime));
 
 
         this.HTEtimer = new Timer(Settings.delay, e -> {
