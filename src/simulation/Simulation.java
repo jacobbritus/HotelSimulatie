@@ -7,6 +7,7 @@ import events.HotelEvent;
 import events.HotelEventListener;
 import facility.Facility;
 import facility.Tile;
+import human.Cleaner;
 import human.Guest;
 import human.Human;
 import layout.Layout;
@@ -111,12 +112,17 @@ public class Simulation extends JPanel implements HotelEventListener {
         switch (hotelEvent.getEventType()) {
             case SPAWN_GUEST -> {
                 Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
-                Guest guest = new Guest(tile, this.layout, hotelEvent.getId());
+                Guest guest = new Guest(tile, this.layout, hotelEvent.getHumanId());
                 humans.add(guest);
             }
-
             case CHECK_OUT -> {
                 this.humansLeaving.addAll(humans.stream().filter(Human::isReadyToDespawn).toList());
+            }
+
+            case SPAWN_CLEANER -> {
+                Tile tile = this.layout.getRandomTile(layout.getLobbies().getFirst());
+                Cleaner cleaner = new Cleaner(tile, this.layout, hotelEvent.getHumanId());
+                humans.add(cleaner);
             }
         }
     }
@@ -149,16 +155,6 @@ public class Simulation extends JPanel implements HotelEventListener {
             }
             return false;
         });
-
-//        if (!humansLeaving.isEmpty()) {
-//            for (Human human : humans) {
-//                if (humansLeaving.contains(human)) {
-//                    this.simulationController.removeListener(human);
-//                    human.
-//                }
-//            }
-//        }
-
     }
 
     public void removeHuman(Human h) {

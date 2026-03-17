@@ -74,16 +74,16 @@ public class EventsPage extends SidebarPage {
         eventPanel.setOpaque(true);
         eventPanel.setBackground(Settings.themeColor);
 
-        JLabel title = new MyLabel(hotelEvent.getEventType().toString(), FontWeight.MEDIUM, TextSize.SMALL);
+        JLabel title = new MyLabel(hotelEvent.getEventType().getTitle(), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(title);
-        title.setPreferredSize(new Dimension(this.getPreferredSize().width  , 40));
+        title.setPreferredSize(new Dimension(this.getPreferredSize().width * 2  , 40));
 
         eventPanel.add(Box.createHorizontalGlue());
-        JLabel a = new MyLabel("Human ID: " +hotelEvent.getId().toString(), FontWeight.MEDIUM, TextSize.SMALL);
+        JLabel a = new MyLabel("ID: " +hotelEvent.getHumanId().toString(), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(a);
 
         eventPanel.add(Box.createHorizontalGlue());
-        JLabel b = new MyLabel("Ticks: " + String.valueOf(hotelEvent.getTime()), FontWeight.MEDIUM, TextSize.SMALL);
+        JLabel b = new MyLabel("Tick: " + String.valueOf(hotelEvent.getTime()), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(b);
 
         eventPanel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 1, 1, 1,

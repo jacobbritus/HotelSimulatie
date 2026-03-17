@@ -48,7 +48,7 @@ public abstract class Human implements RoomOccupant, HotelEventListener {
     }
 
     public Room getAssignedRoom() {
-        return assignedRoom;
+        return this.assignedRoom;
     }
 
     public void setAssignedRoom(Room assignedRoom) {

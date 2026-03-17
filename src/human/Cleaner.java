@@ -1,5 +1,6 @@
 package human;
 
+import enums.FacilityType;
 import enums.Role;
 import enums.RoomStatus;
 import events.HotelEvent;
@@ -11,12 +12,10 @@ import layout.Layout;
 import java.awt.*;
 
 public class Cleaner extends Human {
-    private int roomsCleaned;
 
     public Cleaner(Tile tile, Layout layout, int id) {
         super(tile, layout, Role.CLEANER, id);
         this.getTile().setBackground(Color.BLUE);
-        this.roomsCleaned = 0;
     }
 
     @Override
@@ -27,10 +26,6 @@ public class Cleaner extends Human {
     @Override
     public void onFacilityInteract(Facility facility) {
 
-    }
-
-    public int getRoomsCleaned() {
-        return roomsCleaned;
     }
 
 
@@ -50,7 +45,6 @@ public class Cleaner extends Human {
         this.setAssignedRoom(null);
         room.removeOccupant(RoomStatus.AVAILABLE);
         this.getTile().setBackground(Color.BLUE);
-        this.roomsCleaned++;
     }
 
     @Override
@@ -60,7 +54,25 @@ public class Cleaner extends Human {
 
     @Override
     public void notify(HotelEvent hotelEvent) {
+        if (hotelEvent.getHumanId() != null && hotelEvent.getHumanId() != this.getId() && hotelEvent.getData() != 255) return;
 
+        switch (hotelEvent.getEventType()) {
+            case GO_DIRTY_ROOM -> {
+                Room room = this.getLayout().getRooms()
+                        .stream().filter(r -> r.getStatus() == RoomStatus.DIRTY).findFirst().orElse(null);
+
+                System.out.println(room);
+                if (room != null) {
+                    this.assignRoom(room);
+                    this.setDestination(this.getLayout().getRandomTile(room));
+                }
+            }
+            case CLEAN_ROOM -> {
+                if (this.getAssignedRoom() == null) return;
+                this.setDestination(this.getLayout().getRandomTile(this.getLayout().getLobbies().getFirst()));
+                this.removeRoom(this.getAssignedRoom());
+            }
+        }
     }
 }
 

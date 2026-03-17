@@ -61,13 +61,15 @@ public class SimulationController extends JPanel {
 
     public void initializeTimer() {
         this.hotelEvents = new ArrayList<>();
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 10, 0, 100));
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 10, 1, 0));
-        hotelEvents.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 30, 1, 0));
-        hotelEvents.add(new HotelEvent(HotelEventType.ASSIGN_ROOM, 30, 0, 0));
-        hotelEvents.add(new HotelEvent(HotelEventType.GO_ROOM, 50, 1, 0));
-        hotelEvents.add(new HotelEvent(HotelEventType.GO_ROOM, 50, 0, 0));
-        hotelEvents.add(new HotelEvent(HotelEventType.CHECK_OUT, 75, 0, 0));
+        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 0, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 1, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 2, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 3, 255));
+
+        hotelEvents.add(new HotelEvent(HotelEventType.GO_DIRTY_ROOM, 30, 0, 255));
+        hotelEvents.add(new HotelEvent(HotelEventType.CLEAN_ROOM, 150, 0, 255));
+
+
 
         this.HTEtimer = new Timer(Settings.delay, e -> {
             this.clockTime += (1000 / Settings.delay);
@@ -80,7 +82,7 @@ public class SimulationController extends JPanel {
                     for (HotelEventListener listener : hotelEventListeners) {
                         listener.notify(event);
                     }
-                    if (event.getEventType() == HotelEventType.SPAWN_GUEST) {
+                    if (event.getEventType() == HotelEventType.SPAWN_GUEST || event.getEventType() == HotelEventType.SPAWN_CLEANER) {
                         simulation.getHumans().stream()
                                 .filter(h -> !this.hotelEventListeners.contains(h))
                                 .forEach(this::registerListener);

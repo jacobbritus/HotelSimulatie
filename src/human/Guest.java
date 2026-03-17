@@ -36,7 +36,6 @@ public class Guest extends Human {
     @Override
     public void onFacilityInteract(Facility facility) {
         if (facility.getType() == FacilityType.LOBBY && this.status == GuestStatus.CHECKING_OUT) {
-            System.out.println("arrived");
             this.setReadyToDespawn();
             this.getTile().revertColor();
         }
@@ -48,10 +47,6 @@ public class Guest extends Human {
         return false;
     }
 
-    public void checkOut(Layout layout) {
-        if (this.getAssignedRoom() != null) this.removeRoom(this.getAssignedRoom());
-        this.status = GuestStatus.CHECKING_OUT;
-    }
 
     @Override
     public void assignRoom(Room room) {
@@ -62,10 +57,10 @@ public class Guest extends Human {
         this.status = GuestStatus.CHECKED_IN;
     }
 
-    @Override
     public void removeRoom(Room room) {
         this.setAssignedRoom(null);
         room.removeOccupant(RoomStatus.DIRTY);
+        this.status = GuestStatus.CHECKING_OUT;
     }
 
     @Override
@@ -75,25 +70,23 @@ public class Guest extends Human {
 
     @Override
     public void notify(HotelEvent hotelEvent) {
-        if (hotelEvent.getId() != null && hotelEvent.getId() != this.getId()) return;
+        if (hotelEvent.getHumanId() != null && hotelEvent.getHumanId() != this.getId()) return;
 
         switch (hotelEvent.getEventType()) {
             case ASSIGN_ROOM -> {
-                Room nearestRoom = this.getLayout().getNearestRoom(this); // assign room
+                Room nearestRoom = this.getLayout().getNearestRoom(this);
                 if (nearestRoom == null) {
                     return;
                 }
                 this.assignRoom(nearestRoom);
-                this.status = GuestStatus.CHECKED_IN;
-                this.getTile().setBackground(Color.GREEN);
             }
             case GO_ROOM -> {
+                if (this.getAssignedRoom() == null) return;
                 this.setDestination(this.getLayout().getRandomTile(this.getAssignedRoom()));
             }
             case CHECK_OUT -> {
                 this.setDestination(this.getLayout().getRandomTile(this.getLayout().getLobbies().getFirst()));
                 this.removeRoom(this.getAssignedRoom());
-                this.status = GuestStatus.CHECKING_OUT;
             }
         }
     }
