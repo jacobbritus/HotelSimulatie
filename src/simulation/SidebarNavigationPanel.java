@@ -5,33 +5,45 @@ import helper.MyButton;
 import settings.Settings;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class SidebarNavigationPanel extends JPanel {
-    public SidebarNavigationPanel(SimulationSidebar simulationSidebar) {
+    ArrayList<MyButton> buttons;
+    public SidebarNavigationPanel(Sidebar sidebar) {
         this.setOpaque(true);
         this.setBackground(Settings.themeColor2);
         this.setPreferredSize(new Dimension(Settings.sidebarWidth / 6, Settings.schermHoogte));
 
-        this.setBorder(BorderFactory.createCompoundBorder( new MatteBorder(0, 1, 1, 1,
-                Settings.themeColor3), new EmptyBorder(0, 0, 20, 0)));
+        this.setBorder(new MatteBorder(0, 1, 1, 1, Settings.themeColor3));
 
-        MyButton button =new MyButton("EV", _ -> simulationSidebar.openPage(SidebarPageType.EVENTS));
-
-        button.setPreferredSize(new Dimension(360, 65));
-        button.setBorder(new MatteBorder(0, 1, 1, 1, Settings.themeColor3));
-
-        MyButton button2 =new MyButton("OV", _ -> simulationSidebar.openPage(SidebarPageType.OVERVIEW));
-
-        button2.setPreferredSize(new Dimension(360, 65));
+        MyButton button =new MyButton("E", _ -> sidebar.openPage(SidebarPageType.EVENTS));
 
 
+        MyButton button2 = new MyButton("H", _ -> {
+            sidebar.openPage(SidebarPageType.OVERVIEW);
+        });
+
+        this.buttons = new ArrayList<>();
+        buttons.add(button);
+        buttons.add(button2);
+        button2.setSelected(true);
+        customizeButtons();
         this.add(button2);
         this.add(button);
-
     }
 
-
+    public void customizeButtons() {
+        for (MyButton b : this.buttons) {
+            b.setPreferredSize(new Dimension(55, 55));
+            b.addActionListener(_ -> {
+                b.setSelected(true);
+                for (MyButton other : this.buttons) {
+                    if (b == other) continue;
+                    other.setSelected(false);
+                }
+            });
+        }
+    }
 }

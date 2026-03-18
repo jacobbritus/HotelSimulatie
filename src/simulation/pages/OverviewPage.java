@@ -1,32 +1,67 @@
 package simulation.pages;
 
-import enums.SidebarPageType;
-import enums.Statistic;
-import enums.StatisticSection;
+import enums.*;
 import events.HotelEvent;
-import facility.Tile;
-import human.Guest;
+import helper.MyLabel;
+import simulation.HotelEventManager;
 import simulation.SidebarSection;
 import simulation.StatRow;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class OverviewPage extends SidebarPage {
     private HashMap<Statistic, StatRow> statRows;
-    private int guestCount;
-    private int cleanerCount;
-    private int eventCount;
+    private MyLabel emptyLabel;
+    private HashMap<Statistic, Supplier<Integer>> statisticSupplierHashMap;
+    private final Map<Statistic, Integer> statsMap = new EnumMap<>(Statistic.class);
 
-    public OverviewPage() {
+    public OverviewPage(HotelEventManager hotelEventManager) {
+        super(hotelEventManager);
         addHeaderSection(SidebarPageType.OVERVIEW.getTitle());
         addUIdesign();
-        this.guestCount = 0;
-        this.cleanerCount = 0;
-        this.eventCount = 0;
+        labelOnPreStart();
+        initStatValues();
+        initializeStatisticSupplierMap();
+    }
+
+    public void initializeStatisticSupplierMap() {
+        /* 2. Connect stat to supplier which returns the current value for the UI */
+        this.statisticSupplierHashMap = new HashMap<>();
+        for (Statistic statistic : Statistic.values()) {
+            this.statisticSupplierHashMap.put(statistic, () -> statsMap.get(statistic));
+        }
+        this.statisticSupplierHashMap.put(Statistic.ROOMS_OCCUPIED, () -> validateRoomCountStat(this.hotelEventManager.getRooms().size(), statsMap.get(Statistic.ROOMS_OCCUPIED)));
+        this.statisticSupplierHashMap.put(Statistic.ROOMS_AVAILABLE, () -> validateRoomCountStat(this.hotelEventManager.getRooms().size(), statsMap.get(Statistic.ROOMS_AVAILABLE)));
+    }
+
+    public void initStatValues() {
+        /* 1. Connect stat with value. */
+        for (Statistic statistic : Statistic.values()) {
+            statsMap.put(statistic, 0);
+        }
+        statsMap.put(Statistic.ROOMS_AVAILABLE, this.hotelEventManager.getRooms().size());
+        statsMap.put(Statistic.PENDING_EVENTS, this.hotelEventManager.getHotelEvents().size());
+    }
+
+    public void labelOnPreStart() {
+        // Simulation not started
+        this.emptyLabel = new MyLabel("Nothing to show yet.", FontWeight.REGULAR, TextSize.SMALL);
+        emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        emptyLabel.setPreferredSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        emptyLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        this.add(emptyLabel);
+    }
+
+    @Override
+    public void init() {
+        initStatValues();
+        this.remove(this.emptyLabel);
         this.statRows = new HashMap<>();
 
         for (StatisticSection section : StatisticSection.values()) {
@@ -38,10 +73,17 @@ public class OverviewPage extends SidebarPage {
             for (Statistic statistic : Statistic.values()) {
                 if (statistic.getSection() != section) continue;
                 String title = statistic.getTitle() ;
-                StatRow row = new StatRow(title, this, statistic.getUnit());
+                Supplier<Integer> supplier = statisticSupplierHashMap.get(statistic);
+                System.out.println(title);
+                System.out.println(supplier);
+                StatRow row = new StatRow(title, this, statistic.getUnit(), supplier);
                 this.statRows.put(statistic, row);
                 sectionPanel.add(row);
                 sectionPanel.add(Box.createVerticalGlue());
+
+                for (StatRow stat : statRows.values()) {
+                    stat.update();
+                }
             }
         }
 
@@ -49,22 +91,24 @@ public class OverviewPage extends SidebarPage {
         this.repaint();
     }
 
+    public int validateRoomCountStat(int allRooms, int statusRooms) {
+        if (statusRooms == 0) {
+            return 0;
+        } else {
+            return  statusRooms * 100 / allRooms;
+        }
 
+    }
 
     @Override
     public void reactToEvent(HotelEvent hotelEvent) {
-        switch (hotelEvent.getEventType())  {
-            case SPAWN_GUEST -> {
-                guestCount++;
-                statRows.get(Statistic.GUEST_COUNT).update(String.valueOf(guestCount));
-            }
-            case SPAWN_CLEANER -> {
-                cleanerCount++;
-                statRows.get(Statistic.CLEANER_COUNT).update(String.valueOf(cleanerCount));
+        /* 3. Find stats related to the event, apply the impact on the value, update value in map and update UI */
+        for (Statistic stat : Statistic.values()) {
+            Integer impact = stat.getImpact(hotelEvent.getEventType());
+            if (impact != null) {
+                statsMap.merge(stat, impact, Integer::sum);
+                statRows.get(stat).update();
             }
         }
-
-        this.revalidate();
-        this.repaint();
     }
 }

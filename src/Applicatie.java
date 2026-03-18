@@ -2,8 +2,8 @@ import helper.MyScrollPane;
 import settings.FacilityColors;
 import settings.Settings;
 import simulation.Simulation;
-import simulation.SimulationController;
-import simulation.SimulationSidebar;
+import simulation.HotelEventManager;
+import simulation.Sidebar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,23 +36,19 @@ public class Applicatie extends JFrame implements KeyListener {
 
         this.getContentPane().add(scrollPane);
 
-        // Put the controller (Top bar UI) at the top of the screen
-//        scrollPane.setColumnHeaderView(simulationController);
 
+        Sidebar sidebar = new Sidebar();
+        simulation.setSimulationSidebar(sidebar);
 
+        HotelEventManager hotelEventManager = new HotelEventManager(simulation, sidebar);
+        simulation.setSimulationController(hotelEventManager);
+        this.add(hotelEventManager, BorderLayout.NORTH);
 
-        SimulationSidebar simulationSidebar = new SimulationSidebar();
-        simulation.setSimulationSidebar(simulationSidebar);
-
-        SimulationController simulationController = new SimulationController(simulation, simulationSidebar);
-        simulation.setSimulationController(simulationController);
-        this.add(simulationController, BorderLayout.NORTH);
-
-        simulationSidebar.setSimulationController(simulationController);
-        this.add(simulationSidebar, BorderLayout.WEST);
+        this.add(sidebar, BorderLayout.WEST);
         this.setVisible(true);
         
         simulation.init();
+        sidebar.init(hotelEventManager);
 
         simulation.zoom(Settings.facilityTilesSize*  2);
     }

@@ -1,12 +1,11 @@
 package facility;
 import enums.FacilityType;
-import human.Human;
-import simulation.SimulationController;
+import simulation.HotelEventManager;
 
 import javax.swing.*;
 
 public class Lobby extends Facility {
-    public Lobby(JPanel superPanel, FacilityType type, int row, int column, SimulationController simC) {
+    public Lobby(JPanel superPanel, FacilityType type, int row, int column, HotelEventManager simC) {
         super(superPanel, type, row, column, simC);
     }
 

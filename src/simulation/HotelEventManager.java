@@ -1,10 +1,12 @@
 package simulation;
 
 import enums.FontWeight;
+import enums.RoomStatus;
 import enums.TextSize;
 import events.HotelEvent;
 import events.HotelEventListener;
 import events.HotelEventType;
+import facility.Room;
 import helper.MyButton;
 import helper.MyLabel;
 import settings.Settings;
@@ -14,12 +16,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
-public class SimulationController extends JPanel {
+public class HotelEventManager extends JPanel {
     private final Simulation simulation;
-    private final SimulationSidebar simulationSidebar;
+    private final Sidebar sidebar;
     private Timer HTEtimer;
     private MyLabel speedMultiplierLabel;
     private final JLabel timeLabel;
@@ -34,8 +35,7 @@ public class SimulationController extends JPanel {
     private int eventTicks;
     private final ArrayList<HotelEventListener> hotelEventListeners;
 
-
-    public SimulationController(Simulation simulation, SimulationSidebar simulationSidebar) {
+    public HotelEventManager(Simulation simulation, Sidebar sidebar) {
         this.setBackground(Settings.themeColor);
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         this.setPreferredSize(new Dimension(0, 48));
@@ -44,14 +44,14 @@ public class SimulationController extends JPanel {
         this.clockTime = 0;
         this.eventTicks = 0;
         this.simulation = simulation;
-        this.simulationSidebar = simulationSidebar;
+        this.sidebar = sidebar;
         this.timeLabel = new MyLabel("00:00:00", FontWeight.MEDIUM, TextSize.SMALL);
         this.ticksLabel = new MyLabel("Ticks: 0", FontWeight.MEDIUM, TextSize.SMALL);
         this.ticksLabel.setPreferredSize(new Dimension(75, 30));
 
         hotelEventListeners  = new ArrayList<>();
         hotelEventListeners.add(this.simulation);
-        hotelEventListeners.add(this.simulationSidebar);
+        hotelEventListeners.add(this.sidebar);
 
         initializeTimer();
         addControlButtons();
@@ -61,16 +61,28 @@ public class SimulationController extends JPanel {
         return hotelEvents;
     }
 
+    public Simulation getSimulation() {
+        return simulation;
+    }
+
+    public ArrayList<Room> getRooms() {
+        return this.simulation.returnLayout().getRooms();
+    }
+
+    public int getRoomsByStatus(RoomStatus roomStatus) {
+        return (int) this.getSimulation().returnLayout().getRooms().stream().filter(h -> h.getStatus() == roomStatus).count();
+    }
+
     public void initializeTimer() {
         this.hotelEvents = new ArrayList<>();
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 0, 255));
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 0, 255));
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 1, 255));
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 2, 255));
-        hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_CLEANER, 10, 3, 255));
 
-        hotelEvents.add(new HotelEvent(HotelEventType.CLEAN_ROOM, 150, 0, 255));
-        hotelEvents.add(new HotelEvent(HotelEventType.GO_DIRTY_ROOM, 30, 0, 255));
+        for (int i = 1; i < 17; i++) {
+
+            hotelEvents.add(new HotelEvent(HotelEventType.SPAWN_GUEST, 10, i, 0));
+            hotelEvents.add(new HotelEvent(HotelEventType.CHECK_IN, 20, i, 0));
+            hotelEvents.add(new HotelEvent(HotelEventType.GO_ROOM, 30, i, 0));
+            hotelEvents.add(new HotelEvent(HotelEventType.CHECK_OUT, 150, i, 0));
+        }
 
         System.out.println();
         hotelEvents.sort(Comparator.comparing(HotelEvent::getTime));
@@ -80,7 +92,7 @@ public class SimulationController extends JPanel {
             this.clockTime += (1000 / Settings.delay);
             this.eventTicks++;
             this.timeLabel.setText(Settings.convertTime(this.clockTime));
-            this.ticksLabel.setText("Ticks: " + String.valueOf(this.eventTicks));
+            this.ticksLabel.setText("Ticks: " + this.eventTicks);
 
             for (HotelEvent event : hotelEvents) {
                 if (event.getTime() == this.eventTicks) {
@@ -107,13 +119,30 @@ public class SimulationController extends JPanel {
         this.hotelEventListeners.remove(hotelEventListener);
     }
 
+    private void startSimulation(MyButton startButton, MyButton pauseButton) {
+        this.simulation.reset();
+        this.clockTime = 0;
+        this.eventTicks = 0;
+        this.HTEtimer.stop();
+        this.timeLabel.setText("00:00:00");
+        this.ticksLabel.setText("Ticks: 0");
+        this.sidebar.reset();
+        this.sidebar.init(this);
+        this.started = false;
 
-    public boolean isStarted() {
-        return started;
+        startButton.setForeground(new Color(99, 196, 74,255));
+        pauseButton.setForeground(Color.DARK_GRAY);
+        startButton.setText("Start");
     }
 
-    public int getClockTime() {
-        return clockTime;
+    private void resetSimulation(MyButton startButton, MyButton pauseButton) {
+        this.started = true;
+        this.sidebar.start();
+        this.HTEtimer.start();
+
+        startButton.setText("Reset");
+        startButton.setForeground(Color.RED);
+        pauseButton.setForeground(Settings.textColor);
     }
 
     public void updateSpeed() {
@@ -126,7 +155,7 @@ public class SimulationController extends JPanel {
         MyButton menuButton = new MyButton("Close Menu", null);
 
         menuButton.addActionListener( e -> {
-            if (this.simulationSidebar.toggle()) {
+            if (this.sidebar.toggle()) {
                 menuButton.setText("Close Menu");
             } else {
                 menuButton.setText("Open Menu");
@@ -185,37 +214,18 @@ public class SimulationController extends JPanel {
         return pauseButton;
     }
 
-    private MyButton createStartButton(JButton pauseButton) {
+    private MyButton createStartButton(MyButton pauseButton) {
         MyButton startButton = new MyButton("Start", null);
         startButton.setForeground(new Color(99, 196, 74,255));
         startButton.addActionListener(e -> {
-            if (this.started) {
-                this.simulation.reset();
-                this.clockTime = 0;
-                this.eventTicks = 0;
-                this.HTEtimer.stop();
-                startButton.setForeground(new Color(99, 196, 74,255));
-                pauseButton.setForeground(Color.DARK_GRAY);
-                startButton.setText("Start");
-                this.timeLabel.setText("00:00:00");
-                this.ticksLabel.setText("Ticks: 0");
-                this.simulationSidebar.reset();
-                this.started = false;
-            } else {
-                this.started = true;
-                this.simulation.initializeStatisticSuppliers();
-                this.simulationSidebar.init();
-                this.HTEtimer.start();
-                startButton.setText("Reset");
-                startButton.setForeground(Color.RED);
-                pauseButton.setForeground(Settings.textColor);
-            }
+            if (this.started) startSimulation(startButton, pauseButton);
+            else resetSimulation(startButton, pauseButton);
         });
         return startButton;
     }
 
-    public SimulationSidebar getSimulationSidebar() {
-        return simulationSidebar;
+    public Sidebar getSimulationSidebar() {
+        return sidebar;
     }
 }
 

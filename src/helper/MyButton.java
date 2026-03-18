@@ -10,9 +10,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class MyButton extends JButton {
-    private Color hoverColor;
+    private boolean selected;
 
     public MyButton(String text, ActionListener actionListener) {
+        this.selected = false;
         this.setText(text);
         this.setForeground(Settings.textColor);
         this.setFont(FontHelper.getFont(FontWeight.MEDIUM).deriveFont(12f));
@@ -31,9 +32,16 @@ public class MyButton extends JButton {
                 button.setBackground(Settings.themeColor3);
             }
             public void mouseExited(MouseEvent e) {
-                button.setBackground(Settings.themeColor2);
+                if (selected) button.setBackground(Settings.themeColor);
+                else button.setBackground(Settings.themeColor2);
             }
         });
     }
 
+    @Override
+    public void setSelected(boolean selected) {
+        if (selected) this.setBackground(Settings.themeColor);
+        else this.setBackground(Settings.themeColor2);
+        this.selected = selected;
+    }
 }

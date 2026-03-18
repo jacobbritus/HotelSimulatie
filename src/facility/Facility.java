@@ -5,7 +5,7 @@ import enums.FacilityType;
 import human.Human;
 import settings.FacilityColors;
 import settings.Settings;
-import simulation.SimulationController;
+import simulation.HotelEventManager;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -17,12 +17,12 @@ public abstract class Facility extends JPanel implements FacilityMouseInteractio
     private final FacilityType type;
     private final int row;
     private final int column;
-    private final SimulationController simulationController;
+    private final HotelEventManager hotelEventManager;
     private final int level;
     private MouseAdapter mouseEvents;
     Tile[][] tiles;
 
-    public Facility(JPanel superPanel, FacilityType type, int row, int column, SimulationController simC) {
+    public Facility(JPanel superPanel, FacilityType type, int row, int column, HotelEventManager simC) {
         this.type = type;
         this.level = 1;
         this.row = row;
@@ -30,7 +30,7 @@ public abstract class Facility extends JPanel implements FacilityMouseInteractio
         this.setBorder(new LineBorder(this.getColor(FacilityState.DEFAULT2), 2));
         this.setBackground(this.getColor(FacilityState.DEFAULT1));
         this.setOpaque(true);
-        this.simulationController = simC;
+        this.hotelEventManager = simC;
         this.addTiles();
 
         superPanel.add(this);
@@ -77,8 +77,8 @@ public abstract class Facility extends JPanel implements FacilityMouseInteractio
 
     public void onInteract(Human human) {}
 
-    public SimulationController getSimulationController() {
-        return this.simulationController;
+    public HotelEventManager getSimulationController() {
+        return this.hotelEventManager;
     }
 
     public int getRow() {

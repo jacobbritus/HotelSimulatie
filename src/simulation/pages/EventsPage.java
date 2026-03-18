@@ -6,6 +6,7 @@ import events.HotelEvent;
 import helper.MyLabel;
 import helper.MyScrollPane;
 import settings.Settings;
+import simulation.HotelEventManager;
 
 
 import javax.swing.*;
@@ -19,12 +20,18 @@ public class EventsPage extends SidebarPage {
     private JPanel eventsPanel;
     private final HashMap<HotelEvent, JPanel> eventHistory;
 
-    public EventsPage() {
+    public EventsPage(HotelEventManager hotelEventManager) {
+        super(hotelEventManager);
         addHeaderSection("Events");
         addUIdesign();
         this.eventHistory = new HashMap<>();
         JScrollPane scrollPane = createScrollPanel();
         this.add(scrollPane);
+
+        for (HotelEvent hotelEvent : hotelEventManager.getHotelEvents()){
+            reactToEvent(hotelEvent);
+        }
+
         this.repaint();
         this.revalidate();
     }
@@ -43,9 +50,11 @@ public class EventsPage extends SidebarPage {
     }
 
     @Override
+    public void init() {}
+
+    @Override
     public void reactToEvent(HotelEvent hotelEvent) {
         JPanel eventPanel = createEventPanel(hotelEvent);
-
         if (!eventHistory.containsKey(hotelEvent)) {
             this.eventsPanel.add(eventPanel);
         } else {
@@ -87,7 +96,7 @@ public class EventsPage extends SidebarPage {
         JLabel b = new MyLabel("Tick: " + String.valueOf(hotelEvent.getTime()), FontWeight.MEDIUM, TextSize.SMALL);
         eventPanel.add(b);
 
-        eventPanel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 1, 1, 1,
+        eventPanel.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(0, 0, 1, 0,
                 Settings.themeColor2), new EmptyBorder(20, 20, 20, 20)));
 
         return eventPanel;

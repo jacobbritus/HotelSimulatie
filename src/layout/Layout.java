@@ -6,7 +6,7 @@ import enums.RoomStatus;
 import facility.*;
 import human.Human;
 import settings.Settings;
-import simulation.SimulationController;
+import simulation.HotelEventManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ public class Layout extends JPanel {
     private ArrayList<Room> rooms;
 
 
-    public Layout(String[][] rawGrid, SimulationController simulationController) {
+    public Layout(String[][] rawGrid, HotelEventManager hotelEventManager) {
         int height = rawGrid.length;
         int width = rawGrid[0].length;
         facilities = new Facility[height][width];
@@ -36,7 +36,7 @@ public class Layout extends JPanel {
         ));
 
         // Add all facilities and connect their tiles
-        addFacilities(rawGrid, simulationController);
+        addFacilities(rawGrid, hotelEventManager);
         connectTiles();
 
         // Store important facilities once
@@ -121,7 +121,7 @@ public class Layout extends JPanel {
         return randomFacility.getTiles()[dr][dc];
     }
 
-    private void addFacilities(String[][] grid, SimulationController simulationController) {
+    private void addFacilities(String[][] grid, HotelEventManager hotelEventManager) {
         for (int r = 0; r < grid.length; r++) {
             for (int c = 0; c < grid[0].length; c++) {
 
@@ -129,11 +129,11 @@ public class Layout extends JPanel {
                 FacilityType type = FacilityType.getSafe(string.toUpperCase());
 
                 Facility o = switch (type) {
-                    case ROOM ->  new Room(this, type, r, c, simulationController);
-                    case LIFT ->  new Lift(this, type, r, c, simulationController);
-                    case STAIRS ->  new Stairs(this, type, r, c, simulationController);
-                    case LOBBY ->  new Lobby(this, type, r, c, simulationController);
-                    case HALL ->  new Hall(this, type, r, c, simulationController);
+                    case ROOM ->  new Room(this, type, r, c, hotelEventManager);
+                    case LIFT ->  new Lift(this, type, r, c, hotelEventManager);
+                    case STAIRS ->  new Stairs(this, type, r, c, hotelEventManager);
+                    case LOBBY ->  new Lobby(this, type, r, c, hotelEventManager);
+                    case HALL ->  new Hall(this, type, r, c, hotelEventManager);
                     default -> null;};
 
                 if (o == null) {

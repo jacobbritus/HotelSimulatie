@@ -5,8 +5,8 @@ import enums.FacilityType;
 import enums.RoomStatus;
 import human.Human;
 import settings.Settings;
-import simulation.SimulationController;
-import simulation.SimulationSidebar;
+import simulation.HotelEventManager;
+import simulation.Sidebar;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -34,8 +34,8 @@ public class Room extends Facility {
     private Color color1;
     private Color color2;
 
-    public Room(JPanel superPanel, FacilityType type, int row, int column, SimulationController simulationController) {
-        super(superPanel, type, row, column, simulationController);
+    public Room(JPanel superPanel, FacilityType type, int row, int column, HotelEventManager hotelEventManager) {
+        super(superPanel, type, row, column, hotelEventManager);
         this.setStatus(RoomStatus.AVAILABLE);
     }
 
@@ -105,7 +105,7 @@ public class Room extends Facility {
 
     @Override
     public void mouseClicked() {
-        SimulationSidebar sidebar = this.getSimulationController().getSimulationSidebar();
+        Sidebar sidebar = this.getSimulationController().getSimulationSidebar();
         System.out.println();
 
 //        if (!sidebar.getOpenedPages().getLast().equals(SidebarPage.ROOM.getTitle()+this.roomNumber)) {

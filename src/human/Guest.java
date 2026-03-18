@@ -60,10 +60,10 @@ public class Guest extends Human {
 
     @Override
     public void notify(HotelEvent hotelEvent) {
-        if (hotelEvent.getHumanId() != null && hotelEvent.getHumanId() != this.getId()) return;
+        if (hotelEvent.getHumanId() != null && hotelEvent.getHumanId() != this.getId() && hotelEvent.getData() != 255) return;
 
         switch (hotelEvent.getEventType()) {
-            case ASSIGN_ROOM -> {
+            case ASSIGN_ROOM, CHECK_IN -> {
                 Room nearestRoom = this.getLayout().getNearestRoom(this);
                 if (nearestRoom == null) {
                     return;
@@ -75,6 +75,7 @@ public class Guest extends Human {
                 this.setDestination(this.getLayout().getRandomTile(this.getAssignedRoom()));
             }
             case CHECK_OUT -> {
+                if (this.getAssignedRoom() == null) return;
                 this.setDestination(this.getLayout().getRandomTile(this.getLayout().getLobbies().getFirst()));
                 this.removeRoom(this.getAssignedRoom());
             }

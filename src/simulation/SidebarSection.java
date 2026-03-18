@@ -24,10 +24,14 @@ public class SidebarSection extends JPanel {
         this.setBorder(BorderFactory.createCompoundBorder(new MatteBorder(1, 0, 1, 0,
         Settings.themeColor2), new EmptyBorder(0, 0, 0, 0)));
 
+
+        this.setBorder(new LineBorder(Color.RED, 4));
         // --- Title ---
         JLabel titleLabel = new MyLabel(title, FontWeight.SEMIBOLD, TextSize.MEDIUM);
-        titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+//        titleLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
         titleLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
+
+
         this.add(titleLabel);
     }
 }
