@@ -115,6 +115,14 @@ public class Screen extends JFrame {
         return panel;
     }
 
+    private void showError(String reason) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Layout is invalid:\n" + reason,
+                "Layout Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     public JPanel LayoutLoader(){ // Layout Loader scherm
         JPanel panel = new JPanel();
         panel.setLayout(null);
@@ -145,17 +153,21 @@ public class Screen extends JFrame {
             if (result == JFileChooser.APPROVE_OPTION) {
                 LayoutParser parser = new LayoutParser();
                 Document doc = parser.loadFile(chooser.getSelectedFile().getAbsolutePath());
-                if (doc != null) {
-                    String[][] grid = parser.convertLayout(doc);
-                    if (grid != null) {
-                        loadedGrid = grid;
-                        log.append("Layout loaded successfully: " + chooser.getSelectedFile().getName() + "\n");
-                    } else {
-                        log.append("Invalid layout: " + chooser.getSelectedFile().getName() + "\n");
-                    }
-                } else {
-                    log.append("Failed to load file: " + chooser.getSelectedFile().getName() + "\n");
+                if (doc == null) {
+                    log.append("Layout loaded successfully: " + chooser.getSelectedFile().getName() + "\n");
+                    showError(parser.lastError);
+                    return;
                 }
+
+                String[][] grid = parser.convertLayout(doc);
+                if (grid == null) {
+                    log.append("Layout loaded successfully: " + chooser.getSelectedFile().getName() + "\n");
+                    showError(parser.lastError);
+                    return;
+                }
+
+                loadedGrid = grid;
+                log.append("Failed to load file: " + chooser.getSelectedFile().getName() + "\n");
             }
         });
 
