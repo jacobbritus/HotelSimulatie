@@ -115,6 +115,14 @@ public class Screen extends JFrame {
         return panel;
     }
 
+    private void showError(String reason) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Layout is invalid:\n" + reason,
+                "Layout Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     public JPanel LayoutLoader(){ // Layout Loader scherm
         JPanel panel = new JPanel();
         panel.setLayout(null);
