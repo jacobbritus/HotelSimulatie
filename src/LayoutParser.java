@@ -17,6 +17,7 @@ import java.util.Map;
 import static java.util.Map.entry;
 
 public class LayoutParser {
+    public String lastError = null;
     Integer gridColumns;
     Integer gridRows;
 
@@ -24,7 +25,7 @@ public class LayoutParser {
         Node gridNode = doc.getElementsByTagName("grid").item(0);
 
         if (gridNode == null) {
-            System.out.println("Bestand bevat geen grid tag.");
+            lastError = "Bestand bevat geen <grid> tag.";
             return;
         }
 
@@ -34,7 +35,7 @@ public class LayoutParser {
             this.gridColumns = Integer.parseInt(gridElement.getAttribute("columns"));
             this.gridRows = Integer.parseInt(gridElement.getAttribute("rows"));
         } catch (NumberFormatException e) {
-            System.out.println("Grid heeft geen rows en/of columns attributen.");
+            lastError = "Grid heeft geen rows en/of columns attributen.";
         }
     }
 
@@ -69,7 +70,12 @@ public class LayoutParser {
 
     public String[][] convertLayout(Document doc) {
         validateGrid(doc);
-        if (this.gridColumns == null || this.gridRows == null) return null;
+        if (this.gridColumns == null || this.gridRows == null) {
+            if (lastError == null) {
+                lastError = "Grid kon niet worden gelezen.";
+            }
+            return null;
+        }
 
         String[][] grid = new String[this.gridRows][this.gridColumns];
         boolean[][] occupied = new boolean[this.gridRows][this.gridColumns];
@@ -91,7 +97,7 @@ public class LayoutParser {
 
             // Check of label binnen grid past
             if (row + rowSpan > gridRows || col + colSpan > gridColumns) {
-                System.out.println("Label past niet in grid: " + label.getAttribute("text"));
+                lastError = "Label '" + label.getAttribute("text") + "' past niet in het grid.";
                 return null;
             }
 
@@ -99,7 +105,7 @@ public class LayoutParser {
             for (int dr = 0; dr < rowSpan; dr++) {
                 for (int dc = 0; dc < colSpan; dc++) {
                     if (occupied[row + dr][col + dc]) {
-                        System.out.println("Overlap gedetecteerd bij label: " + label.getAttribute("text"));
+                        lastError = "Overlap gedetecteerd bij label: '" + label.getAttribute("text") + "'.";
                         return null;
                     }
                 }
@@ -133,14 +139,14 @@ public class LayoutParser {
         }
 
         if (!lobbyAanwezig || !trapAanwezig || !liftAanwezig) {
-            System.out.println("FOUT: Layout mist verplichte elementen:");
-            if (!lobbyAanwezig) System.out.println("- Lobby ontbreekt");
-            if (!trapAanwezig)  System.out.println("- Trap ontbreekt");
-            if (!liftAanwezig)  System.out.println("- Lift ontbreekt");
+            StringBuilder sb = new StringBuilder("Layout mist verplichte elementen:\n");
+            if (!lobbyAanwezig) sb.append("- Lobby ontbreekt\n");
+            if (!trapAanwezig)  sb.append("- Trap ontbreekt\n");
+            if (!liftAanwezig)  sb.append("- Lift ontbreekt\n");
+            lastError = sb.toString();
             return null;
         }
 
-        System.out.println(Arrays.deepToString(grid));
         return grid;
     }
 
@@ -160,12 +166,11 @@ public class LayoutParser {
 
             // 4. Reads the XML file and turns it into a Document Object.
             doc = builder.parse(file);
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            System.out.println(e);
-            System.out.println("Kon het bestand niet vinden.");
-            doc = null;
+        } catch (Exception e) {
+            lastError = "XML kon niet worden geladen: " + e.getMessage();
+            return null;
         }
-        if (doc != null) doc.getDocumentElement().normalize(); // Maakt het document schoon door bijv. whitespace te wissen.
+        doc.getDocumentElement().normalize(); // Maakt het document schoon door bijv. whitespace te wissen.
         return doc;
     }
 }
